@@ -1,5 +1,6 @@
 package main
 
+import "core:math"
 Vector2 :: [2]f32
 
 Player :: struct {
@@ -26,17 +27,18 @@ player_click :: proc(state: ^GameState, pos: Vector2) {
 }
 
 update :: proc(state: ^GameState, dt: f32) {
-	walk := state.player.speed * dt
+	player := &state.player
 
-	diff := state.player.dest - state.player.pos
+	diff := player.dest - player.pos
+	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
 
-	if abs(diff.x) < walk {
-		state.player.pos.x = state.player.dest.x
-	} else {
-		state.player.pos.x += walk * (diff.x >= 0 ? 1 : -1)
-	}
-	if abs(diff.y) < walk {
-		state.player.pos.y = state.player.dest.y
-	} else {
-		state.player.pos.y += walk * (diff.y >= 0 ? 1 : -1)}
+    if dist > 0 {
+        walk := player.speed * dt
+        if walk >= dist {
+            player.pos = player.dest
+        } else {
+            dir := diff / dist
+            player.pos += dir * walk
+        }
+    }
 }
