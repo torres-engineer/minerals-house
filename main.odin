@@ -1,93 +1,42 @@
 package main
 
-import rl "vendor:raylib"
+Vector2 :: [2]f32
 
-SCREEN_WIDTH :: 640
-SCREEN_HEIGHT :: 480
-FPS :: 144
-
-player: rl.Rectangle
-camera: rl.Camera2D
-destination: rl.Vector2
-speed: f32 = 24
-
-main :: proc() {
-	rl.SetConfigFlags(rl.ConfigFlags{.MSAA_4X_HINT})
-	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Minerals' House")
-	defer rl.CloseWindow()
-
-	init()
-
-	rl.SetTargetFPS(FPS)
-
-	for !rl.WindowShouldClose() {
-		update()
-
-		draw()
-	}
+Player :: struct {
+	pos, dest: Vector2,
+	speed:     f32,
 }
 
-init :: proc() {
-
-	player = rl.Rectangle {
-		x      = f32(rl.GetScreenWidth() / 2),
-		y      = f32(rl.GetScreenHeight() / 2),
-		width  = 32,
-		height = 32,
-	}
-
-	camera = rl.Camera2D {
-		target   = rl.Vector2{player.x, player.y},
-		offset   = rl.Vector2{f32(rl.GetScreenWidth() / 2), f32(rl.GetScreenHeight() / 2)},
-		rotation = 0,
-		zoom     = 1,
-	}
-
-	destination = rl.Vector2{player.x, player.y}
+GameState :: struct {
+	player: Player,
 }
 
-update :: proc() {
-	if rl.IsMouseButtonPressed(rl.MouseButton.RIGHT) {
-		destination = rl.Vector2{player.x, player.y} + (rl.GetMousePosition() - camera.offset)
-
-		// rl.CheckCollisionPointRec
+init :: proc(screen_width, screen_height: u32) -> GameState {
+	center := Vector2{f32(screen_width / 2), f32(screen_height / 2)}
+	player := Player {
+		pos   = center,
+		dest  = center,
+		speed = 120,
 	}
-
-	walk := rl.GetFrameTime() * 6 * speed
-
-	if destination.x != player.x {
-		diff := destination.x - player.x
-		player.x += abs(diff) < walk ? diff : (diff < 0 ? -walk : walk)
-	}
-
-	if destination.y != player.y {
-		diff := destination.y - player.y
-		player.y += abs(diff) < walk ? diff : (diff < 0 ? -walk : walk)
-	}
-
-	camera.target = rl.Vector2{player.x, player.y}
+	return GameState{player}
 }
 
-draw :: proc() {
-	rl.BeginDrawing()
+player_click :: proc(state: ^GameState, pos: Vector2) {
+	state.player.dest = pos
+}
 
-	rl.ClearBackground(rl.RAYWHITE)
+update :: proc(state: ^GameState, dt: f32) {
+	walk := state.player.speed * dt
 
-	rl.BeginMode2D(camera)
+	diff := state.player.dest - state.player.pos
 
-	rl.DrawCircleGradient(
-		SCREEN_WIDTH / 2,
-		SCREEN_HEIGHT / 2,
-		SCREEN_HEIGHT / 3,
-		rl.GREEN,
-		rl.SKYBLUE,
-	)
-
-	rl.DrawCircle(i32(player.x), i32(player.y), 32, rl.DARKBLUE)
-
-	rl.EndMode2D()
-
-	rl.DrawFPS(8, 8)
-
-	rl.EndDrawing()
+	if abs(diff.x) < walk {
+		state.player.pos.x = state.player.dest.x
+	} else {
+		state.player.pos.x += walk * (diff.x >= 0 ? 1 : -1)
+	}
+	if abs(diff.y) < walk {
+		state.player.pos.y = state.player.dest.y
+	} else {
+		state.player.pos.y += walk * (diff.y >= 0 ? 1 : -1)}
 }
