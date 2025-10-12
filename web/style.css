@@ -1,8 +1,8 @@
 main {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 #game {
-    outline: #0F0 solid 1px;
+  outline: #0f0 solid 1px;
 }
