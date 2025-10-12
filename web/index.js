@@ -1,6 +1,12 @@
 "use strict";
 
 const PLAYER_POS_OFFSET = 0;
+const WORLD_WIDTH_OFFSET = 0;
+const WORLD_HEIGHT_OFFSET = 4;
+const WORLD_WORLD_OFFSET = 8;
+const WORLD_WORLD_SIZE_OFFSET = WORLD_WORLD_OFFSET + 4;
+const WORLD_SCALE_OFFSET = 16;
+const WORLD_SPAWN_OFFSET = 20;
 
 (async () => {
   const mem = new odin.WasmMemoryInterface();
@@ -13,6 +19,7 @@ const PLAYER_POS_OFFSET = 0;
 
   exports.init(canvas.width, canvas.height);
   const state = exports.getState();
+  const world_ptr = exports.getWorld();
 
   let camera = {
     target: mem.loadF32Array(state + PLAYER_POS_OFFSET, 2),
@@ -44,38 +51,35 @@ const PLAYER_POS_OFFSET = 0;
   }
 
   function render() {
-    ctx.fillStyle = "#fefefe";
+    ctx.fillStyle = "#181818";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const pos = mem.loadF32Array(state + PLAYER_POS_OFFSET, 2);
 
-    const gradient = ctx.createRadialGradient(
-      screenToWorldX(canvas.width / 2),
-      screenToWorldY(canvas.height / 2),
-      0,
-      screenToWorldX(canvas.width / 2),
-      screenToWorldY(canvas.height / 2),
-      canvas.height / 3,
-    );
-    gradient.addColorStop(0, "green");
-    gradient.addColorStop(1, "skyblue");
-    ctx.fillStyle = gradient;
-    ctx.beginPath();
-    ctx.arc(
-      screenToWorldX(canvas.width / 2),
-      screenToWorldY(canvas.height / 2),
-      canvas.height / 3,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
+    const world = getWorld(mem, world_ptr);
+
+    for (let i = 0; i < world.width; ++i) {
+      for (let j = 0; j < world.height; ++j) {
+        ctx.fillStyle = world.world[j * world.width + i] == 1
+          ? "white"
+          : "black";
+        ctx.beginPath();
+        ctx.rect(
+          screenToWorldX(i * world.scale),
+          screenToWorldY(j * world.scale),
+          world.scale,
+          world.scale,
+        );
+        ctx.fill();
+      }
+    }
 
     ctx.fillStyle = "darkblue";
     ctx.beginPath();
     ctx.arc(
       screenToWorldX(pos[0]),
       screenToWorldY(pos[1]),
-      32,
+      24,
       0,
       Math.PI * 2,
     );
@@ -103,4 +107,23 @@ function showInfo(info) {
 
   gameSection.nextSibling.remove();
   gameSection.insertAdjacentElement("afterend", infoSection);
+}
+
+function getWorld(mem, ptr) {
+  const width = mem.loadU32(ptr + WORLD_WIDTH_OFFSET);
+  const height = mem.loadU32(ptr + WORLD_HEIGHT_OFFSET);
+
+  return {
+    width,
+    height,
+    world: mem.loadU32Array(
+      mem.loadU32(ptr + WORLD_WORLD_OFFSET),
+      mem.loadU32(ptr + WORLD_WORLD_SIZE_OFFSET),
+    ),
+    scale: mem.loadU32(ptr + WORLD_SCALE_OFFSET),
+    spawn: {
+      x: mem.loadF32(ptr + WORLD_SPAWN_OFFSET),
+      y: mem.loadF32(ptr + WORLD_SPAWN_OFFSET + 4),
+    },
+  };
 }

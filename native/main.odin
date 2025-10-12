@@ -54,19 +54,25 @@ update :: proc() {
 draw :: proc() {
 	rl.BeginDrawing()
 
-	rl.ClearBackground(rl.RAYWHITE)
+	rl.ClearBackground(rl.Color{0x18, 0x18, 0x18, 0xFF})
 
 	rl.BeginMode2D(camera)
 
-	rl.DrawCircleGradient(
-		SCREEN_WIDTH / 2,
-		SCREEN_HEIGHT / 2,
-		SCREEN_HEIGHT / 3,
-		rl.GREEN,
-		rl.SKYBLUE,
-	)
+	world := main.getWorld()
 
-	rl.DrawCircleV(state.player.pos, 32, rl.DARKBLUE)
+	for i in 0 ..< world.width {
+		for j in 0 ..< world.height {
+			rl.DrawRectangle(
+				i32(i * world.scale),
+				i32(j * world.scale),
+				i32(world.scale),
+				i32(world.scale),
+				world.world[j * world.width + i] == 1 ? rl.RAYWHITE : rl.BLACK,
+			)
+		}
+	}
+
+	rl.DrawCircleV(state.player.pos, 24, rl.DARKBLUE)
 
 	rl.EndMode2D()
 
