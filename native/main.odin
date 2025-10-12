@@ -8,7 +8,7 @@ SCREEN_HEIGHT :: 480
 FPS :: 144
 
 camera: rl.Camera2D
-state: main.GameState
+state: ^main.GameState
 
 main :: proc() {
 	rl.SetConfigFlags(rl.ConfigFlags{.MSAA_4X_HINT})
@@ -27,7 +27,8 @@ main :: proc() {
 }
 
 init :: proc() {
-	state = main.init(u32(rl.GetScreenWidth()), u32(rl.GetScreenHeight()))
+	main.init(u32(rl.GetScreenWidth()), u32(rl.GetScreenHeight()))
+	state = main.getState()
 
 	camera = rl.Camera2D {
 		target   = state.player.pos,
@@ -39,13 +40,13 @@ init :: proc() {
 
 update :: proc() {
 	if rl.IsMouseButtonPressed(rl.MouseButton.RIGHT) {
-		main.player_click(&state, state.player.pos + (rl.GetMousePosition() - camera.offset))
-		main.player_click(&state, rl.GetScreenToWorld2D(rl.GetMousePosition(), camera))
+		// main.player_click(state.player.pos + (rl.GetMousePosition() - camera.offset))
+		main.player_click(rl.GetScreenToWorld2D(rl.GetMousePosition(), camera))
 
 		// rl.CheckCollisionPointRec
 	}
 
-	main.update(&state, rl.GetFrameTime())
+	main.step(f64(rl.GetFrameTime()))
 
 	camera.target = state.player.pos
 }

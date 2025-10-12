@@ -1,21 +1,32 @@
 <!DOCTYPE html>
-<html>
+<!-- LICENSE -->
+<html lang="en">
 
 <head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Odin js_wasm32 example</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Minerals' House</title>
+    <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-	<input id="number1" type="number" value="0">
-	<input id="number2" type="number" value="0">
-	<button id="add">Add</button>
-	<div id="result">Result will appear here</div>
-
-	<script type="text/javascript" src="odin.js"></script>
-	<script type="text/javascript" src="index.js"></script>
+    <header>
+        <h1>Minerals' House</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Game</h2>
+            <canvas id="game" width="480" height="360">
+                <p>Unsupported browser or JavaScript disabled.</p>
+                <p>Can't run the game.</p>
+            </canvas>
+        </section>
+    </main>
+    <pre id="console"></pre>
+    <script type="text/javascript" src="odin.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    <noscript>This page needs JavaScript to work!</noscript>
 </body>
 
 </html>
