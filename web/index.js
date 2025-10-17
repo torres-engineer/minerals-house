@@ -1,6 +1,7 @@
 "use strict";
 
 const PLAYER_POS_OFFSET = 0;
+const PLAYER_DEST_OFFSET = PLAYER_POS_OFFSET + 8;
 const WORLD_WIDTH_OFFSET = 0;
 const WORLD_HEIGHT_OFFSET = 4;
 const WORLD_WORLD_OFFSET = 8;
@@ -35,7 +36,7 @@ const WORLD_SPAWN_OFFSET = 20;
       const worldX = pos[0] + (e.offsetX - camera.offset[0]);
       const worldY = pos[1] + (e.offsetY - camera.offset[1]);
 
-      showInfo({ coords: [worldX, worldY] });
+      showInfo({ coords: [worldX, worldY], pos });
 
       exports.player_click(worldX, worldY);
     }
@@ -85,6 +86,47 @@ const WORLD_SPAWN_OFFSET = 20;
     );
     ctx.fill();
 
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(
+      screenToWorldX(pos[0]),
+      screenToWorldY(pos[1]),
+      1,
+      0,
+      Math.PI * 2,
+    );
+    ctx.fill();
+
+    ctx.fillStyle = "green";
+    ctx.beginPath();
+    ctx.arc(
+      canvas.width / 2,
+      canvas.height / 2,
+      1,
+      0,
+      Math.PI * 2,
+    );
+    ctx.fill();
+
+    const player = getPlayer(mem, state)
+
+    ctx.beginPath();
+
+    // place the cursor from the point the line should be started 
+    ctx.moveTo(screenToWorldX(player.pos[0]), screenToWorldY(player.pos[1]));
+
+    // draw a line from current cursor position to the provided x,y coordinate
+    ctx.lineTo(screenToWorldX(player.dest[0]), screenToWorldY(player.dest[1]));
+
+    // set strokecolor
+    ctx.strokeStyle = "red";
+
+    // set lineWidht 
+    ctx.lineWidth = 3;
+
+    // add stroke to the line 
+    ctx.stroke();
+
     requestAnimationFrame(render);
   }
 
@@ -107,6 +149,15 @@ function showInfo(info) {
 
   gameSection.nextSibling.remove();
   gameSection.insertAdjacentElement("afterend", infoSection);
+}
+
+function getPlayer(mem, ptr) {
+  const pos = mem.loadF32Array(ptr + PLAYER_POS_OFFSET, 2);
+  const dest = mem.loadF32Array(ptr + PLAYER_DEST_OFFSET, 2);
+
+  return {
+    pos, dest
+  };
 }
 
 function getWorld(mem, ptr) {
