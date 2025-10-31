@@ -1,0 +1,294 @@
+\documentclass[12pt,a4paper,openright,oneside]{memoir}
+
+\usepackage{iftex}
+\ifXeTeX
+  \usepackage{fontspec}
+  \defaultfontfeatures{Ligatures=TeX}
+  \setmainfont{EB Garamond}[
+    Scale = 1.0
+  ]
+\else
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{mathptmx}
+\fi
+
+\usepackage{polyglossia}
+\setdefaultlanguage{portuguese}
+\setotherlanguage{english}
+
+\usepackage[a4paper,top=3cm,bottom=3cm,left=2cm,right=2cm]{geometry}
+
+\OnehalfSpacing
+
+\maxsecnumdepth{subsection}
+\setcounter{secnumdepth}{3}
+\setsecnumformat{\csname the#1\endcsname\quad}
+
+\chapterstyle{section}
+\renewcommand*{\chapnamefont}{\normalfont\Large\scshape}
+\renewcommand*{\chaptitlefont}{\normalfont\Huge\bfseries}
+
+\usepackage{caption}
+\DeclareCaptionLabelFormat{ipbeja}{#1~#2}
+\captionsetup{
+  labelfont=bf,
+  labelsep=none,
+  format=plain,
+  textfont=it,
+  justification=justified,
+  singlelinecheck=false,
+  labelformat=ipbeja
+}
+
+\captionsetup[table]{position=top}
+
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+
+\usepackage{minted}
+\setminted{
+  linenos,
+  breaklines,
+  frame=lines,
+  fontsize=\small
+}
+
+\usepackage[style=apa, backend=biber]{biblatex}
+\addbibresource{bibliography.bib}
+\usepackage{csquotes}
+
+\newcommand{\Institute}{Instituto Politécnico de Beja}
+\newcommand{\School}{Escola Superior de Tecnologia e Gestão}
+\newcommand{\Degree}{Licenciatura em Engenharia Informática}
+\newcommand{\Course}{Projeto Integrado}
+\newcommand{\Title}{A Casa dos Minerais}
+\newcommand{\Subtitle}{Jogo Educativo}
+\newcommand{\AuthorFirst}{Danilo Kymhyr}
+\newcommand{\AuthorSecond}{Guilherme Ferreira Pereira}
+\newcommand{\AuthorThird}{João Augusto Costa Branco Marado Torres}
+\newcommand{\AdvisorFirst}{Dr. Luís Carlos da Silva Bruno}
+\newcommand{\AdvisorSecond}{Dr. João Paulo Barros}
+\newcommand{\AdvisorThird}{Dra. Sofia Maria Mesquita Soares}
+\newcommand{\Date}{Beja, outubro de 2025}
+
+\usepackage[hidelinks]{hyperref}
+\usepackage{hyperxmp}
+\hypersetup{
+  pdfauthor={\AuthorFirst AND \AuthorSecond AND \AuthorThird},
+  pdftitle={\Title},
+  pdflicenseurl={https://creativecommons.org/licenses/by-sa/4.0/},
+  pdfcopyright={© 2025 \AuthorFirst, \AuthorSecond, \AuthorThird --- CC BY-SA 4.0 for PDF, AGPL v3 for source},
+}
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\begin{center}
+    \includegraphics{Logotipo_IPBeja_horizontal-5/IPbeja_horizontal}
+
+    \bigskip
+
+    \textsc{\large \School}\\{\large \Degree}
+
+    \bigskip
+
+    \textsc{\large \Course}
+
+    \vspace{4\baselineskip}
+
+    \textsc{\Huge \Title}
+
+    \smallskip
+
+    {\Large \Subtitle}
+
+    \bigskip
+
+    {\large\bfseries \AuthorFirst}\\
+    {\large\bfseries \AuthorSecond}\\
+    {\large\bfseries \AuthorThird}
+
+    \vfill
+
+    \begin{center}
+        \includegraphics[height=25mm,keepaspectratio]{Logotipos_ESTIG/estig}%
+    \end{center}
+
+    \vfill
+
+    {\footnotesize \Date}
+\end{center}
+
+\cleardoublepage
+
+\thispagestyle{empty}
+\begin{center}
+    \textsc{\large \Institute}
+
+    \bigskip
+
+    \textsc{\large \School}\\{\large \Degree}
+
+    \bigskip
+
+    \textsc{\large \Course}
+
+    \vspace{4\baselineskip}
+
+    \textsc{\Huge \Title}
+
+    \smallskip
+
+    {\Large \Subtitle}
+
+    \bigskip
+
+    {\large\bfseries \AuthorFirst}\\
+    {\large\bfseries \AuthorSecond}\\
+    {\large\bfseries \AuthorThird}
+
+    \vspace{2\baselineskip}
+
+    {\large Trabalho realizado no âmbito da unidade curricular de \Course}
+
+    \vspace{2\baselineskip}
+
+    \textsc{Orientação}
+
+    \bigskip
+
+    \AdvisorSecond\\
+    \AdvisorThird
+
+    \bigskip
+
+    \textsc{Coorientação}
+
+    \bigskip
+
+    \AdvisorFirst
+
+    \vfill
+
+    {\footnotesize \Date}
+\end{center}
+
+\cleardoublepage
+
+\thispagestyle{empty}
+\begin{center}
+  \textbf{Júri}
+
+  \bigskip
+
+  Responsável: \AdvisorFirst
+\end{center}
+\clearpage
+
+\pagenumbering{roman}
+% \fancyfoot[R]{\fontsize{8}{9}\selectfont\thepage}
+
+\chapter*{Resumo}
+\addcontentsline{toc}{chapter}{Resumo}
+\noindent
+...
+
+\bigskip
+
+\textbf{Palavras-chave:} ...
+
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+\noindent
+...
+
+\bigskip
+
+\textbf{Keywords:} ...
+
+\chapter*{Dedicatória}
+\addcontentsline{toc}{chapter}{Dedicatória}
+\begin{flushright}
+    ...
+\end{flushright}
+
+\chapter*{Agradecimentos}
+\addcontentsline{toc}{chapter}{Agradecimentos}
+...
+
+\clearpage
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+% \chapter*{Lista de Abreviaturas e Siglas}
+% \addcontentsline{toc}{chapter}{Lista de Abreviaturas e Siglas}
+% \begin{description}
+%     \item[a11y] \textit{Accessibility}
+%     \item[API] \textit{Application Programming Interface}
+%     \item[DX] \textit{Developer Experience}
+%     \item[FLOSS] \textit{Free Libre and Open Source Software}
+%     \item[HTTP] \textit{Hypertext Transfer Protocol}
+%     \item[i18n] \textit{Internationalization}
+%     \item[MVC] \textit{Model-View-Controller}
+%     \item[POO] Programação Orientada a Objetos
+%     \item[REST] \textit{Representational State Transfer}
+%     \item[TDD] \textit{Test-Driven Development}
+%     \item[UML] \textit{Unified Modeling Language}
+% \end{description}
+
+% \chapter*{Simbologia e Notação}
+% \addcontentsline{toc}{chapter}{Simbologia e Notação}
+% \begin{description}
+%   \item[$x$] variável independente
+%   \item[$y$] variável dependente
+% \end{description}
+
+\clearpage
+\pagenumbering{arabic}
+% \fancyfoot[R]{\fontsize{8}{9}\selectfont\thepage}
+
+\chapter{Introdução}
+\label{ch:intro}
+
+\chapter{Desenvolvimento}
+\label{ch:dev}
+
+\chapter{Conclusão}
+\label{ch:conclusion}
+
+\clearpage
+\printbibliography[title={Referências Bibliográficas}]
+
+\clearpage
+\chapter*{Licença}
+\addcontentsline{toc}{chapter}{Licença}
+\noindent
+Este documento está licenciado sob uma
+\href{https://creativecommons.org/licenses/by-sa/4.0/}{Licença Creative Commons Atribuição–Partilha nos Mesmos Termos 4.0 Internacional (CC BY-SA 4.0)}.
+
+\vspace{0.5cm}
+O código fonte (ficheiros \texttt{.tex}, \texttt{.bib}, \texttt{Makefile}, etc.) utilizado para produzir este relatório está licenciado sob a
+\href{https://www.gnu.org/licenses/agpl-3.0.html}{GNU Affero General Public License v3.0 (AGPL v3)}.
+
+\clearpage
+\appendix
+% \chapter{Apêndice A: Questionário}
+
+% \chapter{Apêndice: Linha de comandos}
+
+\backmatter
+% \chapter*{Anexos}
+% \addcontentsline{toc}{chapter}{Anexos}
+% \section*{Anexo A: Documento Externo}
+% Texto de anexo.
+
+\end{document}
+
