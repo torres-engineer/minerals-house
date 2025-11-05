@@ -80,3 +80,12 @@ busybox httpd -f -p 8000
 - https://commons.wikimedia.org/wiki/Main_Page
 - https://www.go-fair.org/
 - https://zenodo.org/
+
+
+## Credits
+
+Small 8-direction Characters:
+
+By: AxulArt
+https://axulart.itch.io/small-8-direction-characters
+https://axulart.tumblr.com/
