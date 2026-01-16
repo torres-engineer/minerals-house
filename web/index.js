@@ -40,6 +40,16 @@ const WORLD_SPAWN_OFFSET = 20;
   stationaryImg.src = "./source/pixil-frame-stationary.png"; // put your stationary image here
   stationaryImg.onload = () => {};
 
+
+  const floorImg = new Image();
+  floorImg.src = "./source/layers/chao.png";
+
+  const wallsImg = new Image();
+  wallsImg.src = "./source/layers/paredes.png";
+
+  const objectsImg = new Image();
+  objectsImg.src = "./source/layers/objetos.png";
+
   // animation timing: automatically cycle rows while moving
   const animInterval = 180; // ms between row swaps
   let animTimer = 0;
@@ -79,29 +89,49 @@ const WORLD_SPAWN_OFFSET = 20;
   }
 
   function render(now) {
+    // 1. Limpar Ecrã
     ctx.fillStyle = "#181818";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     const pos = mem.loadF32Array(state + PLAYER_POS_OFFSET, 2);
-
     const world = getWorld(mem, world_ptr);
 
+    // 2. Desenhar Chão (Estático)
+    if (floorImg.complete) {
+      ctx.drawImage(floorImg, screenToWorldX(0), screenToWorldY(0));
+    }
+
+    // --- INÍCIO DO SISTEMA DE Y-SORT ---
+    // Criamos uma lista ÚNICA para guardar tudo o que precisa de ser ordenado por profundidade
+    // (Paredes, Objetos e Player) para que interajam corretamente uns com os outros.
+    let renderList = [];
+
+    // 3. Processar Paredes e Objetos
     for (let i = 0; i < world.width; ++i) {
       for (let j = 0; j < world.height; ++j) {
-        ctx.fillStyle = world.world[j * world.width + i] == 1
-          ? "white"
-          : "black";
-        ctx.beginPath();
-        ctx.rect(
-          screenToWorldX(i * world.scale),
-          screenToWorldY(j * world.scale),
-          world.scale,
-          world.scale,
-        );
-        ctx.fill();
+        const wX = i * world.scale;
+        const wY = j * world.scale;
+        const z = wY + world.scale;
+
+        // Adicionar parede
+        renderList.push({
+            type: 'layer_part',
+            img: wallsImg,
+            x: wX, y: wY, w: world.scale, h: world.scale,
+            z: z
+        });
+
+        // Adicionar objeto
+        renderList.push({
+            type: 'layer_part',
+            img: objectsImg,
+            x: wX, y: wY, w: world.scale, h: world.scale,
+            z: z
+        });
       }
     }
 
+    // 4. Processar Player (Cálculos de animação)
     const playerData = getPlayer(mem, state);
     const dx = playerData.dest[0] - playerData.pos[0];
     const dy = playerData.dest[1] - playerData.pos[1];
@@ -122,7 +152,7 @@ const WORLD_SPAWN_OFFSET = 20;
 
     const moving = Math.hypot(dx, dy) > 0.5;
 
-    // animation timing update
+    // Animation timing update
     const tNow = (typeof now !== 'undefined') ? now : ((typeof performance !== 'undefined') ? performance.now() : Date.now());
     const dt = Math.max(0, tNow - lastTime);
     lastTime = tNow;
@@ -134,51 +164,95 @@ const WORLD_SPAWN_OFFSET = 20;
         currentRow = (currentRow + 1) % frameRows;
       }
     } else {
-      // reset animation while standing
       animTimer = 0;
       currentRow = 0;
     }
 
+    // Preparar dados do Player
     if (playerImg && playerImg.complete && playerImg.naturalWidth >= frameW) {
-      const ang = Math.atan2(dy, dx);
-      const idx = angleToFrameIndex(ang);
-      const sx = idx * frameW;
+        // Valores default (para animação normal)
+        let imgToDraw = playerImg;
+        let ang = Math.atan2(dy, dx);
+        let idx = angleToFrameIndex(ang);
+        
+        // Source coords
+        let sx = idx * frameW;
+        let sy = currentRow * frameH;
+        let sW = frameW;
+        let sH = frameH;
 
-      const sy = currentRow * frameH;
-      const drawW = frameW * spriteScale;
-      const drawH = frameH * spriteScale;
-      const dxCanvas = screenToWorldX(pos[0]) - drawW / 2;
-      const dyCanvas = screenToWorldY(pos[1]) - drawH / 2;
+        // Destination coords base
+        let drawW = frameW * spriteScale;
+        let drawH = frameH * spriteScale;
 
-      if (!moving && stationaryImg && stationaryImg.complete) {
-        // when not moving and stationary image is available, draw it instead
-        const sW = stationaryImg.naturalWidth || drawW;
-        const sH = stationaryImg.naturalHeight || drawH;
-        const sDrawW = sW * spriteScale;
-        const sDrawH = sH * spriteScale;
-        const sDx = screenToWorldX(pos[0]) - sDrawW / 2;
-        const sDy = screenToWorldY(pos[1]) - sDrawH / 2;
-        ctx.drawImage(stationaryImg, 0, 0, sW, sH, sDx, sDy, sDrawW, sDrawH);
-      } else {
-        ctx.drawImage(
-          playerImg,
-          sx, sy, frameW, frameH,
-          dxCanvas, dyCanvas, drawW, drawH,
-        );
-      }
+        // Lógica da imagem estacionária (Idle)
+        if (!moving && stationaryImg && stationaryImg.complete) {
+            imgToDraw = stationaryImg;
+            sW = stationaryImg.naturalWidth || drawW;
+            sH = stationaryImg.naturalHeight || drawH;
+            sx = 0; 
+            sy = 0;
+            // Recalcula tamanho de desenho se a imagem parada tiver tamanho diferente
+            drawW = sW * spriteScale; 
+            drawH = sH * spriteScale;
+        }
+
+        // Posição de desenho no ecrã
+        const dxCanvas = screenToWorldX(pos[0]) - drawW / 2;
+        const dyCanvas = screenToWorldY(pos[1]) - drawH / 2;
+
+        // Adicionar Player à lista de renderização
+        renderList.push({
+            type: 'player',
+            img: imgToDraw,
+            sx: sx, sy: sy, sW: sW, sH: sH,
+            dx: dxCanvas, dy: dyCanvas, dW: drawW, dH: drawH,
+            z: pos[1] + (drawH / 2)
+        });
+
     } else {
-      ctx.fillStyle = "darkblue";
-      ctx.beginPath();
-      ctx.arc(
-        screenToWorldX(pos[0]),
-        screenToWorldY(pos[1]),
-        24,
-        0,
-        Math.PI * 2,
-      );
-      ctx.fill();
+        // Fallback
+        renderList.push({
+            type: 'fallback_circle',
+            x: screenToWorldX(pos[0]),
+            y: screenToWorldY(pos[1]),
+            z: pos[1]
+        });
     }
 
+    // 5. RENDERIZAÇÃO POR CAMADAS (Y-SORT ÚNICO)
+    // Ordenamos tudo junto para garantir que o player interage corretamente com paredes E objetos
+    renderList.sort((a, b) => a.z - b.z);
+
+    for (const item of renderList) {
+        if (item.type === 'layer_part') {
+            if (item.img && item.img.complete) {
+                ctx.drawImage(
+                    item.img,
+                    item.x, item.y, item.w, item.h,
+                    screenToWorldX(item.x), screenToWorldY(item.y), item.w, item.h
+                );
+            }
+        } 
+        else if (item.type === 'player') {
+            ctx.drawImage(
+                item.img,
+                item.sx, item.sy, item.sW, item.sH,
+                item.dx, item.dy, item.dW, item.dH
+            );
+        }
+        else if (item.type === 'fallback_circle') {
+            ctx.fillStyle = "darkblue";
+            ctx.beginPath();
+            ctx.arc(item.x, item.y, 24, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+    // --- FIM DO SISTEMA DE RENDERIZAÇÃO ---
+
+
+    // 7. Debug Overlays (Linhas, pontos de debug)
+    // Estes desenhamos sempre por último para ficarem "on top" da UI
     ctx.fillStyle = "red";
     ctx.beginPath();
     ctx.arc(
@@ -204,20 +278,10 @@ const WORLD_SPAWN_OFFSET = 20;
     const player = getPlayer(mem, state)
 
     ctx.beginPath();
-
-    // place the cursor from the point the line should be started 
     ctx.moveTo(screenToWorldX(player.pos[0]), screenToWorldY(player.pos[1]));
-
-    // draw a line from current cursor position to the provided x,y coordinate
     ctx.lineTo(screenToWorldX(player.dest[0]), screenToWorldY(player.dest[1]));
-
-    // set strokecolor
     ctx.strokeStyle = "red";
-
-    // set lineWidht 
     ctx.lineWidth = 3;
-
-    // add stroke to the line 
     ctx.stroke();
 
     requestAnimationFrame(render);
