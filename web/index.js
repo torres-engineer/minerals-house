@@ -15,8 +15,41 @@ const WORLD_SPAWN_OFFSET = 20;
   await odin.runWasm("index.wasm", log, null, mem);
   const exports = mem.exports;
 
+  // Load item and appliance data
+  const itemsData = await fetch("./data/items.json").then(r => r.json());
+  const appliancesData = await fetch("./data/appliances.json").then(r => r.json());
+  const items = itemsData.items;
+  const appliances = appliancesData.appliances;
+
+  // Make appliances available for quiz
+  window.quizAppliances = appliances;
+
+  // Helper to find appliance by name
+  function getAppliance(name) {
+    return appliances.find(a => a.name === name);
+  }
+
+  // Helper to find item near a world position
+  function findItemNear(worldX, worldY, maxDist = 60) {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      const dist = Math.hypot(worldX - item.x, worldY - item.y);
+      if (dist <= (item.radius || maxDist)) {
+        return { item, index: i + 1 }; // index+1 because 0 means "no item" in Odin
+      }
+    }
+    return null;
+  }
+
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
+
+  // Make canvas fullscreen
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    camera.offset = [canvas.width / 2, canvas.height / 2];
+  }
 
   const playerImg = new Image();
   const frameW = 48;
@@ -33,12 +66,12 @@ const WORLD_SPAWN_OFFSET = 20;
   const frameAngles = [270, 315, 0, 45, 90, 135, 180, 225];
 
   playerImg.src = "./source/pixil-frame-2Frame.png";
-  playerImg.onload = () => {};
+  playerImg.onload = () => { };
 
   // separate stationary image (shown only when not moving)
   const stationaryImg = new Image();
   stationaryImg.src = "./source/pixil-frame-stationary.png"; // put your stationary image here
-  stationaryImg.onload = () => {};
+  stationaryImg.onload = () => { };
 
 
   const floorImg = new Image();
@@ -55,6 +88,10 @@ const WORLD_SPAWN_OFFSET = 20;
   let animTimer = 0;
   let lastTime = (typeof performance !== 'undefined') ? performance.now() : Date.now();
 
+  // Initialize canvas size before init
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
   exports.init(canvas.width, canvas.height);
   const state = exports.getState();
   const world_ptr = exports.getWorld();
@@ -66,14 +103,55 @@ const WORLD_SPAWN_OFFSET = 20;
     zoom: 1,
   };
 
+  window.addEventListener("resize", resizeCanvas);
+
   canvas.addEventListener("contextmenu", (e) => e.preventDefault());
   canvas.addEventListener("mousedown", (e) => {
+    e.preventDefault();
     const pos = mem.loadF32Array(state + PLAYER_POS_OFFSET, 2);
     if (e.button === 2) {
       const worldX = pos[0] + (e.offsetX - camera.offset[0]);
       const worldY = pos[1] + (e.offsetY - camera.offset[1]);
 
-      showInfo({ coords: [worldX, worldY], pos });
+      // Check if click is near the exit and player is close enough
+      const exitPos = exports.get_exit_pos();
+      const exitX = mem.loadF32(exitPos);
+      const exitY = mem.loadF32(exitPos + 4);
+
+      const clickDistToExit = Math.hypot(worldX - exitX, worldY - exitY);
+      const isNearExit = exports.is_near_exit(100); // Player within 100px of exit
+
+      if (clickDistToExit < 80 && isNearExit) {
+        // Trigger quiz event!
+        showQuizEvent({
+          items,
+          appliances,
+          foundCount: exports.get_found_items_count(),
+          totalItems: items.filter(i => i.appliance !== null).length
+        });
+        return; // Don't move player when triggering quiz
+      }
+
+      // Check if click is near an item
+      const found = findItemNear(worldX, worldY);
+      if (found) {
+        const playerDistToItem = Math.hypot(pos[0] - found.item.x, pos[1] - found.item.y);
+        if (playerDistToItem <= 120) { // Player must be close enough
+          // Add to found items
+          const isNewFind = exports.add_found_item(found.index);
+
+          // Get appliance info if available
+          const appliance = found.item.appliance ? getAppliance(found.item.appliance) : null;
+
+          showItemDiscovery({
+            item: found.item,
+            appliance: appliance,
+            isNew: isNewFind,
+            playerPos: pos
+          });
+          return; // Don't move player when discovering item
+        }
+      }
 
       exports.player_click(worldX, worldY);
     }
@@ -89,6 +167,14 @@ const WORLD_SPAWN_OFFSET = 20;
   }
 
   function render(now) {
+    // Calculate delta time
+    const tNow = (typeof now !== 'undefined') ? now : ((typeof performance !== 'undefined') ? performance.now() : Date.now());
+    const deltaTime = (tNow - lastTime) / 1000; // Convert to seconds
+    lastTime = tNow;
+
+    // Update game state
+    exports.step(deltaTime);
+
     // 1. Limpar Ecrã
     ctx.fillStyle = "#181818";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -115,18 +201,18 @@ const WORLD_SPAWN_OFFSET = 20;
 
         // Adicionar parede
         renderList.push({
-            type: 'layer_part',
-            img: wallsImg,
-            x: wX, y: wY, w: world.scale, h: world.scale,
-            z: z
+          type: 'layer_part',
+          img: wallsImg,
+          x: wX, y: wY, w: world.scale, h: world.scale,
+          z: z
         });
 
         // Adicionar objeto
         renderList.push({
-            type: 'layer_part',
-            img: objectsImg,
-            x: wX, y: wY, w: world.scale, h: world.scale,
-            z: z
+          type: 'layer_part',
+          img: objectsImg,
+          x: wX, y: wY, w: world.scale, h: world.scale,
+          z: z
         });
       }
     }
@@ -152,13 +238,11 @@ const WORLD_SPAWN_OFFSET = 20;
 
     const moving = Math.hypot(dx, dy) > 0.5;
 
-    // Animation timing update
-    const tNow = (typeof now !== 'undefined') ? now : ((typeof performance !== 'undefined') ? performance.now() : Date.now());
-    const dt = Math.max(0, tNow - lastTime);
-    lastTime = tNow;
+    // Animation timing update (using deltaTime from render start)
+    const animDeltaMs = deltaTime * 1000;
 
     if (moving) {
-      animTimer += dt;
+      animTimer += animDeltaMs;
       if (animTimer >= animInterval) {
         animTimer = animTimer % animInterval;
         currentRow = (currentRow + 1) % frameRows;
@@ -170,54 +254,54 @@ const WORLD_SPAWN_OFFSET = 20;
 
     // Preparar dados do Player
     if (playerImg && playerImg.complete && playerImg.naturalWidth >= frameW) {
-        // Valores default (para animação normal)
-        let imgToDraw = playerImg;
-        let ang = Math.atan2(dy, dx);
-        let idx = angleToFrameIndex(ang);
-        
-        // Source coords
-        let sx = idx * frameW;
-        let sy = currentRow * frameH;
-        let sW = frameW;
-        let sH = frameH;
+      // Valores default (para animação normal)
+      let imgToDraw = playerImg;
+      let ang = Math.atan2(dy, dx);
+      let idx = angleToFrameIndex(ang);
 
-        // Destination coords base
-        let drawW = frameW * spriteScale;
-        let drawH = frameH * spriteScale;
+      // Source coords
+      let sx = idx * frameW;
+      let sy = currentRow * frameH;
+      let sW = frameW;
+      let sH = frameH;
 
-        // Lógica da imagem estacionária (Idle)
-        if (!moving && stationaryImg && stationaryImg.complete) {
-            imgToDraw = stationaryImg;
-            sW = stationaryImg.naturalWidth || drawW;
-            sH = stationaryImg.naturalHeight || drawH;
-            sx = 0; 
-            sy = 0;
-            // Recalcula tamanho de desenho se a imagem parada tiver tamanho diferente
-            drawW = sW * spriteScale; 
-            drawH = sH * spriteScale;
-        }
+      // Destination coords base
+      let drawW = frameW * spriteScale;
+      let drawH = frameH * spriteScale;
 
-        // Posição de desenho no ecrã
-        const dxCanvas = screenToWorldX(pos[0]) - drawW / 2;
-        const dyCanvas = screenToWorldY(pos[1]) - drawH / 2;
+      // Lógica da imagem estacionária (Idle)
+      if (!moving && stationaryImg && stationaryImg.complete) {
+        imgToDraw = stationaryImg;
+        sW = stationaryImg.naturalWidth || drawW;
+        sH = stationaryImg.naturalHeight || drawH;
+        sx = 0;
+        sy = 0;
+        // Recalcula tamanho de desenho se a imagem parada tiver tamanho diferente
+        drawW = sW * spriteScale;
+        drawH = sH * spriteScale;
+      }
 
-        // Adicionar Player à lista de renderização
-        renderList.push({
-            type: 'player',
-            img: imgToDraw,
-            sx: sx, sy: sy, sW: sW, sH: sH,
-            dx: dxCanvas, dy: dyCanvas, dW: drawW, dH: drawH,
-            z: pos[1] + (drawH / 2)
-        });
+      // Posição de desenho no ecrã
+      const dxCanvas = screenToWorldX(pos[0]) - drawW / 2;
+      const dyCanvas = screenToWorldY(pos[1]) - drawH / 2;
+
+      // Adicionar Player à lista de renderização
+      renderList.push({
+        type: 'player',
+        img: imgToDraw,
+        sx: sx, sy: sy, sW: sW, sH: sH,
+        dx: dxCanvas, dy: dyCanvas, dW: drawW, dH: drawH,
+        z: pos[1] + (drawH / 2)
+      });
 
     } else {
-        // Fallback
-        renderList.push({
-            type: 'fallback_circle',
-            x: screenToWorldX(pos[0]),
-            y: screenToWorldY(pos[1]),
-            z: pos[1]
-        });
+      // Fallback
+      renderList.push({
+        type: 'fallback_circle',
+        x: screenToWorldX(pos[0]),
+        y: screenToWorldY(pos[1]),
+        z: pos[1]
+      });
     }
 
     // 5. RENDERIZAÇÃO POR CAMADAS (Y-SORT ÚNICO)
@@ -225,28 +309,28 @@ const WORLD_SPAWN_OFFSET = 20;
     renderList.sort((a, b) => a.z - b.z);
 
     for (const item of renderList) {
-        if (item.type === 'layer_part') {
-            if (item.img && item.img.complete) {
-                ctx.drawImage(
-                    item.img,
-                    item.x, item.y, item.w, item.h,
-                    screenToWorldX(item.x), screenToWorldY(item.y), item.w, item.h
-                );
-            }
-        } 
-        else if (item.type === 'player') {
-            ctx.drawImage(
-                item.img,
-                item.sx, item.sy, item.sW, item.sH,
-                item.dx, item.dy, item.dW, item.dH
-            );
+      if (item.type === 'layer_part') {
+        if (item.img && item.img.complete) {
+          ctx.drawImage(
+            item.img,
+            item.x, item.y, item.w, item.h,
+            screenToWorldX(item.x), screenToWorldY(item.y), item.w, item.h
+          );
         }
-        else if (item.type === 'fallback_circle') {
-            ctx.fillStyle = "darkblue";
-            ctx.beginPath();
-            ctx.arc(item.x, item.y, 24, 0, Math.PI * 2);
-            ctx.fill();
-        }
+      }
+      else if (item.type === 'player') {
+        ctx.drawImage(
+          item.img,
+          item.sx, item.sy, item.sW, item.sH,
+          item.dx, item.dy, item.dW, item.dH
+        );
+      }
+      else if (item.type === 'fallback_circle') {
+        ctx.fillStyle = "darkblue";
+        ctx.beginPath();
+        ctx.arc(item.x, item.y, 24, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
     // --- FIM DO SISTEMA DE RENDERIZAÇÃO ---
 
@@ -306,6 +390,210 @@ function showInfo(info) {
 
   gameSection.nextSibling.remove();
   gameSection.insertAdjacentElement("afterend", infoSection);
+}
+
+// Quiz state
+let quizQuestions = [];
+let currentQuestion = 0;
+let score = 0;
+
+function showQuizEvent(info) {
+  const modal = document.getElementById("item-modal");
+  const modalBody = document.getElementById("modal-body");
+
+  // Check if all items are found
+  if (info.foundCount < info.totalItems) {
+    // Not all items found - ask if they want to continue
+    let html = `
+      <h2>🚪 Saída - Questionário</h2>
+      <p>Ainda não encontraste todos os itens!</p>
+      <p>Encontraste <strong>${info.foundCount}</strong> de <strong>${info.totalItems}</strong> itens.</p>
+      <p>Queres iniciar o questionário mesmo assim?</p>
+      <div class="quiz-buttons">
+        <button onclick="startQuiz()" class="quiz-btn">Sim, iniciar questionário</button>
+        <button onclick="closeModal()" class="quiz-btn secondary">Não, continuar a explorar</button>
+      </div>
+    `;
+    modalBody.innerHTML = html;
+    modal.classList.remove("hidden");
+  } else {
+    // All items found - start quiz directly
+    startQuiz();
+  }
+}
+
+function startQuiz() {
+  const modal = document.getElementById("item-modal");
+  const modalBody = document.getElementById("modal-body");
+
+  // Generate quiz questions from found items
+  quizQuestions = generateQuizQuestions();
+  currentQuestion = 0;
+  score = 0;
+
+  if (quizQuestions.length === 0) {
+    modalBody.innerHTML = `
+      <h2>Erro</h2>
+      <p>Não há questões disponíveis. Descobre mais itens primeiro!</p>
+      <button onclick="closeModal()" class="quiz-btn">Fechar</button>
+    `;
+    modal.classList.remove("hidden");
+    return;
+  }
+
+  showQuestion();
+}
+
+function generateQuizQuestions() {
+  // This will be populated with actual items/appliances data
+  const questions = [];
+
+  // Get all unique minerals from all appliances
+  const allMinerals = new Set();
+  window.quizAppliances.forEach(app => {
+    app.minerals.forEach(m => allMinerals.add(m.name));
+  });
+  const mineralsList = Array.from(allMinerals);
+
+  // Generate a question for each appliance
+  window.quizAppliances.forEach(appliance => {
+    // Question: Which mineral is in this appliance?
+    const correctMineral = appliance.minerals[Math.floor(Math.random() * appliance.minerals.length)];
+
+    // Get wrong answers
+    const wrongMinerals = mineralsList
+      .filter(m => !appliance.minerals.some(am => am.name === m))
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3);
+
+    if (wrongMinerals.length >= 3) {
+      const options = [correctMineral.name, ...wrongMinerals].sort(() => Math.random() - 0.5);
+
+      questions.push({
+        question: `Qual destes minerais está presente no/na ${appliance.name}?`,
+        options: options,
+        correct: correctMineral.name,
+        explanation: `O ${correctMineral.name} é usado para: ${correctMineral.use}`
+      });
+    }
+  });
+
+  return questions.sort(() => Math.random() - 0.5);
+}
+
+function showQuestion() {
+  const modal = document.getElementById("item-modal");
+  const modalBody = document.getElementById("modal-body");
+
+  if (currentQuestion >= quizQuestions.length) {
+    // Quiz finished
+    showQuizResults();
+    return;
+  }
+
+  const q = quizQuestions[currentQuestion];
+
+  let html = `
+    <h2>Pergunta ${currentQuestion + 1} de ${quizQuestions.length}</h2>
+    <p class="quiz-question">${q.question}</p>
+    <div class="quiz-options">
+  `;
+
+  q.options.forEach((opt, i) => {
+    html += `<button onclick="answerQuestion('${opt.replace(/'/g, "\\'")}')" class="quiz-option">${opt}</button>`;
+  });
+
+  html += `</div>
+    <p class="quiz-score">Pontuação: ${score}/${quizQuestions.length}</p>
+  `;
+
+  modalBody.innerHTML = html;
+  modal.classList.remove("hidden");
+}
+
+function answerQuestion(answer) {
+  const q = quizQuestions[currentQuestion];
+  const modalBody = document.getElementById("modal-body");
+
+  const isCorrect = answer === q.correct;
+  if (isCorrect) score++;
+
+  let html = `
+    <h2>${isCorrect ? "✅ Correto!" : "❌ Incorreto!"}</h2>
+    <p>${q.explanation}</p>
+    <button onclick="nextQuestion()" class="quiz-btn">Próxima pergunta</button>
+  `;
+
+  modalBody.innerHTML = html;
+}
+
+function nextQuestion() {
+  currentQuestion++;
+  showQuestion();
+}
+
+function showQuizResults() {
+  const modalBody = document.getElementById("modal-body");
+
+  const percentage = Math.round((score / quizQuestions.length) * 100);
+  let message = "";
+
+  if (percentage === 100) {
+    message = "🏆 Perfeito! Conheces muito bem os minerais!";
+  } else if (percentage >= 70) {
+    message = "👍 Muito bom! Tens um bom conhecimento sobre minerais.";
+  } else if (percentage >= 50) {
+    message = "📚 Não está mal, mas podes melhorar!";
+  } else {
+    message = "💪 Continua a explorar e aprende mais sobre os minerais!";
+  }
+
+  let html = `
+    <h2>🎉 Questionário Completo!</h2>
+    <p class="quiz-final-score">Pontuação Final: <strong>${score}/${quizQuestions.length}</strong> (${percentage}%)</p>
+    <p>${message}</p>
+    <div class="quiz-buttons">
+      <button onclick="startQuiz()" class="quiz-btn">Jogar novamente</button>
+      <button onclick="closeModal()" class="quiz-btn secondary">Fechar</button>
+    </div>
+  `;
+
+  modalBody.innerHTML = html;
+}
+
+function showItemDiscovery(info) {
+  const modal = document.getElementById("item-modal");
+  const modalBody = document.getElementById("modal-body");
+
+  const itemName = info.item.customName || info.item.appliance || info.item.id;
+
+  let html = `<h2>${info.isNew ? "Nova Descoberta!" : ""} ${itemName}</h2>`;
+
+  // If it's an appliance, show mineral info
+  if (info.appliance) {
+    html += `<p>Categoria: ${info.appliance.category}</p>`;
+    html += `<h3>Minerais Utilizados:</h3><ul>`;
+
+    for (const mineral of info.appliance.minerals) {
+      html += `<li>
+        <strong>${mineral.name}</strong><br>
+        <span class="mineral-use">${mineral.use}</span><br>
+        <em>Origem: ${mineral.origin}</em>
+      </li>`;
+    }
+    html += `</ul>`;
+  } else if (info.item.customInfo) {
+    html += `<p>${info.item.customInfo}</p>`;
+  }
+
+  modalBody.innerHTML = html;
+  modal.classList.remove("hidden");
+
+  console.log("ITEM DISCOVERED!", info);
+}
+
+function closeModal() {
+  document.getElementById("item-modal").classList.add("hidden");
 }
 
 function getPlayer(mem, ptr) {

@@ -12,8 +12,12 @@ Player :: struct {
 	speed:     f32,
 }
 
+MAX_FOUND_ITEMS :: 16
+
 GameState :: struct {
-	player: Player,
+	player:           Player,
+	found_items:      [MAX_FOUND_ITEMS]u8, // Item IDs (0 = empty slot)
+	found_items_count: u32,
 }
 
 state: GameState
@@ -28,6 +32,7 @@ World :: struct {
 	world:         []u32,
 	scale:         u32,
 	spawn:         Vector2,
+	exit:          Vector2,
 }
 world_width :: 30
 world_height :: 20
@@ -71,6 +76,7 @@ world := World {
 	world  = world_map[:],
 	scale  = 48,
 	spawn  = Vector2{9, 16},
+	exit   = Vector2{18, 18} * 48 + 24, // Exit at tile (18,18), centered
 }
 
 @(export)
@@ -188,4 +194,56 @@ step :: proc(delta_time: f64) -> (keep_going: bool) {
 	}
 
 	return true
+}
+
+@(export)
+is_near_exit :: proc(threshold: f32) -> bool {
+	diff := state.player.pos - world.exit
+	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
+	return dist <= threshold
+}
+
+@(export)
+get_exit_pos :: proc() -> Vector2 {
+	return world.exit
+}
+
+@(export)
+add_found_item :: proc(item_id: u8) -> bool {
+	// Check if already found
+	for i in 0..<state.found_items_count {
+		if state.found_items[i] == item_id {
+			return false // Already found
+		}
+	}
+	// Add if space available
+	if state.found_items_count < MAX_FOUND_ITEMS {
+		state.found_items[state.found_items_count] = item_id
+		state.found_items_count += 1
+		return true // Newly found
+	}
+	return false
+}
+
+@(export)
+has_found_item :: proc(item_id: u8) -> bool {
+	for i in 0..<state.found_items_count {
+		if state.found_items[i] == item_id {
+			return true
+		}
+	}
+	return false
+}
+
+@(export)
+get_found_items_count :: proc() -> u32 {
+	return state.found_items_count
+}
+
+@(export)
+get_found_item_at :: proc(index: u32) -> u8 {
+	if index < state.found_items_count {
+		return state.found_items[index]
+	}
+	return 0
 }

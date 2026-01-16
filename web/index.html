@@ -1,30 +1,30 @@
 <!DOCTYPE html>
 <!-- LICENSE -->
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Minerals' House</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
 
-  <body>
-    <header>
-      <h1>Minerals' House</h1>
-    </header>
-    <main>
-      <section>
-        <h2>Game</h2>
-        <canvas id="game" width="480" height="360">
-          <p>Unsupported browser or JavaScript disabled.</p>
-          <p>Can't run the game.</p>
-        </canvas>
-      </section>
-    </main>
-    <pre id="console"></pre>
-    <script type="text/javascript" src="odin.js"></script>
-    <script type="text/javascript" src="index.js"></script>
-    <noscript>This page needs JavaScript to work!</noscript>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Minerals' House</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- Modal for item discovery -->
+  <div id="item-modal" class="modal hidden" oncontextmenu="return false;">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <pre id="console" style="display:none;"></pre>
+  <script type="text/javascript" src="odin.js"></script>
+  <script type="text/javascript" src="index.js"></script>
+  <noscript>This page needs JavaScript to work!</noscript>
+</body>
+
 </html>

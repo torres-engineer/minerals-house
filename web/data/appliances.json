@@ -1,0 +1,179 @@
+{
+  "appliances": [
+    {
+      "name": "Fogão Elétrico",
+      "category": "Cozinha",
+      "minerals": [
+        {
+          "name": "Ferro",
+          "origin": "Austrália, Brasil, China",
+          "use": "Elementos de aquecimento e corpo"
+        },
+        {
+          "name": "Crómio",
+          "origin": "África do Sul, Cazaquistão, Índia",
+          "use": "Elementos de aquecimento de nicromo"
+        },
+        {
+          "name": "Níquel",
+          "origin": "Indonésia, Filipinas, Rússia",
+          "use": "Elementos de aquecimento de nicromo"
+        },
+        {
+          "name": "Cobre",
+          "origin": "Chile, Peru, China",
+          "use": "Cablagem"
+        },
+        {
+          "name": "Minerais cerâmicos",
+          "origin": "China, Estados Unidos, Alemanha",
+          "use": "Superfície da placa (vitrocerâmica)"
+        }
+      ]
+    },
+    {
+      "name": "Micro-ondas",
+      "category": "Cozinha",
+      "minerals": [
+        {
+          "name": "Cobre",
+          "origin": "Chile, Peru, China",
+          "use": "Magnetrão e cablagem"
+        },
+        {
+          "name": "Ferro",
+          "origin": "Austrália, Brasil, China",
+          "use": "Caixa de aço e transformador"
+        },
+        {
+          "name": "Alumínio",
+          "origin": "Austrália, Guiné, China",
+          "use": "Guia de ondas e cavidade interior"
+        },
+        {
+          "name": "Mica",
+          "origin": "China, Finlândia, Estados Unidos",
+          "use": "Tampa do guia de ondas"
+        },
+        {
+          "name": "Silício",
+          "origin": "China, Rússia, Estados Unidos",
+          "use": "Eletrónica de controlo"
+        }
+      ]
+    },
+    {
+      "name": "Máquina de Lavar Roupa",
+      "category": "Lavandaria",
+      "minerals": [
+        {
+          "name": "Ferro",
+          "origin": "Austrália, Brasil, China",
+          "use": "Tambor e componentes do motor"
+        },
+        {
+          "name": "Cobre",
+          "origin": "Chile, Peru, China",
+          "use": "Enrolamentos do motor e cablagem"
+        },
+        {
+          "name": "Alumínio",
+          "origin": "Austrália, Guiné, China",
+          "use": "Tambor e peças estruturais"
+        },
+        {
+          "name": "Zinco",
+          "origin": "China, Peru, Austrália",
+          "use": "Peças galvanizadas para prevenção de ferrugem"
+        },
+        {
+          "name": "Neodímio",
+          "origin": "China, Estados Unidos, Myanmar",
+          "use": "Ímanes permanentes nos motores"
+        }
+      ]
+    },
+    {
+      "name": "Televisão",
+      "category": "Eletrónica",
+      "minerals": [
+        {
+          "name": "Índio",
+          "origin": "China, Coreia do Sul, Japão",
+          "use": "Ecrã LCD (óxido de índio-estanho)"
+        },
+        {
+          "name": "Cobre",
+          "origin": "Chile, Peru, China",
+          "use": "Cablagem e placas de circuito"
+        },
+        {
+          "name": "Ouro",
+          "origin": "China, Austrália, Rússia",
+          "use": "Conectores"
+        },
+        {
+          "name": "Silício",
+          "origin": "China, Rússia, Estados Unidos",
+          "use": "Semicondutores e chips"
+        },
+        {
+          "name": "Terras Raras",
+          "origin": "China, Estados Unidos, Myanmar",
+          "use": "Fósforos e ímanes"
+        },
+        {
+          "name": "Alumínio",
+          "origin": "Austrália, Guiné, China",
+          "use": "Moldura e dissipadores de calor"
+        }
+      ]
+    },
+    {
+      "name": "Computador",
+      "category": "Eletrónica",
+      "minerals": [
+        {
+          "name": "Lítio",
+          "origin": "Austrália, Chile, China",
+          "use": "Bateria"
+        },
+        {
+          "name": "Cobalto",
+          "origin": "República Democrática do Congo, Rússia, Austrália",
+          "use": "Cátodo da bateria"
+        },
+        {
+          "name": "Cobre",
+          "origin": "Chile, Peru, China",
+          "use": "Cablagem e tubos de calor"
+        },
+        {
+          "name": "Ouro",
+          "origin": "China, Austrália, Rússia",
+          "use": "Conectores e placas de circuito"
+        },
+        {
+          "name": "Prata",
+          "origin": "México, Peru, China",
+          "use": "Soldadura e contactos"
+        },
+        {
+          "name": "Alumínio",
+          "origin": "Austrália, Guiné, China",
+          "use": "Caixa e dissipadores de calor"
+        },
+        {
+          "name": "Silício",
+          "origin": "China, Rússia, Estados Unidos",
+          "use": "Processador e chips de memória"
+        },
+        {
+          "name": "Terras Raras",
+          "origin": "China, Estados Unidos, Myanmar",
+          "use": "Ímanes do disco rígido, altifalantes"
+        }
+      ]
+    }
+  ]
+}

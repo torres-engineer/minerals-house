@@ -1,0 +1,55 @@
+{
+  "items": [
+    {
+      "id": "oven",
+      "appliance": "Fogão Elétrico",
+      "x": 1225,
+      "y": 528,
+      "radius": 40
+    },
+    {
+      "id": "toaster",
+      "appliance": "Micro-ondas",
+      "x": 1379,
+      "y": 504,
+      "radius": 35
+    },
+    {
+      "id": "laundry",
+      "appliance": "Máquina de Lavar Roupa",
+      "x": 993,
+      "y": 149,
+      "radius": 40
+    },
+    {
+      "id": "computer",
+      "appliance": "Computador",
+      "x": 68,
+      "y": 256,
+      "radius": 35
+    },
+    {
+      "id": "monitor",
+      "appliance": "Televisão",
+      "x": 113,
+      "y": 330,
+      "radius": 35
+    },
+    {
+      "id": "tv",
+      "appliance": "Televisão",
+      "x": 267,
+      "y": 497,
+      "radius": 40
+    },
+    {
+      "id": "piano",
+      "appliance": null,
+      "x": 509,
+      "y": 805,
+      "radius": 50,
+      "customName": "Piano",
+      "customInfo": "Um belo instrumento musical!"
+    }
+  ]
+}
