@@ -1,0 +1,119 @@
+{
+  "appliances": [
+    {
+      "name": "Smartphone",
+      "category": "Electronics",
+      "minerals": [
+        { "name": "Lithium", "origin": "Australia, Chile, China", "use": "Rechargeable batteries" },
+        { "name": "Cobalt", "origin": "Democratic Republic of Congo, Russia, Australia", "use": "Battery cathodes" },
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Wiring and circuits" },
+        { "name": "Gold", "origin": "China, Australia, Russia", "use": "Connectors and circuit boards" },
+        { "name": "Tantalum", "origin": "Democratic Republic of Congo, Rwanda, Brazil", "use": "Capacitors" },
+        { "name": "Tin", "origin": "China, Indonesia, Myanmar", "use": "Solder for circuit boards" },
+        { "name": "Tungsten", "origin": "China, Vietnam, Russia", "use": "Vibration motor" },
+        { "name": "Rare Earth Elements", "origin": "China, United States, Myanmar", "use": "Speakers, screen, magnets" }
+      ]
+    },
+    {
+      "name": "Refrigerator",
+      "category": "Kitchen",
+      "minerals": [
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Compressor motor and wiring" },
+        { "name": "Aluminum", "origin": "Australia, Guinea, China", "use": "Heat exchangers and shelving" },
+        { "name": "Iron", "origin": "Australia, Brazil, China", "use": "Steel casing and compressor" },
+        { "name": "Chromium", "origin": "South Africa, Kazakhstan, India", "use": "Stainless steel finish" },
+        { "name": "Nickel", "origin": "Indonesia, Philippines, Russia", "use": "Stainless steel alloy" }
+      ]
+    },
+    {
+      "name": "Microwave Oven",
+      "category": "Kitchen",
+      "minerals": [
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Magnetron and wiring" },
+        { "name": "Iron", "origin": "Australia, Brazil, China", "use": "Steel casing and transformer" },
+        { "name": "Aluminum", "origin": "Australia, Guinea, China", "use": "Waveguide and interior cavity" },
+        { "name": "Mica", "origin": "China, Finland, United States", "use": "Waveguide cover" },
+        { "name": "Silicon", "origin": "China, Russia, United States", "use": "Control electronics" }
+      ]
+    },
+    {
+      "name": "Washing Machine",
+      "category": "Laundry",
+      "minerals": [
+        { "name": "Iron", "origin": "Australia, Brazil, China", "use": "Drum and motor components" },
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Motor windings and wiring" },
+        { "name": "Aluminum", "origin": "Australia, Guinea, China", "use": "Drum and structural parts" },
+        { "name": "Zinc", "origin": "China, Peru, Australia", "use": "Galvanized parts for rust prevention" },
+        { "name": "Neodymium", "origin": "China, United States, Myanmar", "use": "Permanent magnets in motors" }
+      ]
+    },
+    {
+      "name": "Television",
+      "category": "Electronics",
+      "minerals": [
+        { "name": "Indium", "origin": "China, South Korea, Japan", "use": "LCD screen (indium tin oxide)" },
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Wiring and circuit boards" },
+        { "name": "Gold", "origin": "China, Australia, Russia", "use": "Connectors" },
+        { "name": "Silicon", "origin": "China, Russia, United States", "use": "Semiconductors and chips" },
+        { "name": "Rare Earth Elements", "origin": "China, United States, Myanmar", "use": "Phosphors and magnets" },
+        { "name": "Aluminum", "origin": "Australia, Guinea, China", "use": "Frame and heat sinks" }
+      ]
+    },
+    {
+      "name": "Air Conditioner",
+      "category": "Climate Control",
+      "minerals": [
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Tubing, coils, and wiring" },
+        { "name": "Aluminum", "origin": "Australia, Guinea, China", "use": "Fins and heat exchangers" },
+        { "name": "Iron", "origin": "Australia, Brazil, China", "use": "Compressor and structural parts" },
+        { "name": "Zinc", "origin": "China, Peru, Australia", "use": "Protective coatings" }
+      ]
+    },
+    {
+      "name": "Electric Stove",
+      "category": "Kitchen",
+      "minerals": [
+        { "name": "Iron", "origin": "Australia, Brazil, China", "use": "Heating elements and body" },
+        { "name": "Chromium", "origin": "South Africa, Kazakhstan, India", "use": "Nichrome heating elements" },
+        { "name": "Nickel", "origin": "Indonesia, Philippines, Russia", "use": "Nichrome heating elements" },
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Wiring" },
+        { "name": "Ceramic minerals", "origin": "China, United States, Germany", "use": "Cooktop surface (glass-ceramic)" }
+      ]
+    },
+    {
+      "name": "Laptop Computer",
+      "category": "Electronics",
+      "minerals": [
+        { "name": "Lithium", "origin": "Australia, Chile, China", "use": "Battery" },
+        { "name": "Cobalt", "origin": "Democratic Republic of Congo, Russia, Australia", "use": "Battery cathode" },
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Wiring and heat pipes" },
+        { "name": "Gold", "origin": "China, Australia, Russia", "use": "Connectors and circuit boards" },
+        { "name": "Silver", "origin": "Mexico, Peru, China", "use": "Solder and contacts" },
+        { "name": "Aluminum", "origin": "Australia, Guinea, China", "use": "Casing and heat sinks" },
+        { "name": "Silicon", "origin": "China, Russia, United States", "use": "Processor and memory chips" },
+        { "name": "Rare Earth Elements", "origin": "China, United States, Myanmar", "use": "Hard drive magnets, speakers" }
+      ]
+    },
+    {
+      "name": "Vacuum Cleaner",
+      "category": "Cleaning",
+      "minerals": [
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Motor windings" },
+        { "name": "Iron", "origin": "Australia, Brazil, China", "use": "Motor core" },
+        { "name": "Neodymium", "origin": "China, United States, Myanmar", "use": "Permanent magnets in brushless motors" },
+        { "name": "Aluminum", "origin": "Australia, Guinea, China", "use": "Lightweight structural parts" }
+      ]
+    },
+    {
+      "name": "Light Bulb (LED)",
+      "category": "Lighting",
+      "minerals": [
+        { "name": "Gallium", "origin": "China, Japan, South Korea", "use": "LED semiconductor" },
+        { "name": "Indium", "origin": "China, South Korea, Japan", "use": "LED semiconductor" },
+        { "name": "Aluminum", "origin": "Australia, Guinea, China", "use": "Heat sink" },
+        { "name": "Copper", "origin": "Chile, Peru, China", "use": "Wiring and base" },
+        { "name": "Rare Earth Elements", "origin": "China, United States, Myanmar", "use": "Phosphor coatings" }
+      ]
+    }
+  ]
+}
