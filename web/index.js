@@ -109,10 +109,15 @@ const WORLD_SPAWN_OFFSET = 20;
   canvas.addEventListener("mousedown", (e) => {
     e.preventDefault();
     const pos = mem.loadF32Array(state + PLAYER_POS_OFFSET, 2);
-    if (e.button === 2) {
-      const worldX = pos[0] + (e.offsetX - camera.offset[0]);
-      const worldY = pos[1] + (e.offsetY - camera.offset[1]);
 
+    // Convert screen click to world coordinates using camera's actual position
+    // The camera.target is the world position at the center of the screen
+    // camera.offset is the screen center (canvas.width/2, canvas.height/2)
+    const worldX = camera.target[0] + (e.offsetX - camera.offset[0]);
+    const worldY = camera.target[1] + (e.offsetY - camera.offset[1]);
+
+    // Left-click (button 0) - Interact with items and exit
+    if (e.button === 0) {
       // Check if click is near the exit and player is close enough
       const exitPos = exports.get_exit_pos();
       const exitX = mem.loadF32(exitPos);
@@ -129,7 +134,7 @@ const WORLD_SPAWN_OFFSET = 20;
           foundCount: exports.get_found_items_count(),
           totalItems: items.filter(i => i.appliance !== null).length
         });
-        return; // Don't move player when triggering quiz
+        return;
       }
 
       // Check if click is near an item
@@ -149,10 +154,13 @@ const WORLD_SPAWN_OFFSET = 20;
             isNew: isNewFind,
             playerPos: pos
           });
-          return; // Don't move player when discovering item
+          return;
         }
       }
+    }
 
+    // Right-click (button 2) - Move player
+    if (e.button === 2) {
       exports.player_click(worldX, worldY);
     }
 
@@ -397,6 +405,71 @@ let quizQuestions = [];
 let currentQuestion = 0;
 let score = 0;
 
+// Mineral icon mapping
+const mineralIcons = {
+  'Ferro': './source/minerals/ferro.png',
+  'Cobre': './source/minerals/cobre.png',
+  'Ouro': './source/minerals/ouro.png',
+  'Silício': './source/minerals/silicio.png',
+  'Alumínio': './source/minerals/aluminio.png',
+  'Lítio': './source/minerals/litio.png',
+  'default': './source/minerals/generic.png'
+};
+
+// Mineral emoji fallbacks
+const mineralEmojis = {
+  'Ferro': '🔩',
+  'Cobre': '🔶',
+  'Ouro': '✨',
+  'Silício': '💎',
+  'Alumínio': '⬜',
+  'Lítio': '💜',
+  'Cobalto': '🔵',
+  'Prata': '🥈',
+  'Níquel': '⚙️',
+  'Crómio': '🔧',
+  'Zinco': '🔘',
+  'Neodímio': '🧲',
+  'Índio': '🟣',
+  'Mica': '📄',
+  'default': '💎'
+};
+
+function getMineralIcon(mineralName) {
+  return mineralIcons[mineralName] || mineralIcons['default'];
+}
+
+function getMineralEmoji(mineralName) {
+  return mineralEmojis[mineralName] || mineralEmojis['default'];
+}
+
+// Generate progress gems HTML
+function generateProgressGems(current, total, answered) {
+  let gems = '';
+  for (let i = 0; i < total; i++) {
+    if (i < answered) {
+      gems += '<span class="gem-filled">💎</span>';
+    } else {
+      gems += '<span class="gem-empty">◇</span>';
+    }
+  }
+  return `<div class="quiz-progress">${gems}</div>`;
+}
+
+// Create confetti effect
+function createConfetti(container) {
+  const colors = ['#e17055', '#f39c12', '#d4a754', '#27ae60', '#b87333'];
+  for (let i = 0; i < 20; i++) {
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+    container.appendChild(confetti);
+    setTimeout(() => confetti.remove(), 1500);
+  }
+}
+
 function showQuizEvent(info) {
   const modal = document.getElementById("item-modal");
   const modalBody = document.getElementById("modal-body");
@@ -405,13 +478,20 @@ function showQuizEvent(info) {
   if (info.foundCount < info.totalItems) {
     // Not all items found - ask if they want to continue
     let html = `
-      <h2>🚪 Saída - Questionário</h2>
-      <p>Ainda não encontraste todos os itens!</p>
-      <p>Encontraste <strong>${info.foundCount}</strong> de <strong>${info.totalItems}</strong> itens.</p>
-      <p>Queres iniciar o questionário mesmo assim?</p>
+      <h2>⛏️ Saída da Mina</h2>
+      <div style="text-align: center; margin: 20px 0;">
+        <p style="font-size: 10px; color: #f39c12;">Ainda não encontraste todos os itens!</p>
+        <p style="margin: 16px 0;">
+          <span style="font-size: 24px;">📦</span><br>
+          <strong style="color: #e17055; font-size: 14px;">${info.foundCount}</strong>
+          <span style="color: #a0998f;"> / </span>
+          <strong style="color: #27ae60; font-size: 14px;">${info.totalItems}</strong>
+        </p>
+        <p>Queres testar os teus conhecimentos?</p>
+      </div>
       <div class="quiz-buttons">
-        <button onclick="startQuiz()" class="quiz-btn">Sim, iniciar questionário</button>
-        <button onclick="closeModal()" class="quiz-btn secondary">Não, continuar a explorar</button>
+        <button onclick="startQuiz()" class="quiz-btn">⛏️ Iniciar Questionário</button>
+        <button onclick="closeModal()" class="quiz-btn secondary">🔙 Continuar a Explorar</button>
       </div>
     `;
     modalBody.innerHTML = html;
@@ -433,9 +513,11 @@ function startQuiz() {
 
   if (quizQuestions.length === 0) {
     modalBody.innerHTML = `
-      <h2>Erro</h2>
-      <p>Não há questões disponíveis. Descobre mais itens primeiro!</p>
-      <button onclick="closeModal()" class="quiz-btn">Fechar</button>
+      <h2>⚠️ Sem Questões</h2>
+      <p style="text-align: center;">Não há questões disponíveis.<br>Descobre mais itens primeiro!</p>
+      <div class="quiz-buttons">
+        <button onclick="closeModal()" class="quiz-btn">🔙 Voltar</button>
+      </div>
     `;
     modal.classList.remove("hidden");
     return;
@@ -445,7 +527,6 @@ function startQuiz() {
 }
 
 function generateQuizQuestions() {
-  // This will be populated with actual items/appliances data
   const questions = [];
 
   // Get all unique minerals from all appliances
@@ -457,7 +538,6 @@ function generateQuizQuestions() {
 
   // Generate a question for each appliance
   window.quizAppliances.forEach(appliance => {
-    // Question: Which mineral is in this appliance?
     const correctMineral = appliance.minerals[Math.floor(Math.random() * appliance.minerals.length)];
 
     // Get wrong answers
@@ -486,7 +566,6 @@ function showQuestion() {
   const modalBody = document.getElementById("modal-body");
 
   if (currentQuestion >= quizQuestions.length) {
-    // Quiz finished
     showQuizResults();
     return;
   }
@@ -494,17 +573,19 @@ function showQuestion() {
   const q = quizQuestions[currentQuestion];
 
   let html = `
-    <h2>Pergunta ${currentQuestion + 1} de ${quizQuestions.length}</h2>
+    <h2>⛏️ Pergunta ${currentQuestion + 1} de ${quizQuestions.length}</h2>
+    ${generateProgressGems(currentQuestion, quizQuestions.length, score)}
     <p class="quiz-question">${q.question}</p>
     <div class="quiz-options">
   `;
 
-  q.options.forEach((opt, i) => {
-    html += `<button onclick="answerQuestion('${opt.replace(/'/g, "\\'")}')" class="quiz-option">${opt}</button>`;
+  q.options.forEach((opt) => {
+    const emoji = getMineralEmoji(opt);
+    html += `<button onclick="answerQuestion('${opt.replace(/'/g, "\\'")}')" class="quiz-option">${emoji} ${opt}</button>`;
   });
 
   html += `</div>
-    <p class="quiz-score">Pontuação: ${score}/${quizQuestions.length}</p>
+    <p class="quiz-score">⛏️ Pontos: ${score} | ❓ Restantes: ${quizQuestions.length - currentQuestion}</p>
   `;
 
   modalBody.innerHTML = html;
@@ -520,11 +601,30 @@ function answerQuestion(answer) {
 
   let html = `
     <h2>${isCorrect ? "✅ Correto!" : "❌ Incorreto!"}</h2>
-    <p>${q.explanation}</p>
-    <button onclick="nextQuestion()" class="quiz-btn">Próxima pergunta</button>
+    <div class="${isCorrect ? 'correct-feedback' : 'wrong-feedback'}" style="text-align: center; padding: 16px;">
+      <p style="font-size: 9px; line-height: 1.8;">${q.explanation}</p>
+      ${isCorrect ? '<p style="font-size: 24px; margin-top: 12px;">🎉</p>' : '<p style="font-size: 24px; margin-top: 12px;">💪</p>'}
+    </div>
+    <div class="quiz-buttons">
+      <button onclick="nextQuestion()" class="quiz-btn">${currentQuestion < quizQuestions.length - 1 ? '➡️ Próxima' : '🏁 Ver Resultado'}</button>
+    </div>
   `;
 
   modalBody.innerHTML = html;
+
+  // Add animation class
+  const feedbackDiv = modalBody.querySelector('.correct-feedback, .wrong-feedback');
+  if (feedbackDiv) {
+    feedbackDiv.classList.add(isCorrect ? 'correct-answer' : 'wrong-answer');
+  }
+
+  // Confetti for correct answers
+  if (isCorrect) {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    modalBody.appendChild(container);
+    createConfetti(container);
+  }
 }
 
 function nextQuestion() {
@@ -537,28 +637,51 @@ function showQuizResults() {
 
   const percentage = Math.round((score / quizQuestions.length) * 100);
   let message = "";
+  let emoji = "";
+  let stars = "";
 
   if (percentage === 100) {
-    message = "🏆 Perfeito! Conheces muito bem os minerais!";
+    message = "Perfeito! És um mestre dos minerais!";
+    emoji = "🏆";
+    stars = "⭐⭐⭐";
   } else if (percentage >= 70) {
-    message = "👍 Muito bom! Tens um bom conhecimento sobre minerais.";
+    message = "Muito bom! Conheces bem os minerais.";
+    emoji = "🥈";
+    stars = "⭐⭐";
   } else if (percentage >= 50) {
-    message = "📚 Não está mal, mas podes melhorar!";
+    message = "Nada mal! Podes fazer melhor.";
+    emoji = "🥉";
+    stars = "⭐";
   } else {
-    message = "💪 Continua a explorar e aprende mais sobre os minerais!";
+    message = "Continua a explorar e aprende mais!";
+    emoji = "📚";
+    stars = "";
   }
 
   let html = `
-    <h2>🎉 Questionário Completo!</h2>
-    <p class="quiz-final-score">Pontuação Final: <strong>${score}/${quizQuestions.length}</strong> (${percentage}%)</p>
-    <p>${message}</p>
+    <h2>🎉 Missão Completa!</h2>
+    <div style="text-align: center; padding: 20px;">
+      <p style="font-size: 48px; margin: 16px 0;">${emoji}</p>
+      <p class="quiz-final-score">${score} / ${quizQuestions.length}</p>
+      <p style="font-size: 10px; color: #e17055; margin: 8px 0;">(${percentage}%)</p>
+      ${stars ? `<p style="font-size: 24px; margin: 12px 0;">${stars}</p>` : ''}
+      <p style="margin-top: 16px;">${message}</p>
+    </div>
     <div class="quiz-buttons">
-      <button onclick="startQuiz()" class="quiz-btn">Jogar novamente</button>
-      <button onclick="closeModal()" class="quiz-btn secondary">Fechar</button>
+      <button onclick="startQuiz()" class="quiz-btn">🔄 Jogar Novamente</button>
+      <button onclick="closeModal()" class="quiz-btn secondary">✅ Fechar</button>
     </div>
   `;
 
   modalBody.innerHTML = html;
+
+  // Add confetti for good scores
+  if (percentage >= 70) {
+    const container = document.createElement('div');
+    container.className = 'confetti-container';
+    modalBody.appendChild(container);
+    createConfetti(container);
+  }
 }
 
 function showItemDiscovery(info) {
@@ -567,24 +690,63 @@ function showItemDiscovery(info) {
 
   const itemName = info.item.customName || info.item.appliance || info.item.id;
 
-  let html = `<h2>${info.isNew ? "Nova Descoberta!" : ""} ${itemName}</h2>`;
+  let html = `
+    <h2>${info.isNew ? '✨ Nova Descoberta!' : '📦 ' + itemName}</h2>
+  `;
+
+  if (info.isNew) {
+    html += `
+      <div class="discovery-header">
+        <span class="discovery-icon">🔍</span>
+        <span class="discovery-title">${itemName}</span>
+        <span class="discovery-new-badge">NOVO!</span>
+      </div>
+    `;
+  }
 
   // If it's an appliance, show mineral info
   if (info.appliance) {
-    html += `<p>Categoria: ${info.appliance.category}</p>`;
-    html += `<h3>Minerais Utilizados:</h3><ul>`;
+    html += `<p class="category-badge">📁 ${info.appliance.category}</p>`;
+    html += `<h3>⛏️ Minerais Utilizados:</h3><ul>`;
 
     for (const mineral of info.appliance.minerals) {
-      html += `<li>
-        <strong>${mineral.name}</strong><br>
-        <span class="mineral-use">${mineral.use}</span><br>
-        <em>Origem: ${mineral.origin}</em>
-      </li>`;
+      const emoji = getMineralEmoji(mineral.name);
+      const iconSrc = getMineralIcon(mineral.name);
+
+      html += `
+        <li class="mineral-card">
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <span class="mineral-icon">${emoji}</span>
+            <div style="flex: 1;">
+              <strong class="mineral-name">${mineral.name}</strong>
+              <span class="mineral-use">${mineral.use}</span>
+              <em class="mineral-origin">📍 ${mineral.origin}</em>
+            </div>
+          </div>
+        </li>
+      `;
     }
     html += `</ul>`;
+
+    // Fun fact
+    const funFacts = [
+      `Este objeto usa ${info.appliance.minerals.length} minerais diferentes!`,
+      `Os minerais viajam de todo o mundo até à tua casa!`,
+      `Sem estes minerais, este objeto não existiria!`,
+      `Cada mineral tem uma função especial neste objeto.`
+    ];
+    const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+    html += `<div class="fun-fact">${randomFact}</div>`;
+
   } else if (info.item.customInfo) {
     html += `<p>${info.item.customInfo}</p>`;
   }
+
+  html += `
+    <div class="quiz-buttons">
+      <button onclick="closeModal()" class="quiz-btn continue-btn">👍 Fixe! Continuar</button>
+    </div>
+  `;
 
   modalBody.innerHTML = html;
   modal.classList.remove("hidden");
@@ -593,7 +755,8 @@ function showItemDiscovery(info) {
 }
 
 function closeModal() {
-  document.getElementById("item-modal").classList.add("hidden");
+  const modal = document.getElementById("item-modal");
+  modal.classList.add("hidden");
 }
 
 function getPlayer(mem, ptr) {
