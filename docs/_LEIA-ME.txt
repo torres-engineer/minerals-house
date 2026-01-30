@@ -1,0 +1,40 @@
+
+Este conjunto de ficheiros pretende facilitar a escrita de dissertações e relatórios de estágio ou projecto final de curso do Instituto Politécnico de Beja de acordo com o recomendado pelo documento normativo do IPBeja intitulado "Normas para a elaboração de trabalhos académicos, produzidos no IPBeja", com os Autores: Elisete Sepanas, João Paulo Barros, Liliana Fidalgo, Sandra Lopes, Teresa Mestre, 1.ª edição, Data: setembro de 2024 ISBN: 978-989-9175-10-5, disponivel em https://www.ipbeja.pt/UnidadesOrganicas/biblioteca/Documents/NormasTrabalhosAcademicos/NormasTrabalhosAcademicos_IPBeja.pdf.
+
+*** Importante ***
+Deve ser compilado utilizando LuaLaTeX.
+Na versão free do overleaf não deverá conseguir compilar. Nesse caso, pode optar por fazer download das sources em Menu->Download-Source e compilar offline com uma distribuição LaTeX. Por exemplo:
+Windows: https://miktex.org/
+Windows, MacOS e Linux: https://www.tug.org/texlive/
+******************
+
+Note que todos os ficheiros nesta distribuição são oferecidos sem qualquer garantia, expressa ou implícita. O utilizador assume todos os riscos na sua utilização. Nem o autor nem o Instituto Politécnico de Beja podem ser responsabilizados por quaisquer danos resultantes da utilização de qualquer destes ficheiros. Não há sequer garantia que este conjunto de ficheiros cumpra totalmente o disposto no documento "Normas para a elaboração de trabalhos académicos, produzidos no IPBeja", referido acima. Caso detecte desconformidades, muito agradeço que informe através de email para joao.barros@ipbeja.pt. 
+
+Esta distribuição e os seus ficheiros podem ser livremente utilizados e modificados desde que se mantenham todas as referências à sua autoria e origem.
+
+O Henrique Água-Doce, o Nuno Mourinho e o Raul Carvalho e o Pedro Miranda contribuíram com sugestões para melhorar a versão deste template que se aplicava às anteriores normas. É possível que algumas dessas contribuições ainda estejam presentes. Deixo aqui o meu agradecimento a todos.
+
+Agradeço que quaisquer correcções ou sugestões de melhoria sejam enviadas para joao.barros@ipbeja.pt.
+
+O ficheiro principal tem o nome "01-main-document.tex". É este que permite gerar o relatório. A informação "base" (titulo, autor, etc.) deve ser colocada no ficheiro "02-info-to-fill.tex" nos locais lá assinalados. A bibliografia deve ser colocada no ficheiro "03-bibliography.bib". O conteúdo do relatório deve ser colocado em ficheiros nas seguintes directorias:
+"parte-inicial" resumo, agradecimentos, etc.
+"capitulos" texto dos capítulos
+"figuras" para todas as imagens
+"listagens" para listagens de código
+"apendices" se existentes
+"anexos" se existentes
+
+João Paulo Barros
+
+Beja, 10 de junho de 2025 (versão 2.01, adaptação para suporte à lingua inglesa)
+
+Versões anteriores:
+Beja, 28 de maio de 2025 (versão 2.0, primeira versão para a norma de setembro de 2024)
+Beja, 1 de dezembro de 2021
+Beja, 1 de outubro de 2021
+Beja, 4 de janeiro de 2021
+Beja, 20 de novembro de 2020
+Beja, 3 de novembro de 2020
+Beja, 3 de julho de 2014
+Beja, 10 de outubro de 2013
+Beja, 18 de abril de 2013

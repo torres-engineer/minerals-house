@@ -1,0 +1,102 @@
+\chapter{Este é o título deste capítulo}
+\label{cap2}
+Este capítulo exemplifica a utilização de referências, figuras, tabelas e listagens.
+
+\section{Titulo de uma secção}
+\label{sec}
+Este é primeiro parágrafo desta secção.
+
+Uma equação $x = \frac{-b + \sqrt{b^2 - 4ac}}{2a}$.
+
+E mais outra em linha própria:
+$$e^{i\pi} + 1 = 0$$
+
+\subsection{Título de uma subsecção}
+\subsubsection{Título de parágrafo de texto normal}
+
+%https://tug.ctan.org/info/biblatex-cheatsheet/biblatex-cheatsheet.pdf
+%https://www.overleaf.com/learn/latex/Articles/Getting_started_with_BibLaTeX
+Eis duas citações: como alegou \textcite{book:Brooks1995}, adicionar mais pessoas a um projeto de software atrasado só o torna ainda mais atrasado.
+Os modelos conceptuais de dados que têm por objetivo unificar diferentes visões dos dados são muito importantes \parencite{Chen1976}. E mais exemplos de citações \parencite{AndroidDoc},
+\parencite[p. 120]{book:Brooks1995},
+\parencite{Chen1976}
+A Figura \ref{fig:exemplofig} apresenta os vários tipos de diagrama da Unified Modeling Language (UML). É uma figura "flutuante"\ o que significa que a sua localização será decidida pelo \LaTeX.
+
+\begin{figure}[!htb]
+\centering
+\caption{Exemplo de Figura flutuante (\textit{in} \url{http://en.wikipedia.org/wiki/Class_diagram})}
+\includegraphics[width=13cm]{exemploFig}
+\label{fig:exemplofig}
+\end{figure}
+
+
+Se pretender que a figura fique no local em que está (sem ser um objeto flutuante) então pode fazer como na figura seguinte (Fig. \ref{fig:exemplofigFixa}).
+
+\begin{center}
+
+\captionof{figure}{Exemplo de Figura não flutuante (\textit{in} \url{http://en.wikipedia.org/wiki/Class_diagram})}
+\includegraphics[width=\textwidth]{exemploFig}
+%\includegraphics[width=0.5\textwidth]{exemploFig}
+\label{fig:exemplofigFixa}
+\end{center}
+
+
+%Exemplo de listagem de código Java.
+%\lstlisting{
+
+\section{Exemplos de Listagens}
+
+
+A Listagem \ref{lst:javaparcial} apresenta apenas o método \lstinline[language=java]$void Quicksort(int A[], int f, int l)$, apresentado por  \textcite{Quicksort1962}. Para tal, são indicadas a linha inicial e a linha final a importar do ficheiro.
+
+
+\lstinputlisting[language=java,abovecaptionskip=20pt,caption={Exemplo de listagem de parte de um ficheiro Java na pasta listagens.},{label=lst:javaparcial},firstline=38,lastline=44]{listagens/quicksort.java}
+
+
+%\pagebreak % para forçar uma mudança de página
+%%%%%%%%%%%%%%%%%%%%
+\section{Um exemplo de tabela}
+
+A Tabela \ref{tab:casoFIXO} apresenta os resultados de aplicação de quatro métodos a um caso.
+Não é suportado (ainda) uma distinção entre "Quadro"\ e "Tabela"\ dado que essa distinção não parece estar formalizada em Portugal (ver, por exemplo, a resposta no \href{https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/tabela-vs-quadro-e-figura-vs-ilustracao/32273}{ciberdúvidas}).
+
+\noindent\begin{minipage}{\linewidth}
+\captionof{table}{Uma tabela de exemplo não flutuante} % título da tabela
+\begin{tabular}{l l c r} % duas colunas à esquerda (l l), uma ao centro (c) e uma à direita (r) (4 colunas)
+\hline\hline %insere duas linhas horizontais
+Caso & Método 1 & Método 2 & Método 3 \\ [0.5ex] % insere tabela 
+\hline % insere uma linha horizontal
+1 & 50 & 837 & 970 \\ % insure corpo da tabela
+2 & 47 & 877 & 230 \\
+3 & 31 & 25 & 415 \\
+4 & 35 & 144 & 2356 \\
+5 & 45 & 300 & 556 \\ [1ex] % [1ex] adiciona espaço vertical
+\hline %insere uma linha horizontal
+\end{tabular}
+\label{tab:casoFIXO} % é utilizada para referir a tabela no texto
+\\ %% linha em braco
+\textit{Nota}: uma nota. remover se não for necessária.\\
+\end{minipage}
+
+Ou, a Tabela \ref{tab:caso}, em versão flutuante :
+
+%baseado num exemplo em http://www1.maths.leeds.ac.uk/latex/TableHelp1.pdf
+\begin{table}[!htb]
+\caption{Uma tabela de exemplo} 
+\begin{tabular}{l l c r} % duas colunas à esquerda (l l), uma ao centro (c) e uma à direita (r) (4 colunas)
+\hline\hline %insere duas linhas horizontais
+Caso & Método 1 & Método 2 & Método 3 \\ [0.5ex] % insere tabela 
+\hline % insere uma linha horizontal
+1 & 50 & 837 & 970 \\ % insere corpo da tabela
+2 & 47 & 877 & 230 \\
+3 & 31 & 25 & 415 \\
+4 & 35 & 144 & 2356 \\
+5 & 45 & 300 & 556 \\ [1ex] % [1ex] adiciona espaço vertical
+\hline %insere uma linha horizontal
+\end{tabular}
+\label{tab:caso} % é utilizada para referir a tabela no texto
+\\ %% linha em braco
+\textit{Nota}: uma nota. remover se não for necessária.\\
+\end{table}
+
+

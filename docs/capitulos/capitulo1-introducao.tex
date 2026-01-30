@@ -1,0 +1,30 @@
+\chapter{Introdução}
+\label{intro}
+
+% deve substituir as duas linhas seguintes pelo texto da introdução
+
+
+Sugestão de capítulos e/ou secções para relatórios de projetos ou dissertações de mestrado:
+\begin{enumerate}
+    \item Introdução: tema, objetivo geral, a quem se destina, o que é suposto o leitor saber, apresentação da estrutura do documento (quais os capítulos que o constituem e uma frase resumo sobre o conteúdo de cada um);
+    \item Motivação para o tema (pode estar no capítulo de introdução); porque é que é importante o tema do trabalho;
+    \item Descrição e apresentação clara do problema que se pretende resolver; deve ficar claro porque é que é importante/útil resolver esse problema;
+    \item Estado da arte/trabalho relacionado (o que existe / o que se sabe sobre o problema a resolver); é um capítulo teórico que pode apresentar o que importa saber sobre o problema; 
+    \item  Descrição dos métodos para resolver o problema; pode incluir uma descrição das tecnologias, ferramentas e linguagens utilizadas, se foi feito um inquérito, etc.;
+    \item Um ou mais capítulos/secções sobre o que foi feito; por exemplo, análise, projecto, implementações e teste/validação;
+    \item Discussão / Conclusão (podem ser capítulos separados)
+\end{enumerate}
+
+Importa ter presente que o principal objetivo do documento é o leitor perceber o que foi feito e porque é que é importante/útil. Também deve permitir que o leitor fique a saber onde encontrar mais informação sobre o tema do trabalho desenvolvido.
+
+Outras indicações sobre \LaTeX:
+\begin{enumerate}
+    \item Não se preocupe com as formatações. Utilize as que já estão exemplificadas no Capítulo \ref{cap2};
+    \item Em especial, não se preocupe com o sítio em que ficam as figuras  \textit{flutuantes} (\textit{floating}): estas são arrumadas automaticamente pelo \LaTeX;  ficarão tanto melhor arrumados quanto mais texto houver; muitos elementos flutuantes em pouco texto não costuma permitir um documento com um \textit{layout} equilibrado; quando \textbf{concluir} a escrita do texto poderá então fazer pequenos ajustes na posição das figuras e tabelas utilizando, por exemplo, os seguintes métodos: alterar a dimensão das figuras (devem ficar o mais pequenas possível desde que legíveis na dimensão A4); inserir quebras de página (\verb|\pagebreak|), alterar o local no texto em que surge o comando de inserção de cada figura; ou colocar as figuras sem serem flutuantes (exemplificado pelo Fig. \ref{fig:exemplofigFixa} no Capítulo \ref{cap2}; no entanto esta última opção deve ser utilizada com último recurso pois o posicionamento automático, desde que com texto suficiente, deverá produzir um layout mais equilibrado.
+    \item Procure evitar o comando \verb|\pagebreak|. Só o deve utilizar no final para eventuais ajustes na paginação.
+    \item Deve referir cada uma das figuras, listagens e tabelas pelo menos uma vez; utilize sempre o comando \verb|\ref{umaLabel}|. Por exemplo: "na Fig.\linebreak \verb|\ref{fig:exemplofig}|"\ ou "A Listagem \verb|\ref{lst:exemplolst01}|";
+    \item Para referir capítulos, secções figuras, listagens e tabelas utilize "Capítulo\linebreak \verb|\ref{cap:exemplo}|", "Secção \verb|\ref{sec:exemplo}|", "Fig. \verb|\ref{fig:exemplo}|", "Listagem \verb|\ref{lst:exemplo}|"\ e "Tabela \verb|\ref{tab:exemplo}|", respectivamente;
+    \item Se pretender forçar uma mudança de linha pode utilizar \verb|\\|; se quiser que essa linha partida fique justificada, ocupando toda a largura da página, pode utilizar o comando \verb|\linebreak|; 
+    \item Para que o \LaTeX respeite a regra, em português, de hífen na mudança de linha, deve utilizar o comando \verb!"-! em lugar de \verb!-!. Por exemplo, deve escrever \verb!arco"-íris! em lugar de \verb!arco-íris!. Desta forma, quando mudar de linha no hífen, a palavra \textbf{arco"-íris} ficará em duas partes: "arco-"\ no fim de uma linha e  "-íris"\ no início da linha seguinte. Se não conhece esta regra, consulte, por exemplo, a seguinte página no Ciberdúvidas: \href{https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/a-barra-e-o-hifen-na-translineacao/12731}{https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/a-barra-e-o-hifen-na-translineacao/12731}.
+\end{enumerate}
+

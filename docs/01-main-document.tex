@@ -1,0 +1,73 @@
+% Template for final reports and dissertations (Instituto Politécnico de Beja)
+% Author: João Paulo Barros, joao.barros@ipbeja.pt
+
+%para texto em Português PT
+%para texto em Inglês substitua PT por EN
+\documentclass[PT,alphabetic]{ipbeja-format}
+%\documentclass[EN,alphabetic]{ipbeja-format}
+\input{02-info-to-fill-PT}
+%\input{02-info-to-fill-EN}
+\usepackage[]{hyperref}
+\hypersetup{hidelinks,hypertexnames=true}
+
+\begin{document}
+\setcounter{page}{1}
+\thispagestyle{empty}
+\input{parte-inicial/capa}
+\pagestyle{ruled}
+
+\input{parte-inicial/folhaRosto}
+\input{parte-inicial/resumo}
+\input{parte-inicial/abstract}
+
+%Opcional
+\input{parte-inicial/agradecimentos}
+
+\indicegeral
+\indicedefiguras % Remover se houver menos de 5 figuras
+\indicedetabelas % Remover se houver menos de 5 tabelas
+\indicedelistagens % Remover se houver menos de 5 listagens
+% Opcional
+\include{parte-inicial/abreviaturas}
+% Opcional
+\include{parte-inicial/simbologiaENotacoes}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\input{capitulos/capitulo1-introducao} % capitulo 1
+\input{capitulos/capitulo2}
+\input{capitulos/capitulo3}
+% para adicionar o  capítulo N adicione a linha \input{capituloN} e crie o ficheiro
+% capituloN.tex na directoria "capitulos"
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliografia
+\clearpage
+\thispagestyle{empty}
+
+%\printbibliography[heading=bibintoc]
+\sloppy
+\printbibliography[heading=subbibliography]
+\thispagestyle{empty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\apendices
+\input{apendices/apendice1}
+% para adicionar o  apêndice N adicione a linha \input{apendiceN} e crie o ficheiro
+% apendiceN.tex na directoria "apendices"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\anexos
+\input{anexos/anexo1}
+% para adicionar o  anexo N adicione a linha \input{anexoN} e crie o ficheiro
+% anexoN.tex na directoria "anexos"
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\vfill
+
+\SingleSpacing
+{\tiny Documento elaborado com base no \ing{template for final reports and dissertations (Instituto Politécnico de Beja)}, disponível em \url{https://www.overleaf.com/project/5d936b9ea273390001434a37} para cumprimento do disposto nas"Norma para a elaboração de trabalhos académicos, produzidos no IPBeja" disponível em \url{https://www.ipbeja.pt/UnidadesOrganicas/biblioteca/Documents/NormasTrabalhosAcademicos/NormasTrabalhosAcademicos_IPBeja.pdf}.
+    \version, Autor: João Paulo Barros, joao.barros@ipbeja.pt}
+
+\end{document}
