@@ -118,6 +118,9 @@ player_click :: proc(pos: Vector2) {
 	path, path_len := find_path(state.player.pos, pos)
 	
 	if path_len > 0 {
+		// Smooth the path to remove artifacts of grid-based movement
+		path, path_len = smooth_path(state.player.pos, path, path_len)
+
 		// Store the path
 		state.player.path = path
 		state.player.path_len = path_len
@@ -217,10 +220,12 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 	if !is_tile_walkable(end_tx, end_ty) {
 		best_dist := f32(1e9)
 		found := false
-		for dy := i32(-3); dy <= 3; dy += 1 {
-			for dx := i32(-3); dx <= 3; dx += 1 {
-				tx := end_tx + dx
-				ty := end_ty + dy
+		origin_tx := end_tx
+		origin_ty := end_ty
+		for dy := i32(-5); dy <= 5; dy += 1 {
+			for dx := i32(-5); dx <= 5; dx += 1 {
+				tx := origin_tx + dx
+				ty := origin_ty + dy
 				if is_tile_walkable(tx, ty) {
 					d := f32(dx*dx + dy*dy)
 					if d < best_dist {
@@ -380,6 +385,45 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 	// Set final destination to exact end position if walkable
 	if path_len > 0 && !check_collision(end_pos) {
 		path[path_len - 1] = end_pos
+	}
+	
+	return
+}
+
+// Optimize path by removing unnecessary waypoints (string pulling)
+smooth_path :: proc(start_pos: Vector2, path: [MAX_PATH_LENGTH]Vector2, path_len: u32) -> (new_path: [MAX_PATH_LENGTH]Vector2, new_len: u32) {
+	if path_len == 0 {
+		return
+	}
+
+	current := start_pos
+	last_idx := int(path_len) - 1
+	
+	// Start checking from the last node
+	// If we can go straight to the end, great. If not, back up one step, etc.
+	
+	idx := 0
+	for idx <= last_idx {
+		found := false
+		// Look ahead from current index to the end
+		for j := last_idx; j >= idx; j -= 1 {
+			if has_clear_path(current, path[j]) {
+				new_path[new_len] = path[j]
+				new_len += 1
+				current = path[j]
+				idx = j + 1
+				found = true
+				break
+			}
+		}
+		
+		if !found {
+			// This creates a failsafe, just take the next point
+			new_path[new_len] = path[idx]
+			new_len += 1
+			current = path[idx]
+			idx += 1
+		}
 	}
 	
 	return
