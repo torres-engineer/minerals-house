@@ -83,6 +83,9 @@ const WORLD_SPAWN_OFFSET = 20;
   const objectsImg = new Image();
   objectsImg.src = "./source/layers/objetos.png";
 
+  const itemsImg = new Image();
+  itemsImg.src = "./source/layers/items.png";
+
   // animation timing: automatically cycle rows while moving
   const animInterval = 180; // ms between row swaps
   let animTimer = 0;
@@ -167,6 +170,14 @@ const WORLD_SPAWN_OFFSET = 20;
     camera.target = mem.loadF32Array(state + PLAYER_POS_OFFSET, 2);
   });
 
+  let lastMouseX = 0;
+  let lastMouseY = 0;
+
+  canvas.addEventListener("mousemove", (e) => {
+    lastMouseX = e.offsetX;
+    lastMouseY = e.offsetY;
+  });
+
   function screenToWorldX(x) {
     return x - (camera.target[0] - camera.offset[0]);
   }
@@ -219,6 +230,14 @@ const WORLD_SPAWN_OFFSET = 20;
         renderList.push({
           type: 'layer_part',
           img: objectsImg,
+          x: wX, y: wY, w: world.scale, h: world.scale,
+          z: z
+        });
+
+        // Adicionar item
+        renderList.push({
+          type: 'layer_part',
+          img: itemsImg,
           x: wX, y: wY, w: world.scale, h: world.scale,
           z: z
         });
@@ -341,6 +360,123 @@ const WORLD_SPAWN_OFFSET = 20;
       }
     }
     // --- FIM DO SISTEMA DE RENDERIZAÇÃO ---
+
+
+    // 5.5. Item Hint Pulse (Blinking Silhouette)
+    // We calculate mouse position first to know if we are hovering something
+    const worldMouseX = camera.target[0] + (lastMouseX - camera.offset[0]);
+    const worldMouseY = camera.target[1] + (lastMouseY - camera.offset[1]);
+
+    const foundNearMouse = findItemNear(worldMouseX, worldMouseY);
+
+    // Altera o cursor se estiver sobre um item
+    canvas.style.cursor = foundNearMouse ? "pointer" : "default";
+
+    if (itemsImg.complete) {
+      const time = Date.now() / 1000;
+      const pulseFactor = (Math.sin(time * 3) + 1) / 2; // 0 to 1
+      const pulseAlpha = 0.1 + (pulseFactor * 0.15); // 0.1 to 0.35 opacity (Reduced intensity)
+
+      if (!window.highlightCanvas) {
+        window.highlightCanvas = document.createElement("canvas");
+        window.highlightCanvas.width = 256;
+        window.highlightCanvas.height = 256;
+      }
+      const hCtx = window.highlightCanvas.getContext("2d");
+
+      items.forEach((item, index) => {
+        const r = item.radius || 40;
+        const size = r * 2.5;
+        const halfSize = size / 2;
+
+        // Coordinates in the source image (assuming 1:1 map correlation for now)
+        // If image is huge, this picks the sprite at the item's location
+        const sX = item.x - halfSize;
+        const sY = item.y - halfSize;
+
+        const isHovered = (foundNearMouse && foundNearMouse.item === item);
+        const isFound = exports.has_found_item(index + 1);
+
+        // Logic:
+        // - If Hovered: Show solid highlight (ignores isFound)
+        // - If Found BUT NOT Hovered: Show NOTHING
+        // - If Not Found AND Not Hovered: Show Pulse
+
+        if (isFound && !isHovered) {
+          return;
+        }
+
+        // Colors
+        let fillStyle;
+        let shadowBlur;
+
+        if (isHovered) {
+          fillStyle = "rgba(255, 215, 0, 0.25)";
+          shadowBlur = 15;
+        } else {
+          // Pulse logic (only reaches here if !isFound)
+          fillStyle = `rgba(255, 215, 0, ${pulseAlpha})`;
+          shadowBlur = 5;
+        }
+
+        // 1. Clear temp canvas
+        hCtx.clearRect(0, 0, size, size);
+
+        // 2. Draw sprite to temp canvas
+        hCtx.drawImage(itemsImg, sX, sY, size, size, 0, 0, size, size);
+
+        // 3. Composite "source-in" to fill the sprite shape with color
+        hCtx.globalCompositeOperation = "source-in";
+        hCtx.fillStyle = fillStyle;
+        hCtx.fillRect(0, 0, size, size);
+
+        // Reset composite
+        hCtx.globalCompositeOperation = "source-over";
+
+        // 4. Draw the colored silhouette to main canvas
+        ctx.save();
+        ctx.shadowColor = "rgba(255, 215, 0, 1)";
+        ctx.shadowBlur = shadowBlur;
+
+        ctx.drawImage(
+          window.highlightCanvas,
+          0, 0, size, size,
+          screenToWorldX(sX), screenToWorldY(sY), size, size
+        );
+        ctx.restore();
+      });
+    }
+
+    // 6. Tooltip (Label only)
+    if (foundNearMouse) {
+      const item = foundNearMouse.item;
+      const label = item.appliance || item.customName || "Item";
+
+      ctx.save();
+      ctx.font = "bold 14px sans-serif";
+      ctx.textAlign = "center";
+
+      const labelX = screenToWorldX(item.x);
+      const labelY = screenToWorldY(item.y) - (item.radius || 40) - 15;
+
+      const textMetrics = ctx.measureText(label);
+      const textW = textMetrics.width;
+
+      ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+      ctx.beginPath();
+      if (ctx.roundRect) {
+        ctx.roundRect(labelX - textW / 2 - 5, labelY - 15, textW + 10, 20, 5);
+      } else {
+        ctx.rect(labelX - textW / 2 - 5, labelY - 15, textW + 10, 20);
+      }
+      ctx.fill();
+
+      ctx.fillStyle = "white";
+      ctx.shadowBlur = 0;
+      ctx.fillText(label, labelX, labelY);
+
+      ctx.restore();
+    }
 
 
     // 7. Debug Overlays (Linhas, pontos de debug)
