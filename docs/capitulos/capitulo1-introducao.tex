@@ -3,28 +3,286 @@
 
 % deve substituir as duas linhas seguintes pelo texto da introdução
 
-
-Sugestão de capítulos e/ou secções para relatórios de projetos ou dissertações de mestrado:
+Sugestão de capítulos e/ou secções para relatórios de projetos ou
+dissertações de mestrado:
 \begin{enumerate}
-    \item Introdução: tema, objetivo geral, a quem se destina, o que é suposto o leitor saber, apresentação da estrutura do documento (quais os capítulos que o constituem e uma frase resumo sobre o conteúdo de cada um);
-    \item Motivação para o tema (pode estar no capítulo de introdução); porque é que é importante o tema do trabalho;
-    \item Descrição e apresentação clara do problema que se pretende resolver; deve ficar claro porque é que é importante/útil resolver esse problema;
-    \item Estado da arte/trabalho relacionado (o que existe / o que se sabe sobre o problema a resolver); é um capítulo teórico que pode apresentar o que importa saber sobre o problema; 
-    \item  Descrição dos métodos para resolver o problema; pode incluir uma descrição das tecnologias, ferramentas e linguagens utilizadas, se foi feito um inquérito, etc.;
-    \item Um ou mais capítulos/secções sobre o que foi feito; por exemplo, análise, projecto, implementações e teste/validação;
-    \item Discussão / Conclusão (podem ser capítulos separados)
+  \item Estado da arte/trabalho relacionado (o que existe / o que se
+    sabe sobre o problema a resolver); é um capítulo teórico que pode
+    apresentar o que importa saber sobre o problema;
+  \item  Descrição dos métodos para resolver o problema; pode incluir
+    uma descrição das tecnologias, ferramentas e linguagens
+    utilizadas, se foi feito um inquérito, etc.;
+  \item Um ou mais capítulos/secções sobre o que foi feito; por
+    exemplo, análise, projecto, implementações e teste/validação;
+  \item Discussão / Conclusão (podem ser capítulos separados)
 \end{enumerate}
 
-Importa ter presente que o principal objetivo do documento é o leitor perceber o que foi feito e porque é que é importante/útil. Também deve permitir que o leitor fique a saber onde encontrar mais informação sobre o tema do trabalho desenvolvido.
+Importa ter presente que o principal objetivo do documento é o leitor
+perceber o que foi feito e porque é que é importante/útil. Também
+deve permitir que o leitor fique a saber onde encontrar mais
+informação sobre o tema do trabalho desenvolvido.
 
 Outras indicações sobre \LaTeX:
 \begin{enumerate}
-    \item Não se preocupe com as formatações. Utilize as que já estão exemplificadas no Capítulo \ref{cap2};
-    \item Em especial, não se preocupe com o sítio em que ficam as figuras  \textit{flutuantes} (\textit{floating}): estas são arrumadas automaticamente pelo \LaTeX;  ficarão tanto melhor arrumados quanto mais texto houver; muitos elementos flutuantes em pouco texto não costuma permitir um documento com um \textit{layout} equilibrado; quando \textbf{concluir} a escrita do texto poderá então fazer pequenos ajustes na posição das figuras e tabelas utilizando, por exemplo, os seguintes métodos: alterar a dimensão das figuras (devem ficar o mais pequenas possível desde que legíveis na dimensão A4); inserir quebras de página (\verb|\pagebreak|), alterar o local no texto em que surge o comando de inserção de cada figura; ou colocar as figuras sem serem flutuantes (exemplificado pelo Fig. \ref{fig:exemplofigFixa} no Capítulo \ref{cap2}; no entanto esta última opção deve ser utilizada com último recurso pois o posicionamento automático, desde que com texto suficiente, deverá produzir um layout mais equilibrado.
-    \item Procure evitar o comando \verb|\pagebreak|. Só o deve utilizar no final para eventuais ajustes na paginação.
-    \item Deve referir cada uma das figuras, listagens e tabelas pelo menos uma vez; utilize sempre o comando \verb|\ref{umaLabel}|. Por exemplo: "na Fig.\linebreak \verb|\ref{fig:exemplofig}|"\ ou "A Listagem \verb|\ref{lst:exemplolst01}|";
-    \item Para referir capítulos, secções figuras, listagens e tabelas utilize "Capítulo\linebreak \verb|\ref{cap:exemplo}|", "Secção \verb|\ref{sec:exemplo}|", "Fig. \verb|\ref{fig:exemplo}|", "Listagem \verb|\ref{lst:exemplo}|"\ e "Tabela \verb|\ref{tab:exemplo}|", respectivamente;
-    \item Se pretender forçar uma mudança de linha pode utilizar \verb|\\|; se quiser que essa linha partida fique justificada, ocupando toda a largura da página, pode utilizar o comando \verb|\linebreak|; 
-    \item Para que o \LaTeX respeite a regra, em português, de hífen na mudança de linha, deve utilizar o comando \verb!"-! em lugar de \verb!-!. Por exemplo, deve escrever \verb!arco"-íris! em lugar de \verb!arco-íris!. Desta forma, quando mudar de linha no hífen, a palavra \textbf{arco"-íris} ficará em duas partes: "arco-"\ no fim de uma linha e  "-íris"\ no início da linha seguinte. Se não conhece esta regra, consulte, por exemplo, a seguinte página no Ciberdúvidas: \href{https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/a-barra-e-o-hifen-na-translineacao/12731}{https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/a-barra-e-o-hifen-na-translineacao/12731}.
-\end{enumerate}
+  \item Não se preocupe com as formatações. Utilize as que já estão
+    exemplificadas no Capítulo \ref{cap2};
+  \item Em especial, não se preocupe com o sítio em que ficam as
+    figuras  \textit{flutuantes} (\textit{floating}): estas são
+    arrumadas automaticamente pelo \LaTeX;  ficarão tanto melhor
+    arrumados quanto mais texto houver; muitos elementos flutuantes
+    em pouco texto não costuma permitir um documento com um
+    \textit{layout} equilibrado; quando \textbf{concluir} a escrita
+    do texto poderá então fazer pequenos ajustes na posição das
+    figuras e tabelas utilizando, por exemplo, os seguintes métodos:
+    alterar a dimensão das figuras (devem ficar o mais pequenas
+    possível desde que legíveis na dimensão A4); inserir quebras de
+    página (\verb|\pagebreak|), alterar o local no texto em que surge
+    o comando de inserção de cada figura; ou colocar as figuras sem
+    serem flutuantes (exemplificado pelo Fig.
+      \ref{fig:exemplofigFixa} no Capítulo \ref{cap2}; no entanto
+      esta última opção deve ser utilizada com último recurso pois o
+      posicionamento automático, desde que com texto suficiente,
+      deverá produzir um layout mais equilibrado.
+      \item Procure evitar o comando \verb|\pagebreak|. Só o deve
+      utilizar no final para eventuais ajustes na paginação.
+    \item Deve referir cada uma das figuras, listagens e tabelas
+      pelo menos uma vez; utilize sempre o comando
+      \verb|\ref{umaLabel}|. Por exemplo: "na Fig.\linebreak
+      \verb|\ref{fig:exemplofig}|"\ ou "A Listagem
+      \verb|\ref{lst:exemplolst01}|";
+    \item Para referir capítulos, secções figuras, listagens e
+      tabelas utilize "Capítulo\linebreak \verb|\ref{cap:exemplo}|",
+      "Secção \verb|\ref{sec:exemplo}|", "Fig.
+      \verb|\ref{fig:exemplo}|", "Listagem
+      \verb|\ref{lst:exemplo}|"\ e "Tabela \verb|\ref{tab:exemplo}|",
+      respectivamente;
+    \item Se pretender forçar uma mudança de linha pode utilizar
+      \verb|\\|; se quiser que essa linha partida fique justificada,
+      ocupando toda a largura da página, pode utilizar o comando
+      \verb|\linebreak|;
+    \item Para que o \LaTeX respeite a regra, em português, de hífen
+      na mudança de linha, deve utilizar o comando \verb!"-! em lugar
+      de \verb!-!. Por exemplo, deve escrever \verb!arco"-íris! em
+      lugar de \verb!arco-íris!. Desta forma, quando mudar de linha
+      no hífen, a palavra \textbf{arco"-íris} ficará em duas partes:
+      "arco-"\ no fim de uma linha e  "-íris"\ no início da linha
+      seguinte. Se não conhece esta regra, consulte, por exemplo, a
+      seguinte página no Ciberdúvidas:
+      \href{https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/a-barra-e-o-hifen-na-translineacao/12731}{https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/a-barra-e-o-hifen-na-translineacao/12731}.
+  \end{enumerate}
 
+  «Os minerais são a matéria"-prima essencial para a esmagadora
+  maioria dos objetos que utilizamos no nosso quotidiano, desde os
+  dispositivos eletrónicos mais complexos aos materiais de construção
+  mais básicos. No entanto, a origem e a importância destes recursos
+  são frequentemente desconhecidas do público em geral.» Não
+  interresa se estás a ler este documento num dispositivo eletrónico,
+  ou em impresso, os minerais, eles estão presentes tanto nos
+  \textit{microchips} (e não só) assim como no papel também.
+
+  Faz sentido que nunca pensemos na origem dos bens que usamos no
+  nosso dia"-a"-dia. Eles aparecem \textit{por magia} nas parteleiras
+  das lojas, tu os compras, e os usas para aquilo que tu precisas sem
+  pensar muito em todo o processo que foi necessário para esse
+  produto existir. Se tu já cozinhaste, mais depressa olhas para uma
+  refeição e consegues ter uma ideia de quais foram os ingredientes
+  necessários para confécioná"-lo. Bem, imagino que o leitor
+  provavelmente nunca fez parte do processo da criação de uma resma
+  de papel\footnote{Que também não é concerteza um processo simples e
+    linear. É necessário ferramentas e máquinas para cortar as àrvores
+    e processar a madeira, e essas ferramentas e máquinas têm que ser
+    feitas anteriormente, talvez por outras ferramentas e máquinas, e
+    por aí adiante, e essas ferramentas, máquinas e tudo o que é
+  necessário durante o processo, usa minerais.}, nem da construção
+  das peças de um computador, nem dos processos anteriores a esse
+  para as peças das peças existirem, \textbf{incluindo a extração de
+    minérios do solo, de onde eles provêm, e por que razão eles são um
+  ingrediente necessário} para confecionar o produto final.
+
+  Um painel solar, uma televisão, uma telha ou uma torneira, todos
+  estes e muitos mais, normalmente presentes nas próprias casas e
+  sendo objetos que usamos no dia"-a"-dia, para o seu fabrico, são
+  necessários vários minerais essenciais. Às vezes são coisas que nem
+  chegamos a dar o valor que elas realmente possuem, exatamente
+  porque o processo de produção está parcial ou completamente
+  escondido do consumidor. Não pensamos, por exemplo, na quantidade
+  de trabalhadores de várias zonas do globo que fazem o seu trabalho
+  às vezes nas condições mais precárias, para extrair o minério da
+  natureza usando a sua força humana. Outra vez, o que quer que seja
+  que está a tocar o teu pé agora (meia, calçado, o chão da tua casa,
+  etc., etc.), por exemplo, não apareceu magicamente na tua vida
+  porque alguém teve dinheiro para o comprar, existe toda uma cadeia de
+  trabalho humano envolvida.
+
+  \section{Objetivos}
+
+  \begin{itemize}
+    \item Promover a literacia científica sobre os minerais e a sua
+      importância no quotidiano;
+    \item Usar a \textbf{gamificação} como uma ferramenta pedagógica
+      para tornar «a aprendizagem em experiências interativas e
+      motivadoras», mais envolventes e visualmente apelativas — a
+      criação de um jogo educativo e recreativo.
+  \end{itemize}
+
+  % No jogo, através da exploração de uma casa virtual, o jogador
+  % poderá clicar em diferentes objetos do dia"-a"-dia como uma
+  % televisão, um frigorifico ou uma torneira, e descobrir os minerais
+  % essenciais para o seu fabrico, a sua proveniência e relevância.
+
+  % deve ficar claro porque é que é importante/útil resolver esse problema
+
+  \section{Estrutura do documento}
+
+  \begin{enumerate}
+    \item ...
+  \end{enumerate}
+
+  \chapter{Desenvolvimento}
+  \label{develop}
+
+  \section{Enquadramento teórico}
+
+  \subsection{"Estado da arte"}
+
+  «Inspirado por jogos educativos como
+  "\href{https://www.thebriefcasegame.eu/}{The Briefcase Game}",
+  [...] o objetivo é aumentar a literacia sobre recursos
+  geológicos, demonstrando de forma lúdica e visual a ligação direta
+  entre a geologia e a nossa vida diária.»
+
+  % O nosso toque pessoal, point click tipo Club Penguin...
+
+  \subsection{Os minerais}
+
+  Eles andam por aí espalhados, mas tu nem pensas neles: os minerais.
+  Matéria-prima e recurso importante para diversos setores como a
+  indústria química, da construção civil, da agricultura e da
+  energia. Mas é que estão presentes em todo o lado mesmo: se estás a
+  ler isto através de um aparelho eletrónico, esquece, desde o cobre
+  dos cabos elétricos até ao silício dos microchips, mas mesmo lendo
+  numa folha de papel, é capaz dessa folha ter vestígios de cádmio,
+  cobalto e titânio. As frutas e vegetais que consomes, além das
+  vitaminas, também têm minerais. Minerais são indispensáveis para a
+  nossa vida e para a sociedade.
+
+  E esse seria o objetivo principal deste jogo, ensinar onde é que
+  estes minerais, que existem naturalmente no nosso planeta, estão
+  presentes nas coisas que usamos todos os dias. Também podemos
+  ensinar talvez qual a utilidade de certo mineral numa ocasião
+  específica. Mas basta isso?
+
+  Uma das razões para a qual estes minerais ficam escondidos dos
+  consumidores é porque, tu vais à loja e compras o telemóvel, mas o
+  processo de produção desse telemóvel, da extração dos minerais da
+  terra, da montagem do equipamento, até ao produto final, é
+  totalmente ofuscado. Existe uma alienação entre as nossas vidas e a
+  geologia, os minerais, e todo o trabalho humano que leva à
+  realização dos teus bens. Simplesmente o telemóvel não apareceu na
+  estante da loja por pozinhos de perlimpimpim. O telemóvel é visto
+  como uma coisa e não como fruto de mineração e do trabalho.
+
+  \subsection{Gamificação na pedagogia}
+
+  A "Casa dos Minerais" utilizará elementos de gamificação para
+  estruturar a aprendizagem, como a progressão por diferentes níveis
+  e a inclusão de minijogos, por exemplo, um questionário no final de
+  cada nível.
+
+  No entanto, a abordagem pedagógica deste projeto foca-se em usar a
+  brincadeira como uma forma de descoberta e reflexão. O objetivo
+  principal não é criar um sistema de avaliação rigoroso; o foco é a
+  alegria de aprender. A aprendizagem é mais importante do que uma
+  pontuação final ou a rapidez com que se termina o jogo.
+
+  Desta forma, elementos como a pontuação ou um temporizador,
+  servirão como um incentivo opcional (conforme detalhado na secção
+  \ref{future}) e não como o foco central da experiência.
+
+  \subsection{Para quem é o jogo?}
+  \label{forwho}
+
+  O jogo têm como alvo principal as crianças e jovens, e serviria de
+  apoio para o que eles estão a aprender nas aulas de Estudo de Meio
+  e Ciências Naturais (no contexto de Portugal). Mas a verdade é que
+  todos merecem aprender, por isso precisamos de pensar em fazer um
+  jogo para todas as faixas etárias. Desde que tenha o interesse em
+  adquirir conhecimento acerca dos minerais.
+
+  Mas esta inclusão não pode parar na idade. Existem pessoas com
+  limitações a nível físico (controlo, mobilidade), cognitivo
+  (pensamento, memória, processamento de informação), sensorial,
+  visão, audição e/ou fala, e elas também merecem de ter o direito à
+  sabedoria (e à diversão de jogar).
+
+  O que pode parecer trabalhoso ter de se preocupar com todos na
+  realidade pode ser algo bem simples de alcançar, por exemplo,
+  escolhendo a tipografia correta, baseado no contraste da cor de
+  letra, do tamanho de letra, e no tipo de letra. Especialmente no
+  ambiente de navegadores web, estes estão muito preparados para
+  serem úteis e utilizáveis por todos, basta aos programadores
+  fazerem o seu trabalho corretamente.
+
+  \section{Metodologia}
+
+  Para a implementação, o projeto baseia-se em tecnologias de
+  multiplataforma, tirando partido da linguagem de programação Odin.
+  Para a parte gráfica escolhemos a Raylib, integrada com Odin. Esta
+  combinação permite criar gráficos 2D interativos com desempenho
+  nativo e exportação para WebAssembly (WASM), garantindo execução
+  fluida diretamente no navegador.
+
+  \subsection{Como integrar outros públicos?}
+
+  Os problemas falados em \ref{forwho}, já foram todos pensados, e já
+  existem soluções para alguns dos problemas. Nós só necessitamos
+  implementar essas soluções.
+
+  \subsubsection{Acessibilidade}
+
+  No que toca a Web, existe a \href{https://www.w3.org/WAI/}{Web
+  Accessibility Initiative (WAI)} do \href{https://www.w3.org/}{World
+  Wide Web Consortium (W3C)}. Criaram um conjunto normas para criar
+  um Web acessível, e nos só temos de seguir as normas: HTML
+  semântico e ARIA; texto para leitores de ecrã; texto simples;
+  imagens e vídeos (média) acessíveis; controlos de interface
+  semânticos; cores e contraste; ...
+
+  \subsubsection{Internacionalização}
+
+  Aprender não esta reservado para uma só cultura, região, língua,
+  etnia... A W3C também esta preocupada neste aspeto, e vemos isso
+  por exemplo com a
+  \href{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl}{Intl
+  Web API}. Não somos poliglotas, mas com certeza encontraremos forma
+  de permitir com que este projeto não seja apenas em português e
+  inglês. Os browsers normalmente conseguem traduzir um website, mas
+  se não quisermos depender disso, podemos explorar opções como
+  \href{https://github.com/argosopentech/argos-translate}{Argos}.
+
+  \subsubsection{Informação semântica}
+
+  O jogo quando jogado no navegador, não podemos depender só do HTML
+  `canvas` para mostrar a informação, porque a informação no `canvas`
+  não passa de pixéis, de bits num bitmap (um leitor de ecrãs não
+  consegue ler texto no `canvas`). Devemos usar HTML semântico para
+  qualquer informação que seja de valor.
+
+  \subsubsection{Independência de uma plataforma}
+
+  O jogo tem de ser possível de ser jogado na maioria dos
+  dispositivos, e não só no nosso computador. Existem pessoas que
+  talvez apenas tenham um smartphone, e que nem é dos “bons”. Temos
+  dois problemas aqui então. Para o primeiro, a solução vai ser não
+  criar o jogo apenas para navegador web através da biblioteca
+  \href{https://www.raylib.com/index.html}{raylib}, e então o jogo
+  poderá rodar nativamente num PC (caso o PC não tenha suporte para
+  os browsers mais atualizados) independentemente do sistema
+  operativo, num Android, numa PlayStation da Sony ou numa Switch da
+  Nintendo. Para o segundo problema, a performance: tentar escrever
+  código otimizado, a pensar que existem computadores mais fraquitos;
+  controlar a quantidade e o tamanho das requisições, a pensar nos
+  sítios onde a internet e mais lenta; caches; armazenamento local; o
+  offline. O jogo não vai ser só para os computadores mais topo de
+  gama. Não vais ter de comprar um novo dispositivo para jogar. Uma
+  decisão ecológica e amiga do ambiente, mas também amiga da tua carteira!
