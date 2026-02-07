@@ -478,6 +478,46 @@ const WORLD_SPAWN_OFFSET = 20;
       ctx.restore();
     }
 
+    // 6.5. Exit Door Highlight (Blue Pulse for Quiz)
+    const exitPos = exports.get_exit_pos();
+    const exitX = mem.loadF32(exitPos);
+    const exitY = mem.loadF32(exitPos + 4);
+
+    const time = Date.now() / 1000;
+    const exitPulseFactor = (Math.sin(time * 2) + 1) / 2; // 0 to 1, slower pulse
+    const exitPulseAlpha = 0.15 + (exitPulseFactor * 0.25); // 0.15 to 0.4 opacity
+
+    // Check if mouse is near exit
+    const distToExit = Math.hypot(worldMouseX - exitX, worldMouseY - exitY);
+    const isHoveringExit = distToExit < 80;
+
+    // Change cursor when hovering exit
+    if (isHoveringExit && !foundNearMouse) {
+      canvas.style.cursor = "pointer";
+    }
+
+    // Draw exit highlight (square)
+    ctx.save();
+
+    const exitSize = 48;
+    const exitScreenX = screenToWorldX(exitX);
+    const exitScreenY = screenToWorldY(exitY);
+
+    if (isHoveringExit) {
+      // Solid highlight when hovering
+      ctx.fillStyle = "rgba(0, 191, 255, 0.3)"; // Deep sky blue
+      ctx.shadowColor = "rgba(0, 191, 255, 1)";
+      ctx.shadowBlur = 20;
+    } else {
+      // Pulsing highlight
+      ctx.fillStyle = `rgba(0, 191, 255, ${exitPulseAlpha})`;
+      ctx.shadowColor = "rgba(0, 191, 255, 0.8)";
+      ctx.shadowBlur = 10;
+    }
+
+    ctx.fillRect(exitScreenX - exitSize / 2, exitScreenY - exitSize / 2, exitSize * 2, exitSize);
+
+    ctx.restore();
 
     // 7. Debug Overlays (Linhas, pontos de debug)
     // Estes desenhamos sempre por último para ficarem "on top" da UI
@@ -547,36 +587,18 @@ const mineralIcons = {
   'Cobre': './source/minerals/cobre.png',
   'Ouro': './source/minerals/ouro.png',
   'Silício': './source/minerals/silicio.png',
-  'Alumínio': './source/minerals/aluminio.png',
   'Lítio': './source/minerals/litio.png',
+  'Crómio': './source/minerals/cromio.png',
+  'Níquel': './source/minerals/niquel.png',
+  'Mica': './source/minerals/mica.png',
+  'Zinco': './source/minerals/zinco.png',
+  'Neodímio': './source/minerals/neodimio.png',
+  'Terras Raras': './source/minerals/terrasRaras.png',
   'default': './source/minerals/generic.png'
-};
-
-// Mineral emoji fallbacks
-const mineralEmojis = {
-  'Ferro': '🔩',
-  'Cobre': '🔶',
-  'Ouro': '✨',
-  'Silício': '💎',
-  'Alumínio': '⬜',
-  'Lítio': '💜',
-  'Cobalto': '🔵',
-  'Prata': '🥈',
-  'Níquel': '⚙️',
-  'Crómio': '🔧',
-  'Zinco': '🔘',
-  'Neodímio': '🧲',
-  'Índio': '🟣',
-  'Mica': '📄',
-  'default': '💎'
 };
 
 function getMineralIcon(mineralName) {
   return mineralIcons[mineralName] || mineralIcons['default'];
-}
-
-function getMineralEmoji(mineralName) {
-  return mineralEmojis[mineralName] || mineralEmojis['default'];
 }
 
 // Generate progress gems HTML
@@ -716,8 +738,11 @@ function showQuestion() {
   `;
 
   q.options.forEach((opt) => {
-    const emoji = getMineralEmoji(opt);
-    html += `<button onclick="answerQuestion('${opt.replace(/'/g, "\\'")}')" class="quiz-option">${emoji} ${opt}</button>`;
+    const iconSrc = getMineralIcon(opt);
+    html += `<button onclick="answerQuestion('${opt.replace(/'/g, "\\'")}')" class="quiz-option">
+      <img src="${iconSrc}" class="mineral-btn-icon" alt="">
+      ${opt}
+    </button>`;
   });
 
   html += `</div>
@@ -846,13 +871,14 @@ function showItemDiscovery(info) {
     html += `<h3>⛏️ Minerais Utilizados:</h3><ul>`;
 
     for (const mineral of info.appliance.minerals) {
-      const emoji = getMineralEmoji(mineral.name);
       const iconSrc = getMineralIcon(mineral.name);
 
       html += `
         <li class="mineral-card">
           <div style="display: flex; align-items: flex-start; gap: 12px;">
-            <span class="mineral-icon">${emoji}</span>
+            <div class="mineral-icon-frame">
+              <img src="${iconSrc}" class="mineral-icon-large" alt="${mineral.name}">
+            </div>
             <div style="flex: 1;">
               <strong class="mineral-name">${mineral.name}</strong>
               <span class="mineral-use">${mineral.use}</span>

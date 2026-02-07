@@ -308,17 +308,32 @@ body {
 }
 
 /* Mineral icon container */
-.mineral-icon {
-  display: inline-block;
+.mineral-icon-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--bg-dark);
+  border: 3px solid var(--accent-copper);
+  margin-right: 12px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.mineral-icon-large {
   width: 32px;
   height: 32px;
-  background: var(--bg-dark);
-  border: 2px solid var(--accent-copper);
-  margin-right: 12px;
-  vertical-align: middle;
-  text-align: center;
-  line-height: 28px;
-  font-size: 16px;
+  image-rendering: pixelated;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.3));
+}
+
+.mineral-btn-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+  image-rendering: pixelated;
+  filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.3));
 }
 
 .modal-content li strong,
@@ -431,6 +446,9 @@ body {
   box-shadow:
     0 3px 0 var(--border-dark),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  display: flex;
+  align-items: center;
 }
 
 .quiz-option:hover {
@@ -443,17 +461,22 @@ body {
     0 0 10px var(--glow-orange);
 }
 
+.quiz-option:hover .mineral-btn-icon {
+  transform: scale(1.2) rotate(-10deg);
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.5));
+}
+
+.mineral-btn-icon {
+  transition: transform 0.2s, filter 0.2s;
+}
+
 .quiz-option:active {
   transform: translateY(1px);
   box-shadow: 0 2px 0 var(--border-dark);
 }
 
 /* Option with mining cart icon */
-.quiz-option::before {
-  content: '⛏️';
-  margin-right: 10px;
-  font-size: 12px;
-}
+/* Removed generic pickaxe icon in favor of specific mineral image */
 
 .quiz-question {
   font-size: 10px;
