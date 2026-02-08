@@ -222,37 +222,43 @@ const preloadAudio = async () => {
     const worldX = camera.target[0] + (e.offsetX - camera.offset[0]);
     const worldY = camera.target[1] + (e.offsetY - camera.offset[1]);
 
-    // Left-click (button 0) - Interact with items and exit
+    // Unified Click Handler (Left-Click currently, but touches all logic)
     if (e.button === 0) {
-      // Check if click is near the exit and player is close enough
+      // 1. Check Exit Interaction
       const exitPos = exports.get_exit_pos();
       const exitX = mem.loadF32(exitPos);
       const exitY = mem.loadF32(exitPos + 4);
 
       const clickDistToExit = Math.hypot(worldX - exitX, worldY - exitY);
-      const isNearExit = exports.is_near_exit(100); // Player within 100px of exit
 
-      if (clickDistToExit < 80 && isNearExit) {
-        // Trigger quiz event!
-        showQuizEvent({
-          items,
-          appliances,
-          foundCount: exports.get_found_items_count(),
-          totalItems: items.filter(i => i.appliance !== null).length
-        });
-        playSound('click');
-        return;
+      // If clicking ON the exit (within 40px radius visual)
+      if (clickDistToExit < 40) {
+        const isNearExit = exports.is_near_exit(100);
+        if (isNearExit) {
+          // Close enough: Trigger Quiz
+          showQuizEvent({
+            items,
+            appliances,
+            foundCount: exports.get_found_items_count(),
+            totalItems: items.filter(i => i.appliance !== null).length
+          });
+          playSound('click');
+          return;
+        } else {
+          // Too far: Move to Exit
+          exports.player_click(exitX, exitY);
+          return;
+        }
       }
 
-      // Check if click is near an item
+      // 2. Check Item Interaction
       const found = findItemNear(worldX, worldY);
       if (found) {
         const playerDistToItem = Math.hypot(pos[0] - found.item.x, pos[1] - found.item.y);
-        if (playerDistToItem <= 120) { // Player must be close enough
-          // Add to found items
-          const isNewFind = exports.add_found_item(found.index);
 
-          // Get appliance info if available
+        if (playerDistToItem <= 120) {
+          // Close enough: Interact
+          const isNewFind = exports.add_found_item(found.index);
           const appliance = found.item.appliance ? getAppliance(found.item.appliance) : null;
 
           showItemDiscovery({
@@ -262,14 +268,20 @@ const preloadAudio = async () => {
             playerPos: pos
           });
           playSound('click');
-          return;
+        } else {
+          // Too far: Move to Item
+          exports.player_click(found.item.x, found.item.y);
         }
+        return;
       }
+
+      // 3. No object clicked: Just Move
+      exports.player_click(worldX, worldY);
     }
 
-    // Right-click (button 2) - Move player
+    // Disable Right-Click entirely for game logic (optional, keeping it prevents confusion)
     if (e.button === 2) {
-      exports.player_click(worldX, worldY);
+      // Do nothing or maybe show a hint? For now, we silenced it.
     }
 
     camera.target = mem.loadF32Array(state + PLAYER_POS_OFFSET, 2);
