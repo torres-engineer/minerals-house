@@ -1,117 +1,351 @@
-\chapter{Este é o título deste capítulo}
-\label{cap2}
-Este capítulo exemplifica a utilização de referências, figuras,
-tabelas e listagens.
+\chapter{Desenvolvimento}
+\label{ch:develop}
 
-\section{Titulo de uma secção}
-\label{sec}
-Este é primeiro parágrafo desta secção.
+\section{Enquadramento teórico}
 
-Uma equação $x = \frac{-b + \sqrt{b^2 - 4ac}}{2a}$.
+\subsection{``Estado da arte''}
 
-E mais outra em linha própria:
-$$e^{i\pi} + 1 = 0$$
+«Inspirado por jogos educativos como \textcite{briefcasegame},
+[...] o objetivo é aumentar a literacia sobre recursos
+geológicos, demonstrando de forma lúdica e visual a ligação direta
+entre a geologia e a nossa vida diária.»
 
-\subsection{Título de uma subsecção}
-\subsubsection{Título de parágrafo de texto normal}
+% O nosso toque pessoal, point click tipo Club Penguin...
 
-%https://tug.ctan.org/info/biblatex-cheatsheet/biblatex-cheatsheet.pdf
-%https://www.overleaf.com/learn/latex/Articles/Getting_started_with_BibLaTeX
-Eis duas citações: como alegou \textcite{book:Brooks1995}, adicionar
-mais pessoas a um projeto de software atrasado só o torna ainda mais atrasado.
-Os modelos conceptuais de dados que têm por objetivo unificar
-diferentes visões dos dados são muito importantes
-\parencite{Chen1976}. E mais exemplos de citações \parencite{AndroidDoc},
-\parencite[p. 120]{book:Brooks1995},
-\parencite{Chen1976}
-A Figura \ref{fig:exemplofig} apresenta os vários tipos de diagrama
-da Unified Modeling Language (UML). É uma figura "flutuante"\ o que
-significa que a sua localização será decidida pelo \LaTeX.
+\subsection{Os minerais}
+\label{sec:minerals}
 
-\begin{figure}[!htb]
-  \centering
-  \caption{Exemplo de Figura flutuante (\textit{in}
-  \url{http://en.wikipedia.org/wiki/Class_diagram})}
-  \includegraphics[width=13cm]{exemploFig}
-  \label{fig:exemplofig}
-\end{figure}
+Eles andam por aí espalhados, mas tu nem pensas neles: os minerais.
+Matéria-prima e recurso importante para diversos setores como a
+indústria química, da construção civil, da agricultura e da
+energia. Mas é que estão presentes em todo o lado mesmo:
 
-Se pretender que a figura fique no local em que está (sem ser um
-objeto flutuante) então pode fazer como na figura seguinte (Fig.
-\ref{fig:exemplofigFixa}).
+\begin{itemize}
+  \item Se estás a ler isto através de um aparelho eletrónico,
+    esquece, desde o cobre e ouro dos cabos elétricos até ao
+    silício dos microchips;
+  \item mas mesmo lendo numa folha de papel, é capaz dessa folha
+    ter vestígios de cádmio, cobalto e titânio.
+\end{itemize}
 
-\begin{center}
+As frutas e vegetais que consomes, além das vitaminas, também têm os
+minerais presentes no solo. Minerais são indispensáveis para a
+nossa vida e para a sociedade.
 
-  \captionof{figure}{Exemplo de Figura não flutuante (\textit{in}
-  \url{http://en.wikipedia.org/wiki/Class_diagram})}
-  \includegraphics[width=\textwidth]{exemploFig}
-  %\includegraphics[width=0.5\textwidth]{exemploFig}
-  \label{fig:exemplofigFixa}
-\end{center}
+O objetivo principal deste jogo é ensinar onde é que estes
+minerais, que existem naturalmente no nosso planeta, estão
+presentes nas coisas que usamos todos os dias. Além isso,
+ensinamos qual a utilidade de certo mineral numa ocasião específica.
+Mas basta isso?
 
-%Exemplo de listagem de código Java.
-%\lstlisting{
+Uma das razões para a qual estes minerais ficam escondidos dos
+consumidores é porque, tu vais à loja e compras o telemóvel, mas o
+processo de produção desse telemóvel, da extração dos minerais da
+terra, da montagem do equipamento, até ao produto final, é
+totalmente ofuscado. Existe uma alienação entre as nossas vidas e a
+geologia — os minerais — e todo o trabalho humano que leva à
+realização dos teus bens. Simplesmente o telemóvel não apareceu na
+estante da loja por pozinhos de perlimpimpim. O telemóvel é visto
+como uma coisa e não como fruto de mineração e do trabalho. Tudo
+isto já havia sido dito na \ref{ch:intro}.
 
-\section{Exemplos de Listagens}
+Usamos o jogo para conectar também o mineral, ao país de origem
+(geografia), e ao trabalho e/ou processo necessário para esse
+material estar disponível.
 
-A Listagem \ref{lst:javaparcial} apresenta apenas o método
-\lstinline[language=java]$void Quicksort(int A[], int f, int l)$,
-apresentado por  \textcite{Quicksort1962}. Para tal, são indicadas a
-linha inicial e a linha final a importar do ficheiro.
+\subsection{Gamificação na pedagogia}
 
-\lstinputlisting[language=java,abovecaptionskip=20pt,caption={Exemplo
-    de listagem de parte de um ficheiro Java na pasta
-listagens.},{label=lst:javaparcial},firstline=38,lastline=44]{listagens/quicksort.java}
+A ``Casa dos Minerais'' utilizará elementos de gamificação para
+estruturar a aprendizagem, como a progressão por diferentes níveis
+e a inclusão de minijogos, por exemplo, um questionário no final de
+cada nível.
 
-%\pagebreak % para forçar uma mudança de página
-%%%%%%%%%%%%%%%%%%%%
-\section{Um exemplo de tabela}
+No entanto, a abordagem pedagógica deste projeto foca-se em usar a
+brincadeira como uma forma de descoberta e reflexão. O objetivo
+principal não é criar um sistema de avaliação rigoroso; o foco é a
+alegria de aprender. A aprendizagem é mais importante do que uma
+pontuação final ou a rapidez com que se termina o jogo.
 
-A Tabela \ref{tab:casoFIXO} apresenta os resultados de aplicação de
-quatro métodos a um caso.
-Não é suportado (ainda) uma distinção entre "Quadro"\ e
-"Tabela"\ dado que essa distinção não parece estar formalizada em
-Portugal (ver, por exemplo, a resposta no
-\href{https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/tabela-vs-quadro-e-figura-vs-ilustracao/32273}{ciberdúvidas}).
+Desta forma, elementos como a pontuação ou um temporizador,
+servirão como um incentivo opcional (conforme detalhado na secção
+\ref{sec:future}) e não como o foco central da experiência.
 
-\noindent
-\begin{minipage}{\linewidth}
-  \captionof{table}{Uma tabela de exemplo não flutuante} % título da tabela
-  \begin{tabular}{l l c r} % duas colunas à esquerda (l l), uma ao
-    % centro (c) e uma à direita (r) (4 colunas)
-    \hline\hline %insere duas linhas horizontais
-    Caso & Método 1 & Método 2 & Método 3 \\ [0.5ex] % insere tabela
-    \hline % insere uma linha horizontal
-    1 & 50 & 837 & 970 \\ % insure corpo da tabela
-    2 & 47 & 877 & 230 \\
-    3 & 31 & 25 & 415 \\
-    4 & 35 & 144 & 2356 \\
-    5 & 45 & 300 & 556 \\ [1ex] % [1ex] adiciona espaço vertical
-    \hline %insere uma linha horizontal
-  \end{tabular}
-  \label{tab:casoFIXO} % é utilizada para referir a tabela no texto
-  \\ %% linha em braco
-  \textit{Nota}: uma nota. remover se não for necessária.\\
-\end{minipage}
+\subsection{Para quem é o jogo?}
+\label{sec:forwho}
 
-Ou, a Tabela \ref{tab:caso}, em versão flutuante :
+O jogo têm como alvo principal as crianças e jovens, e serviria de
+apoio para o que eles estão a aprender nas aulas de Estudo de Meio
+e Ciências Naturais (no contexto de Portugal). Mas a verdade é que
+todos merecem aprender, por isso precisamos de pensar em fazer um
+jogo para todas as faixas etárias. Desde que tenha o interesse em
+adquirir conhecimento acerca dos minerais.
 
-%baseado num exemplo em http://www1.maths.leeds.ac.uk/latex/TableHelp1.pdf
-\begin{table}[!htb]
-  \caption{Uma tabela de exemplo}
-  \begin{tabular}{l l c r} % duas colunas à esquerda (l l), uma ao
-    % centro (c) e uma à direita (r) (4 colunas)
-    \hline\hline %insere duas linhas horizontais
-    Caso & Método 1 & Método 2 & Método 3 \\ [0.5ex] % insere tabela
-    \hline % insere uma linha horizontal
-    1 & 50 & 837 & 970 \\ % insere corpo da tabela
-    2 & 47 & 877 & 230 \\
-    3 & 31 & 25 & 415 \\
-    4 & 35 & 144 & 2356 \\
-    5 & 45 & 300 & 556 \\ [1ex] % [1ex] adiciona espaço vertical
-    \hline %insere uma linha horizontal
-  \end{tabular}
-  \label{tab:caso} % é utilizada para referir a tabela no texto
-  \\ %% linha em braco
-  \textit{Nota}: uma nota. remover se não for necessária.\\
-\end{table}
+Mas esta inclusão não pode parar na idade. Existem pessoas com
+limitações a nível físico (controlo, mobilidade), cognitivo
+(pensamento, memória, processamento de informação), sensorial,
+visão, audição e/ou fala, e elas também merecem de ter o direito à
+sabedoria (e à diversão de jogar).
+
+O que pode parecer trabalhoso ter de se preocupar com todos na
+realidade pode ser algo bem simples de alcançar, por exemplo,
+escolhendo a tipografia correta, baseado no contraste da cor de
+letra, do tamanho de letra, e no tipo de letra. Especialmente no
+ambiente de navegadores web, estes estão muito preparados para
+serem úteis e utilizáveis por todos, basta aos programadores
+fazerem o seu trabalho corretamente.
+
+\section{Metodologia}
+
+Para a implementação, o projeto baseia-se em tecnologias de
+multiplataforma, tirando partido da linguagem de programação Odin.
+Para a parte gráfica escolhemos a Raylib, integrada com Odin. Esta
+combinação permite criar gráficos 2D interativos com desempenho
+nativo e exportação para WebAssembly (WASM), garantindo execução
+fluida diretamente no navegador.
+
+\subsection{Identificação dos minerais usados no quotidiano}
+
+Minerais são todas as substâncias naturais formadas por processos
+geológicos que normalmente consegues encontrar na crosta da terra.
+
+A telhado das casas podem ser feitos com argila, os vidros com areia.
+Na cozinha, tens pratos que podem conter areia, calcário, feldspato e
+argila. O sal vem do sal-gema. Uma panela pode ser de ferro, níquel e
+crómio. O frigorifico pode ser alumínio e cobre, e derivados de
+petróleo. Na cozinha também pode ser usado gás natural. Existem
+fotografias que usam prata e bronze. Um vaso de flores pode ser de
+argila. Um livro pode ter vestígios de cadmio, cobalto e titânio. Uma
+lâmpada pode ter níquel, alumínio e chumbo. Um relógio pode ter
+silício, crómio, ferro e níquel. Um espelho terá quartzo, alumínio e
+prata. O papel higiénico gesso e calcário. A pasta de dentes tem fluorite.
+
+O mais impressionante talvez são os bens tecnológicos como
+televisões/monitores, computadores e telemóveis, tão presentes no
+nosso dia"-a"-dia e que os levamos de um lado para o outro connosco.
+Estes podem conter zinco, crómio, silício, alumínio, cobre, estanho,
+manganês, cobalto, bário, platina, tungsténio, arsénio, lítio, ouro, prata, ...
+
+\subsection{Comparação com outros jogos}
+
+Em comparação com o \textcite{briefcasegame}, o nosso jogo seria um
+“mundo” aberto, onde o jogador começava dentro de uma casa e teria de
+encontrar os objetos, para ver os minerais que contém neles. Enquanto
+no BriefCase game, o jogador só precisa de associar o objeto ao mineral.
+
+No \textcite{min4kids-minerals-house}, o objetivo é parecido ao jogo
+anterior só que neste caso, não tem aspeto de “gaming” é mais
+informacional, oque o nosso jogo também tem.
+
+No \textcite{wordwall-rochas-minerais}, é um conjunto de jogos sobre
+minerais, mas muito simples em comparação ao nosso.
+
+\subsection{Conceito, regras e âmbito do jogo}
+
+O conceito central do ``Casa dos Minerais'' assenta na exploração
+interativa e autoguiada de um ambiente virtual, primariamente uma
+casa. Inspirado num formato point-and-click, semelhante ao ``Club
+Penguin'', o jogador terá a liberdade de navegar por diferentes
+divisões, que funcionarão como níveis.
+
+Ao interagir com os objetos do quotidiano (como um frigorífico, uma
+  televisão ou uma
+torneira), o jogador descobre informações sobre os minerais
+essenciais para o seu fabrico, a
+sua proveniência e a sua relevância.
+
+Embora a exploração dentro de cada nível seja livre, permitindo ao
+jogador criar o seu próprio
+percurso de aprendizagem, a progressão no jogo será linear e estruturada
+
+\subsubsection{Regras e Progressão}
+
+\begin{itemize}
+  \item Estrutura de Níveis: O jogo será dividido em níveis (ex:
+    cozinha, sala, exterior da casa).
+  \item Desbloqueio de Níveis: A regra principal de progressão é que
+    o jogador só poderá avançar para o nível seguinte após ter
+    completado com sucesso o nível anterior.
+  \item Validação da Aprendizagem: A conclusão de um nível será
+    validada através de um minijogo, especificamente um questionário
+    sobre os minerais e informações exploradas nessa área. A
+    aprovação neste questionário é o que permite o desbloqueio do próximo nível.
+  \item Sistema de Pontuação (Opcional): Está a ser ponderada a
+    inclusão de um sistema de pontuação, que poderá ser influenciado
+    pelo desempenho no questionário. Uma ideia em discussão é a
+    inclusão de um temporizador por nível; um tempo de conclusão mais
+    rápido poderia resultar numa pontuação mais alta, incentivando a
+    rejogabilidade.
+\end{itemize}
+
+\subsubsection{Âmbito do Jogo}
+
+O âmbito do jogo foca-se na experiência de descoberta dentro deste
+``mundo'' virtual. O jogador não tem ``regras'' de exploração; pode
+clicar em qualquer objeto, em qualquer ordem, dentro do nível ativo.
+A ``Casa dos Minerais'' serve, assim, como o hub central para esta descoberta.
+
+\subsection{Como integrar outros públicos?}
+\label{sec:other}
+
+Os problemas falados em \ref{sec:forwho}, já foram todos pensados, e já
+existem soluções para alguns dos problemas. Nós só necessitamos
+implementar essas soluções.
+
+\subsubsection{Acessibilidade}
+
+No que toca a Web, existe a \href{https://www.w3.org/WAI/}{Web
+Accessibility Initiative (WAI)} do \href{https://www.w3.org/}{World
+Wide Web Consortium (W3C)}. Criaram um conjunto normas para criar
+um Web acessível, e nos só temos de seguir as normas: HTML
+semântico e ARIA; texto para leitores de ecrã; texto simples;
+imagens e vídeos (média) acessíveis; controlos de interface
+semânticos; cores e contraste; ...
+
+\subsubsection{Internacionalização}
+
+Aprender não esta reservado para uma só cultura, região, língua,
+etnia... A W3C também esta preocupada neste aspeto, e vemos isso
+por exemplo com a
+\href{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl}{Intl
+Web API}. Não somos poliglotas, mas com certeza encontraremos forma
+de permitir com que este projeto não seja apenas em português e
+inglês. Os browsers normalmente conseguem traduzir um website, mas
+se não quisermos depender disso, podemos explorar opções como
+\href{https://github.com/argosopentech/argos-translate}{Argos}.
+
+\subsubsection{Informação semântica}
+
+O jogo quando jogado no navegador, não podemos depender só do HTML
+`canvas` para mostrar a informação, porque a informação no `canvas`
+não passa de pixéis, de bits num bitmap (um leitor de ecrãs não
+consegue ler texto no `canvas`). Devemos usar HTML semântico para
+qualquer informação que seja de valor.
+
+\subsubsection{Independência de uma plataforma}
+
+O jogo tem de ser possível de ser jogado na maioria dos
+dispositivos, e não só no nosso computador. Existem pessoas que
+talvez apenas tenham um smartphone, e que nem é dos “bons”. Temos
+dois problemas aqui então. Para o primeiro, a solução vai ser não
+criar o jogo apenas para navegador web através da biblioteca
+\href{https://www.raylib.com/index.html}{raylib}, e então o jogo
+poderá rodar nativamente num PC (caso o PC não tenha suporte para
+os browsers mais atualizados) independentemente do sistema
+operativo, num Android, numa PlayStation da Sony ou numa Switch da
+Nintendo. Para o segundo problema, a performance: tentar escrever
+código otimizado, a pensar que existem computadores mais fraquitos;
+controlar a quantidade e o tamanho das requisições, a pensar nos
+sítios onde a internet e mais lenta; caches; armazenamento local; o
+offline. O jogo não vai ser só para os computadores mais topo de
+gama. Não vais ter de comprar um novo dispositivo para jogar. Uma
+decisão ecológica e amiga do ambiente, mas também amiga da tua carteira!
+
+\section{\textit{Tech Stack}}
+
+Começamos por pensar de que forma íamos implementar o jogo. Como o
+nosso objetivo e eventualmente o jogo ser multiplataforma, surgiu a
+ideia de usarmos a biblioteca \href{https://www.raylib.com/}{Raylib}.
+E uma biblioteca bem simples, mas que faz tudo o que necessitamos. E
+fácil de usar e tem uma boa documentação e exemplos. Agora só tivemos
+de pensar como e que faríamos para usar o Raylib para a Web. A
+resposta talvez seja obvia, precisávamos de usar WebAssembly (WASM).
+Mas ainda tivemos de decidir entre compilar a biblioteca Raylib para
+WASM, ou ter a logica do jogo em WASM mas depois usar as API que os
+navegadores Web oferecem para criar a parte gráfica do jogo.
+Escolhemos a segunda. Parece ser a que causa menos problemas, apesar
+de que agora temos de manter duas interfaces gráficas diferentes: A
+que usa a API Canvas do HTML, e a que usa Raylib.
+
+Bom, e agora, em que linguagem vamos criar a logica e a interface
+gráfica do jogo? Tínhamos basicamente qualquer linguagem com FFI,
+quase todas as linguagens compiladas e que conseguem dar link com
+binarios compilados criando ABI shims. Raylib e implementada em C,
+mas a comunidade já criou bindings para múltiplas linguagens. Nós
+queríamos usar uma linguagem que ainda não tínhamos usado, como forma
+de aprender essa linguagem e os seus paradigmas, mas também para
+mostrar que somos programadores, independentemente da linguagem. Um
+de nos lembrou-se da linguagem \href{https://odin-lang.org/}{Odin} e
+não discutimos mais acerca disso. Por acaso a linguagem já tem até um
+binding oficial para o Raylib, nesse sentido facilitou o nosso
+trabalho. Odin oferece programação de vetores, matrizes e quaterniões
+como tipo de dados, e estruturas de dados que facilitam programação
+SIMD e SIMT, que talvez não iremos usar diretamente, mas que com
+certeza ajuda bastante na criação de jogos 3D, na performance.
+
+Também tivemos a surpresa da linguagem estar relativamente preparada
+para compilação em WebAssembly, sem ter de fazer trabalho
+intermediário com
+\href{https://emscripten.org/index.html}{Emscripten}, LLVM e
+ficheiros de objetos, e ainda a gestão da memoria no JavaScript, já
+que Odin oferece um ficheiro preparado para o runtime, com integração
+com DOM e até WebGL.
+
+Odin não é uma linguagem qualquer, e já tem usos no mundo
+profissional, por exemplo, \href{https://jangafx.com/}{JangaFX}
+desenvolve ferramentas como EmberGen, GeoGen e LiquiGen inteiramente
+em Odin, mostrando o desempenho e a facilidade da linguagem para
+aplicações gráficas complexas. E é isso. Depois conforme a
+necessidade podemos ir buscar outras bibliotecas, mas por enquanto, basta.
+
+%%%
+
+% \begin{figure}[!htb]
+%   \centering
+%   \caption{Exemplo de Figura flutuante (\textit{in}
+%   \url{http://en.wikipedia.org/wiki/Class_diagram})}
+%   \includegraphics[width=13cm]{exemploFig}
+%   \label{fig:exemplofig}
+% \end{figure}
+%
+% \begin{center}
+%
+%   \captionof{figure}{Exemplo de Figura não flutuante (\textit{in}
+%   \url{http://en.wikipedia.org/wiki/Class_diagram})}
+%   \includegraphics[width=\textwidth]{exemploFig}
+%   %\includegraphics[width=0.5\textwidth]{exemploFig}
+%   \label{fig:exemplofigFixa}
+% \end{center}
+
+% \lstinputlisting[language=java,abovecaptionskip=20pt,caption={Exemplo
+%     de listagem de parte de um ficheiro Java na pasta
+% listagens.},{label=lst:javaparcial},firstline=38,lastline=44]{listagens/quicksort.java}
+
+% \noindent
+% \begin{minipage}{\linewidth}
+%   \captionof{table}{Uma tabela de exemplo não flutuante} % título da tabela
+%   \begin{tabular}{l l c r} % duas colunas à esquerda (l l), uma ao
+%     % centro (c) e uma à direita (r) (4 colunas)
+%     \hline\hline %insere duas linhas horizontais
+%     Caso & Método 1 & Método 2 & Método 3 \\ [0.5ex] % insere tabela
+%     \hline % insere uma linha horizontal
+%     1 & 50 & 837 & 970 \\ % insure corpo da tabela
+%     2 & 47 & 877 & 230 \\
+%     3 & 31 & 25 & 415 \\
+%     4 & 35 & 144 & 2356 \\
+%     5 & 45 & 300 & 556 \\ [1ex] % [1ex] adiciona espaço vertical
+%     \hline %insere uma linha horizontal
+%   \end{tabular}
+%   \label{tab:casoFIXO} % é utilizada para referir a tabela no texto
+%   \\ %% linha em braco
+%   \textit{Nota}: uma nota. remover se não for necessária.\\
+% \end{minipage}
+%
+% %baseado num exemplo em http://www1.maths.leeds.ac.uk/latex/TableHelp1.pdf
+% \begin{table}[!htb]
+%   \caption{Uma tabela de exemplo}
+%   \begin{tabular}{l l c r} % duas colunas à esquerda (l l), uma ao
+%     % centro (c) e uma à direita (r) (4 colunas)
+%     \hline\hline %insere duas linhas horizontais
+%     Caso & Método 1 & Método 2 & Método 3 \\ [0.5ex] % insere tabela
+%     \hline % insere uma linha horizontal
+%     1 & 50 & 837 & 970 \\ % insere corpo da tabela
+%     2 & 47 & 877 & 230 \\
+%     3 & 31 & 25 & 415 \\
+%     4 & 35 & 144 & 2356 \\
+%     5 & 45 & 300 & 556 \\ [1ex] % [1ex] adiciona espaço vertical
+%     \hline %insere uma linha horizontal
+%   \end{tabular}
+%   \label{tab:caso} % é utilizada para referir a tabela no texto
+%   \\ %% linha em braco
+%   \textit{Nota}: uma nota. remover se não for necessária.\\
+% \end{table}
