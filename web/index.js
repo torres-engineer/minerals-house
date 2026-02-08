@@ -341,7 +341,7 @@ const WORLD_SPAWN_OFFSET = 20;
           ctx.drawImage(
             item.img,
             item.x, item.y, item.w, item.h,
-            screenToWorldX(item.x), screenToWorldY(item.y), item.w, item.h
+            screenToWorldX(item.x), screenToWorldY(item.y), item.w + 1, item.h + 1
           );
         }
       }
@@ -519,38 +519,11 @@ const WORLD_SPAWN_OFFSET = 20;
 
     ctx.restore();
 
-    // 7. Debug Overlays (Linhas, pontos de debug)
-    // Estes desenhamos sempre por último para ficarem "on top" da UI
-    ctx.fillStyle = "red";
-    ctx.beginPath();
-    ctx.arc(
-      screenToWorldX(pos[0]),
-      screenToWorldY(pos[1]),
-      1,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
 
-    ctx.fillStyle = "green";
-    ctx.beginPath();
-    ctx.arc(
-      canvas.width / 2,
-      canvas.height / 2,
-      1,
-      0,
-      Math.PI * 2,
-    );
-    ctx.fill();
 
     const player = getPlayer(mem, state)
 
-    ctx.beginPath();
-    ctx.moveTo(screenToWorldX(player.pos[0]), screenToWorldY(player.pos[1]));
-    ctx.lineTo(screenToWorldX(player.dest[0]), screenToWorldY(player.dest[1]));
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 3;
-    ctx.stroke();
+
 
     requestAnimationFrame(render);
   }
@@ -606,7 +579,7 @@ function generateProgressGems(current, total, answered) {
   let gems = '';
   for (let i = 0; i < total; i++) {
     if (i < answered) {
-      gems += '<span class="gem-filled">💎</span>';
+      gems += '<span class="gem-filled">◆</span>';
     } else {
       gems += '<span class="gem-empty">◇</span>';
     }
@@ -636,20 +609,19 @@ function showQuizEvent(info) {
   if (info.foundCount < info.totalItems) {
     // Not all items found - ask if they want to continue
     let html = `
-      <h2>⛏️ Saída da Mina</h2>
+      <h2>Saída da Casa</h2>
       <div style="text-align: center; margin: 20px 0;">
-        <p style="font-size: 10px; color: #f39c12;">Ainda não encontraste todos os itens!</p>
+        <p style="font-size: 14px; color: #f39c12;">Ainda não encontraste todos os itens!</p>
         <p style="margin: 16px 0;">
-          <span style="font-size: 24px;">📦</span><br>
-          <strong style="color: #e17055; font-size: 14px;">${info.foundCount}</strong>
+          <strong style="color: #e17055; font-size: 18px;">${info.foundCount}</strong>
           <span style="color: #a0998f;"> / </span>
-          <strong style="color: #27ae60; font-size: 14px;">${info.totalItems}</strong>
+          <strong style="color: #27ae60; font-size: 18px;">${info.totalItems}</strong>
         </p>
         <p>Queres testar os teus conhecimentos?</p>
       </div>
       <div class="quiz-buttons">
-        <button onclick="startQuiz()" class="quiz-btn">⛏️ Iniciar Questionário</button>
-        <button onclick="closeModal()" class="quiz-btn secondary">🔙 Continuar a Explorar</button>
+        <button onclick="startQuiz()" class="quiz-btn">Iniciar Questionário</button>
+        <button onclick="closeModal()" class="quiz-btn secondary">Continuar a Explorar</button>
       </div>
     `;
     modalBody.innerHTML = html;
@@ -671,10 +643,10 @@ function startQuiz() {
 
   if (quizQuestions.length === 0) {
     modalBody.innerHTML = `
-      <h2>⚠️ Sem Questões</h2>
+      <h2>Sem Questões</h2>
       <p style="text-align: center;">Não há questões disponíveis.<br>Descobre mais itens primeiro!</p>
       <div class="quiz-buttons">
-        <button onclick="closeModal()" class="quiz-btn">🔙 Voltar</button>
+        <button onclick="closeModal()" class="quiz-btn">Voltar</button>
       </div>
     `;
     modal.classList.remove("hidden");
@@ -731,7 +703,7 @@ function showQuestion() {
   const q = quizQuestions[currentQuestion];
 
   let html = `
-    <h2>⛏️ Pergunta ${currentQuestion + 1} de ${quizQuestions.length}</h2>
+    <h2>Pergunta ${currentQuestion + 1} de ${quizQuestions.length}</h2>
     ${generateProgressGems(currentQuestion, quizQuestions.length, score)}
     <p class="quiz-question">${q.question}</p>
     <div class="quiz-options">
@@ -746,7 +718,7 @@ function showQuestion() {
   });
 
   html += `</div>
-    <p class="quiz-score">⛏️ Pontos: ${score} | ❓ Restantes: ${quizQuestions.length - currentQuestion}</p>
+    <p class="quiz-score">Pontos: ${score} | Restantes: ${quizQuestions.length - currentQuestion}</p>
   `;
 
   modalBody.innerHTML = html;
@@ -761,13 +733,12 @@ function answerQuestion(answer) {
   if (isCorrect) score++;
 
   let html = `
-    <h2>${isCorrect ? "✅ Correto!" : "❌ Incorreto!"}</h2>
+    <h2>${isCorrect ? "Correto!" : "Incorreto!"}</h2>
     <div class="${isCorrect ? 'correct-feedback' : 'wrong-feedback'}" style="text-align: center; padding: 16px;">
-      <p style="font-size: 9px; line-height: 1.8;">${q.explanation}</p>
-      ${isCorrect ? '<p style="font-size: 24px; margin-top: 12px;">🎉</p>' : '<p style="font-size: 24px; margin-top: 12px;">💪</p>'}
+      <p style="font-size: 14px; line-height: 1.8;">${q.explanation}</p>
     </div>
     <div class="quiz-buttons">
-      <button onclick="nextQuestion()" class="quiz-btn">${currentQuestion < quizQuestions.length - 1 ? '➡️ Próxima' : '🏁 Ver Resultado'}</button>
+      <button onclick="nextQuestion()" class="quiz-btn">${currentQuestion < quizQuestions.length - 1 ? 'Próxima' : 'Ver Resultado'}</button>
     </div>
   `;
 
@@ -857,9 +828,8 @@ function showItemDiscovery(info) {
 
   if (info.isNew) {
     html += `
-      <div class="discovery-header">
-        <span class="discovery-icon">🔍</span>
-        <span class="discovery-title">${itemName}</span>
+      <div class="discovery-header" style="justify-content: center;">
+        <span class="discovery-title" style="font-size: 24px;">${itemName}</span>
         <span class="discovery-new-badge">NOVO!</span>
       </div>
     `;
@@ -890,15 +860,7 @@ function showItemDiscovery(info) {
     }
     html += `</ul>`;
 
-    // Fun fact
-    const funFacts = [
-      `Este objeto usa ${info.appliance.minerals.length} minerais diferentes!`,
-      `Os minerais viajam de todo o mundo até à tua casa!`,
-      `Sem estes minerais, este objeto não existiria!`,
-      `Cada mineral tem uma função especial neste objeto.`
-    ];
-    const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
-    html += `<div class="fun-fact">${randomFact}</div>`;
+    // Fun fact removed
 
   } else if (info.item.customInfo) {
     html += `<p>${info.item.customInfo}</p>`;
