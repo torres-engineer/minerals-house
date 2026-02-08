@@ -10,6 +10,7 @@ body {
   height: 100%;
   overflow: hidden;
   background: #181818;
+  cursor: url('./source/ui/cursor.png'), auto;
 }
 
 #game {
@@ -168,7 +169,8 @@ body {
   border-radius: 12px;
   padding: 0;
   width: 90%;
-  max-height: 85vh;
+  max-width: 600px;
+  max-height: 80vh;
   overflow: hidden;
   color: var(--text-light);
   position: relative;

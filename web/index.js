@@ -9,6 +9,109 @@ const WORLD_WORLD_SIZE_OFFSET = WORLD_WORLD_OFFSET + 4;
 const WORLD_SCALE_OFFSET = 16;
 const WORLD_SPAWN_OFFSET = 20;
 
+// Audio context and buffers
+let audioCtx = null;
+const sounds = {
+  bgm: { url: './data/audio/bgm.mp3', buffer: null, source: null, loop: true, volume: 0.05 },
+  footstep: { url: './data/audio/footstep.mp3', buffer: null, lastPlay: 0, minInterval: 350, volume: 0.2 },
+  click: { url: './data/audio/click.mp3', buffer: null, volume: 0.4 },
+  collect: { url: './data/audio/collect.mp3', buffer: null, volume: 0.5 },
+  correct: { url: './data/audio/correct.mp3', buffer: null, volume: 0.5 },
+  wrong: { url: './data/audio/wrong.mp3', buffer: null, volume: 0.5 }
+};
+
+async function initAudio() {
+  if (audioCtx) return;
+
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AudioContext();
+
+    // Load all sounds
+    for (const [key, sound] of Object.entries(sounds)) {
+      try {
+        const response = await fetch(sound.url);
+        const arrayBuffer = await response.arrayBuffer();
+        sound.buffer = await audioCtx.decodeAudioData(arrayBuffer);
+        console.log(`Loaded sound: ${key}`);
+      } catch (e) {
+        console.warn(`Failed to load sound ${key}:`, e);
+      }
+    }
+  } catch (e) {
+    console.warn("AudioContext not supported or blocked");
+  }
+}
+
+function playSound(name) {
+  if (!audioCtx || !sounds[name] || !sounds[name].buffer) return;
+
+  const sound = sounds[name];
+
+  // Rate limiting for repetitive sounds like footsteps
+  if (sound.minInterval) {
+    const now = Date.now();
+    if (now - sound.lastPlay < sound.minInterval) return;
+    sound.lastPlay = now;
+  }
+
+  // Stop previous background music if restarting
+  if (name === 'bgm' && sound.source) {
+    return; // Already playing
+  }
+
+  const source = audioCtx.createBufferSource();
+  source.buffer = sound.buffer;
+  source.loop = sound.loop || false;
+
+  const gainNode = audioCtx.createGain();
+  gainNode.gain.value = sound.volume || 1.0;
+
+  source.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+
+  source.start(0);
+
+  if (name === 'bgm') {
+    sound.source = source;
+  }
+}
+
+// Initialize audio on first user interaction
+// Initialize audio on first user interaction (any click)
+window.addEventListener('mousedown', () => {
+  if (!audioCtx) {
+    initAudio().then(() => {
+      playSound('bgm');
+    });
+  } else if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+}, { once: true });
+
+// Start preloading immediately (even before interaction)
+// This ensures buffers are ready when the user finally clicks
+const preloadAudio = async () => {
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  // We creating a context just to decode, reality is we need the real context to play
+  // But we can fetch the blobs now
+  for (const [key, sound] of Object.entries(sounds)) {
+    try {
+      const response = await fetch(sound.url);
+      const arrayBuffer = await response.arrayBuffer();
+      // We can't decode without a context, but we can have the data ready
+      // Actually, we need the context to decode. 
+      // So best strategy:
+      // We can't actually do much without the context which requires user gesture in some browsers.
+      // But we CAN fetch the data.
+    } catch (e) { }
+  }
+};
+// Triggering initAudio on load might work in some browsers if not playing immediately,
+// but usually it's better to wait. The delay the user feels is the fetch+decode.
+// Let's modify initAudio to be smarter.
+
+
 (async () => {
   const mem = new odin.WasmMemoryInterface();
   const log = document.getElementById("console");
@@ -137,6 +240,7 @@ const WORLD_SPAWN_OFFSET = 20;
           foundCount: exports.get_found_items_count(),
           totalItems: items.filter(i => i.appliance !== null).length
         });
+        playSound('click');
         return;
       }
 
@@ -157,6 +261,7 @@ const WORLD_SPAWN_OFFSET = 20;
             isNew: isNewFind,
             playerPos: pos
           });
+          playSound('click');
           return;
         }
       }
@@ -273,6 +378,10 @@ const WORLD_SPAWN_OFFSET = 20;
       if (animTimer >= animInterval) {
         animTimer = animTimer % animInterval;
         currentRow = (currentRow + 1) % frameRows;
+
+        // Play footstep sound on frame change if player is moving
+        // Frame change happens every ~180ms, good for footstep rhythm
+        playSound('footstep');
       }
     } else {
       animTimer = 0;
@@ -370,7 +479,7 @@ const WORLD_SPAWN_OFFSET = 20;
     const foundNearMouse = findItemNear(worldMouseX, worldMouseY);
 
     // Altera o cursor se estiver sobre um item
-    canvas.style.cursor = foundNearMouse ? "pointer" : "default";
+    // canvas.style.cursor = foundNearMouse ? "pointer" : "default";
 
     if (itemsImg.complete) {
       const time = Date.now() / 1000;
@@ -493,7 +602,7 @@ const WORLD_SPAWN_OFFSET = 20;
 
     // Change cursor when hovering exit
     if (isHoveringExit && !foundNearMouse) {
-      canvas.style.cursor = "pointer";
+      // canvas.style.cursor = "pointer";
     }
 
     // Draw exit highlight (square)
@@ -620,8 +729,8 @@ function showQuizEvent(info) {
         <p>Queres testar os teus conhecimentos?</p>
       </div>
       <div class="quiz-buttons">
-        <button onclick="startQuiz()" class="quiz-btn">Iniciar Questionário</button>
-        <button onclick="closeModal()" class="quiz-btn secondary">Continuar a Explorar</button>
+        <button onclick="playSound('click'); startQuiz()" class="quiz-btn">Iniciar Questionário</button>
+        <button onclick="playSound('click'); closeModal()" class="quiz-btn secondary">Continuar a Explorar</button>
       </div>
     `;
     modalBody.innerHTML = html;
@@ -646,7 +755,7 @@ function startQuiz() {
       <h2>Sem Questões</h2>
       <p style="text-align: center;">Não há questões disponíveis.<br>Descobre mais itens primeiro!</p>
       <div class="quiz-buttons">
-        <button onclick="closeModal()" class="quiz-btn">Voltar</button>
+        <button onclick="playSound('click'); closeModal()" class="quiz-btn">Voltar</button>
       </div>
     `;
     modal.classList.remove("hidden");
@@ -711,7 +820,7 @@ function showQuestion() {
 
   q.options.forEach((opt) => {
     const iconSrc = getMineralIcon(opt);
-    html += `<button onclick="answerQuestion('${opt.replace(/'/g, "\\'")}')" class="quiz-option">
+    html += `<button onclick="playSound('click'); answerQuestion('${opt.replace(/'/g, "\\'")}')" class="quiz-option">
       <img src="${iconSrc}" class="mineral-btn-icon" alt="">
       ${opt}
     </button>`;
@@ -730,7 +839,12 @@ function answerQuestion(answer) {
   const modalBody = document.getElementById("modal-body");
 
   const isCorrect = answer === q.correct;
-  if (isCorrect) score++;
+  if (isCorrect) {
+    score++;
+    playSound('correct');
+  } else {
+    playSound('wrong');
+  }
 
   let html = `
     <h2>${isCorrect ? "Correto!" : "Incorreto!"}</h2>
@@ -738,7 +852,7 @@ function answerQuestion(answer) {
       <p style="font-size: 14px; line-height: 1.8;">${q.explanation}</p>
     </div>
     <div class="quiz-buttons">
-      <button onclick="nextQuestion()" class="quiz-btn">${currentQuestion < quizQuestions.length - 1 ? 'Próxima' : 'Ver Resultado'}</button>
+      <button onclick="playSound('click'); nextQuestion()" class="quiz-btn">${currentQuestion < quizQuestions.length - 1 ? 'Próxima' : 'Ver Resultado'}</button>
     </div>
   `;
 
@@ -800,8 +914,8 @@ function showQuizResults() {
       <p style="margin-top: 16px;">${message}</p>
     </div>
     <div class="quiz-buttons">
-      <button onclick="startQuiz()" class="quiz-btn">🔄 Jogar Novamente</button>
-      <button onclick="closeModal()" class="quiz-btn secondary">✅ Fechar</button>
+      <button onclick="playSound('click'); startQuiz()" class="quiz-btn">🔄 Jogar Novamente</button>
+      <button onclick="playSound('click'); closeModal()" class="quiz-btn secondary">✅ Fechar</button>
     </div>
   `;
 
@@ -813,6 +927,7 @@ function showQuizResults() {
     container.className = 'confetti-container';
     modalBody.appendChild(container);
     createConfetti(container);
+    playSound('collect');
   }
 }
 
@@ -833,6 +948,9 @@ function showItemDiscovery(info) {
         <span class="discovery-new-badge">NOVO!</span>
       </div>
     `;
+
+    // Play success sound
+    playSound('collect');
   }
 
   // If it's an appliance, show mineral info
@@ -868,7 +986,7 @@ function showItemDiscovery(info) {
 
   html += `
     <div class="quiz-buttons">
-      <button onclick="closeModal()" class="quiz-btn continue-btn">👍 Fixe! Continuar</button>
+      <button onclick="playSound('click'); closeModal()" class="quiz-btn continue-btn">👍 Fixe! Continuar</button>
     </div>
   `;
 
