@@ -89,13 +89,18 @@ world := World {
 	height = world_height,
 	world  = world_map[:],
 	scale  = 48,
-	spawn  = Vector2{9, 16},
-	exit   = Vector2{18, 18} * 48 + 24, // Exit at tile (18,18), centered
+	spawn  = Vector2{18, 18},
+	exit   = Vector2{18, 19} * 48 + 24, // Exit at tile (18,19), centered
 }
 
 @(export)
 getWorld :: proc() -> ^World {
 	return &world
+}
+
+@(export)
+get_exit_pos :: proc() -> ^Vector2 {
+	return &world.exit
 }
 
 @(export)
@@ -531,11 +536,6 @@ is_near_exit :: proc(threshold: f32) -> bool {
 	diff := state.player.pos - world.exit
 	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
 	return dist <= threshold
-}
-
-@(export)
-get_exit_pos :: proc() -> Vector2 {
-	return world.exit
 }
 
 @(export)
