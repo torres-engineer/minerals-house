@@ -145,27 +145,27 @@ player_click :: proc(pos: Vector2) {
 	}
 }
 
-// Check if there's a mostly clear path between two points (for deciding when to use A*)
+// Check if there's a clear path between two points using fine-grained sampling
 has_clear_path :: proc(from, to: Vector2) -> bool {
 	diff := to - from
 	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
 
 	// Short distances are always "clear" - let sliding collision handle it
-	if dist < 64 {
+	if dist < 48 {
 		return true
 	}
 
-	// Sample points along the line to check for walls
-	steps := int(dist / 24) // Check every ~24 pixels
-	if steps < 2 {
-		steps = 2
+	// Sample points along the line - check every ~12 pixels for accuracy
+	steps := int(dist / 12)
+	if steps < 3 {
+		steps = 3
 	}
 
-	for i in 1 ..< steps {
+	for i in 1 ..= steps {
 		t := f32(i) / f32(steps)
 		check_pos := from + diff * t
 		if check_collision(check_pos) {
-			return false // Wall in the way
+			return false
 		}
 	}
 
@@ -184,15 +184,17 @@ is_solid :: proc(pos: Vector2) -> bool {
 }
 
 check_collision :: proc(pos: Vector2) -> bool {
-	// Raio horizontal para colisão simples (metade da largura do personagem)
-	// Usamos 20 (largura total 40) para ser menor que o tile (48) e passar nas portas
-	collision_radius :: 20.0
+	// Collision radius - must be smaller than tile (48) so player fits through 1-tile doorways
+	collision_radius_x :: 18.0
+	collision_radius_y :: 14.0
 
-	// Verifica centro, esquerda e direita
+	// Check center and all 4 cardinal edges
 	return(
 		is_solid(pos) ||
-		is_solid(pos + Vector2{-collision_radius, 0}) ||
-		is_solid(pos + Vector2{collision_radius, 0}) \
+		is_solid(pos + Vector2{-collision_radius_x, 0}) ||
+		is_solid(pos + Vector2{ collision_radius_x, 0}) ||
+		is_solid(pos + Vector2{0, -collision_radius_y}) ||
+		is_solid(pos + Vector2{0,  collision_radius_y}) \
 	)
 }
 
@@ -205,7 +207,7 @@ is_tile_walkable :: proc(tx, ty: i32) -> bool {
 }
 
 // A* Pathfinding structures
-MAX_OPEN :: 256
+MAX_OPEN :: 600
 PathNode :: struct {
 	x, y:   i32,
 	g, h:   f32, // g = cost from start, h = heuristic to goal
@@ -278,8 +280,9 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 		parent = -1,
 	}
 
-	// Direction offsets (4-directional for simpler paths)
-	dirs := [4][2]i32{{0, -1}, {1, 0}, {0, 1}, {-1, 0}}
+	// Direction offsets: 4 cardinal + 4 diagonal for smoother paths
+	dirs := [8][2]i32{{0, -1}, {1, 0}, {0, 1}, {-1, 0}, {1, -1}, {1, 1}, {-1, 1}, {-1, -1}}
+	DIAG_COST :: 1.414 // sqrt(2)
 
 	found_goal := false
 	goal_closed_idx: i32 = -1
@@ -315,12 +318,23 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 		}
 
 		// Expand neighbors
-		for dir in dirs {
+		for dir_i in 0 ..< 8 {
+			dir := dirs[dir_i]
 			nx := current.x + dir[0]
 			ny := current.y + dir[1]
 
 			if !is_tile_walkable(nx, ny) {
 				continue
+			}
+
+			// For diagonal moves, ensure both adjacent cardinal tiles are walkable
+			// to prevent cutting through wall corners
+			is_diagonal := dir_i >= 4
+			if is_diagonal {
+				if !is_tile_walkable(current.x + dir[0], current.y) ||
+				   !is_tile_walkable(current.x, current.y + dir[1]) {
+					continue
+				}
 			}
 
 			// Check if in closed
@@ -335,7 +349,8 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 				continue
 			}
 
-			new_g := current.g + 1.0
+			step_cost: f32 = is_diagonal ? DIAG_COST : 1.0
+			new_g := current.g + step_cost
 
 			// Check if in open
 			in_open := false
@@ -458,8 +473,8 @@ step :: proc(delta_time: f64) -> (keep_going: bool) {
 	diff := player.dest - player.pos
 	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
 
-	// Reached current waypoint?
-	if dist < 8.0 {
+	// Reached current waypoint? Use a tighter threshold for precision
+	if dist < 4.0 {
 		player.pos = player.dest
 
 		// Advance to next waypoint if following a path
@@ -512,7 +527,7 @@ step :: proc(delta_time: f64) -> (keep_going: bool) {
 
 	// Stuck detection: if we couldn't move at all, try to advance to next waypoint
 	// or clear the path entirely
-	if !moved && dist > 8.0 {
+	if !moved && dist > 4.0 {
 		if player.path_len > 0 && player.path_index < player.path_len - 1 {
 			// Skip current waypoint and try next
 			player.path_index += 1

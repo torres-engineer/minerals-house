@@ -8,6 +8,8 @@ const WORLD_WORLD_OFFSET = 8;
 const WORLD_WORLD_SIZE_OFFSET = WORLD_WORLD_OFFSET + 4;
 const WORLD_SCALE_OFFSET = 16;
 const WORLD_SPAWN_OFFSET = 20;
+const DATA_VERSION = "20260211-01";
+const SETTINGS_STORAGE_KEY = "minerals-house.settings.v1";
 
 const I18N = window.TRANSLATIONS || window.I18N || { pt: {}, en: {} };
 
@@ -30,6 +32,51 @@ const sounds = {
   correct: { url: "./data/audio/correct.mp3", buffer: null, baseVolume: 0.5, channel: "sfx" },
   wrong: { url: "./data/audio/wrong.mp3", buffer: null, baseVolume: 0.5, channel: "sfx" }
 };
+
+function clamp01(value, fallback = 1) {
+  const num = Number(value);
+  if (!Number.isFinite(num)) return fallback;
+  if (num < 0) return 0;
+  if (num > 1) return 1;
+  return num;
+}
+
+function saveSettings() {
+  try {
+    const payload = {
+      language: currentLanguage,
+      audio: {
+        master: clamp01(audioSettings.master, 1),
+        music: clamp01(audioSettings.music, 1),
+        sfx: clamp01(audioSettings.sfx, 1),
+        muted: Boolean(audioSettings.muted)
+      }
+    };
+    window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    // Ignore persistence errors (privacy mode/storage restrictions).
+  }
+}
+
+function loadSettings() {
+  try {
+    const raw = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object") return;
+
+    currentLanguage = parsed.language === "en" ? "en" : "pt";
+
+    if (parsed.audio && typeof parsed.audio === "object") {
+      audioSettings.master = clamp01(parsed.audio.master, 1);
+      audioSettings.music = clamp01(parsed.audio.music, 1);
+      audioSettings.sfx = clamp01(parsed.audio.sfx, 1);
+      audioSettings.muted = Boolean(parsed.audio.muted);
+    }
+  } catch (error) {
+    // Ignore malformed or unavailable storage.
+  }
+}
 
 const mineralIcons = {
   ferro: "./source/minerals/ferro.png",
@@ -148,9 +195,10 @@ function playSound(name) {
 function updateVolumeReadout(inputId, valueId, targetField) {
   const input = document.getElementById(inputId);
   const value = document.getElementById(valueId);
-  audioSettings[targetField] = Number(input.value) / 100;
+  audioSettings[targetField] = clamp01(Number(input.value) / 100, 1);
   value.textContent = `${input.value}%`;
   applyAudioMix();
+  saveSettings();
 }
 
 function applyStaticTranslations() {
@@ -181,6 +229,12 @@ function applyStaticTranslations() {
     settingsBtn.setAttribute("aria-label", t("settingsOpenAria"));
     settingsBtn.setAttribute("title", t("settingsButton"));
   }
+
+  for (const button of document.querySelectorAll(".lang-btn")) {
+    const lang = button.dataset.lang;
+    if (lang === "pt") button.textContent = t("langPortuguese");
+    else if (lang === "en") button.textContent = t("langEnglish");
+  }
 }
 
 function selectLanguage(language) {
@@ -189,6 +243,7 @@ function selectLanguage(language) {
     button.classList.toggle("active", button.dataset.lang === currentLanguage);
   }
   applyStaticTranslations();
+  saveSettings();
 }
 
 function setupStartMenu() {
@@ -270,6 +325,7 @@ function setupSettingsMenu() {
   document.getElementById("mute-audio").addEventListener("change", (event) => {
     audioSettings.muted = Boolean(event.target.checked);
     applyAudioMix();
+    saveSettings();
   });
 
   restartBtn.addEventListener("click", () => {
@@ -279,9 +335,10 @@ function setupSettingsMenu() {
 }
 
 function getDataPaths(language) {
+  const suffix = `?v=${DATA_VERSION}`;
   return language === "en"
-    ? { items: "./data/items.en.json", appliances: "./data/appliances.en.json" }
-    : { items: "./data/items.json", appliances: "./data/appliances.json" };
+    ? { items: `./data/items.en.json${suffix}`, appliances: `./data/appliances.en.json${suffix}` }
+    : { items: `./data/items.json${suffix}`, appliances: `./data/appliances.json${suffix}` };
 }
 
 async function loadGameData(language) {
@@ -307,7 +364,8 @@ async function initGame(language) {
   window.quizAppliances = appliances;
 
   function getAppliance(name) {
-    return appliances.find((entry) => entry.name === name);
+    const needle = normalizeText(name);
+    return appliances.find((entry) => normalizeText(entry.name) === needle);
   }
 
   function findItemNear(worldX, worldY, maxDist = 60) {
@@ -690,7 +748,7 @@ function generateProgressGems(total, answered) {
 }
 
 function createConfetti(container) {
-  const colors = ["#e17055", "#f39c12", "#d4a754", "#27ae60", "#b87333"];
+  const colors = ["#f0965b", "#e8b730", "#c8894a", "#6dba82", "#8b6f47"];
   for (let i = 0; i < 20; i += 1) {
     const confetti = document.createElement("div");
     confetti.className = "confetti";
@@ -991,10 +1049,23 @@ window.showQuizEvent = showQuizEvent;
 window.showItemDiscovery = showItemDiscovery;
 
 document.addEventListener("DOMContentLoaded", () => {
+  loadSettings();
   setupStartMenu();
   setupSettingsMenu();
+
+  const masterInput = document.getElementById("master-volume");
+  const musicInput = document.getElementById("music-volume");
+  const sfxInput = document.getElementById("sfx-volume");
+  const muteInput = document.getElementById("mute-audio");
+
+  masterInput.value = String(Math.round(clamp01(audioSettings.master, 1) * 100));
+  musicInput.value = String(Math.round(clamp01(audioSettings.music, 1) * 100));
+  sfxInput.value = String(Math.round(clamp01(audioSettings.sfx, 1) * 100));
+  muteInput.checked = Boolean(audioSettings.muted);
+
   selectLanguage(currentLanguage);
   updateVolumeReadout("master-volume", "master-volume-value", "master");
   updateVolumeReadout("music-volume", "music-volume-value", "music");
   updateVolumeReadout("sfx-volume", "sfx-volume-value", "sfx");
+  applyAudioMix();
 });
