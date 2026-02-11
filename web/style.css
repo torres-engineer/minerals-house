@@ -19,6 +19,10 @@ body {
   height: 100vh;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* ========================================
    EARTHY MINING THEME - Color Palette
    ======================================== */
@@ -51,6 +55,198 @@ body {
 
   /* Main Font */
   --font-main: 'Outfit', sans-serif;
+}
+
+/* ========================================
+   START MENU + HUD
+   ======================================== */
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 20% 20%, rgba(212, 167, 84, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 70%, rgba(184, 115, 51, 0.22), transparent 40%),
+    rgba(10, 8, 7, 0.86);
+}
+
+.menu-card {
+  width: min(640px, 92vw);
+  background: linear-gradient(160deg, var(--bg-panel) 0%, #242a2d 100%);
+  border: 4px solid var(--border-dark);
+  border-radius: 14px;
+  color: var(--text-light);
+  padding: 32px;
+  text-align: center;
+  box-shadow:
+    0 0 0 5px var(--accent-copper),
+    0 26px 70px rgba(0, 0, 0, 0.45),
+    inset 0 0 30px rgba(0, 0, 0, 0.35);
+}
+
+.menu-kicker {
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 11px;
+  color: var(--accent-gold);
+  margin-bottom: 12px;
+}
+
+.menu-card h1 {
+  font-size: clamp(30px, 7vw, 48px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0 var(--border-dark);
+}
+
+.menu-subtitle {
+  margin: 14px 0 28px;
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.language-picker p {
+  color: var(--accent-orange);
+  margin-bottom: 12px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.language-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.lang-btn {
+  border: 2px solid var(--border-medium);
+  background: var(--bg-card);
+  color: var(--text-light);
+  border-radius: 8px;
+  padding: 11px 16px;
+  font-family: var(--font-main);
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.lang-btn:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent-copper);
+}
+
+.lang-btn.active {
+  border-color: var(--accent-orange);
+  box-shadow: 0 0 0 2px rgba(243, 156, 18, 0.25);
+  background: linear-gradient(180deg, #4e3d2d 0%, #413427 100%);
+}
+
+.menu-start-btn {
+  margin-top: 24px;
+  width: 100%;
+  border: 3px solid var(--border-dark);
+  border-radius: 10px;
+  background: linear-gradient(180deg, var(--accent-rust) 0%, #c0392b 100%);
+  color: var(--text-light);
+  padding: 16px 18px;
+  font-family: var(--font-main);
+  font-size: 17px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 6px 0 #8b2a1f;
+}
+
+.menu-start-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 #8b2a1f;
+}
+
+.menu-start-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 #8b2a1f;
+}
+
+.settings-button {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 900;
+  border: 3px solid var(--border-dark);
+  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-panel) 100%);
+  color: var(--text-light);
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--border-dark);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.settings-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--border-dark);
+}
+
+.settings-gear-icon {
+  width: 24px;
+  height: 24px;
+  fill: currentColor;
+}
+
+.settings-content {
+  max-width: 520px;
+}
+
+#settings-body {
+  padding: 24px;
+}
+
+.setting-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.setting-row label {
+  grid-column: 1 / span 2;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+.setting-row input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent-orange);
+}
+
+.setting-row span {
+  min-width: 52px;
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+.mute-row {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px dashed var(--border-medium);
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.mute-row label {
+  grid-column: auto;
 }
 
 /* ========================================
@@ -603,6 +799,21 @@ body {
    RESPONSIVE ADJUSTMENTS
    ======================================== */
 @media (max-width: 480px) {
+  .menu-card {
+    padding: 22px 18px;
+  }
+
+  .menu-card h1 {
+    font-size: 30px;
+  }
+
+  .settings-button {
+    top: 10px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+  }
+
   .modal-content {
     width: 95%;
     max-height: 90vh;

@@ -12,12 +12,12 @@
         {
           "name": "Crómio",
           "origin": "África do Sul, Cazaquistão",
-          "use": "Resistências de aquecimento"
+          "use": "Resistências"
         },
         {
           "name": "Níquel",
           "origin": "Indonésia, Filipinas, Rússia",
-          "use": "Revestimento brilhante"
+          "use": "Revestimento"
         }
       ]
     },
@@ -28,7 +28,7 @@
         {
           "name": "Ferro",
           "origin": "Austrália, Brasil, China",
-          "use": "Corpo da torradeira"
+          "use": "Estrutura da torradeira"
         },
         {
           "name": "Mica",
