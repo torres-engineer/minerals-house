@@ -796,6 +796,27 @@ body {
 }
 
 /* ========================================
+   NEXT LEVEL BUTTON
+   ======================================== */
+.quiz-btn.next-level {
+  background: linear-gradient(180deg, var(--success) 0%, #1e8449 100%);
+  box-shadow: 0 4px 0 #196f3d, inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.quiz-btn.next-level:hover {
+  background: linear-gradient(180deg, #2ecc71 0%, var(--success) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 #196f3d, inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+.quiz-btn.next-level:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #196f3d, inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ========================================
    RESPONSIVE ADJUSTMENTS
    ======================================== */
 @media (max-width: 480px) {

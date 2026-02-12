@@ -1,0 +1,145 @@
+{
+    "appliances": [
+        {
+            "name": "Câmara de Filmar",
+            "category": "Escola",
+            "minerals": [
+                {
+                    "name": "Silício",
+                    "origin": "China, Rússia, EUA",
+                    "use": "Sensor de imagem e chips"
+                },
+                {
+                    "name": "Lítio",
+                    "origin": "Austrália, Chile",
+                    "use": "Bateria recarregável"
+                },
+                {
+                    "name": "Vidro (Sílica)",
+                    "origin": "Global",
+                    "use": "Lentes"
+                },
+                {
+                    "name": "Magnésio",
+                    "origin": "China, Rússia",
+                    "use": "Corpo leve e resistente"
+                }
+            ]
+        },
+        {
+            "name": "Extintor",
+            "category": "Segurança",
+            "minerals": [
+                {
+                    "name": "Ferro (Aço)",
+                    "origin": "Austrália, Brasil",
+                    "use": "Cilindro de pressão"
+                },
+                {
+                    "name": "Cobre",
+                    "origin": "Chile, Peru",
+                    "use": "Componentes da válvula (Latão)"
+                },
+                {
+                    "name": "Zinco",
+                    "origin": "China, Peru",
+                    "use": "Componentes da válvula (Latão)"
+                },
+                {
+                    "name": "Alumínio",
+                    "origin": "China, Rússia",
+                    "use": "Bocal e manípulo"
+                }
+            ]
+        },
+        {
+            "name": "Coluna de Som",
+            "category": "Sala de Música",
+            "minerals": [
+                {
+                    "name": "Neodímio",
+                    "origin": "China",
+                    "use": "Ímanes potentes"
+                },
+                {
+                    "name": "Cobre",
+                    "origin": "Chile, EUA",
+                    "use": "Fios da bobina de voz"
+                },
+                {
+                    "name": "Ferro",
+                    "origin": "Austrália, Brasil",
+                    "use": "Estrutura e íman"
+                }
+            ]
+        },
+        {
+            "name": "Globo Terrestre",
+            "category": "Geografia",
+            "minerals": [
+                {
+                    "name": "Alumínio",
+                    "origin": "China, Austrália",
+                    "use": "Suporte e anel meridiano"
+                },
+                {
+                    "name": "Calcite",
+                    "origin": "China, EUA",
+                    "use": "Revestimento de papel"
+                },
+                {
+                    "name": "Pigmentos (Óxido de Ferro)",
+                    "origin": "Inicial",
+                    "use": "Cores do mapa"
+                }
+            ]
+        },
+        {
+            "name": "Quadro Escolar",
+            "category": "Sala de Aula",
+            "minerals": [
+                {
+                    "name": "Ardósia",
+                    "origin": "Espanha, Brasil",
+                    "use": "Superfície de escrita"
+                },
+                {
+                    "name": "Gesso (Gipsita)",
+                    "origin": "EUA, China",
+                    "use": "Giz"
+                },
+                {
+                    "name": "Alumínio",
+                    "origin": "China, Rússia",
+                    "use": "Tabuleiro da estrutura"
+                }
+            ]
+        },
+        {
+            "name": "Guitarra Elétrica",
+            "category": "Sala de Música",
+            "minerals": [
+                {
+                    "name": "Níquel",
+                    "origin": "Indonésia, Filipinas",
+                    "use": "Cordas e trastes"
+                },
+                {
+                    "name": "Cobre",
+                    "origin": "Chile, Peru",
+                    "use": "Bobinas de captação e cablagem"
+                },
+                {
+                    "name": "Prata",
+                    "origin": "México, Peru",
+                    "use": "Fio dos trastes"
+                },
+                {
+                    "name": "Crómio",
+                    "origin": "África do Sul",
+                    "use": "Revestimento metálico"
+                }
+            ]
+        }
+    ]
+}

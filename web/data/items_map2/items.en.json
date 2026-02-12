@@ -1,0 +1,46 @@
+{
+    "items": [
+        {
+            "id": "camera",
+            "appliance": "Filming Camera",
+            "x": 980,
+            "y": 864,
+            "radius": 35
+        },
+        {
+            "id": "extinguisher",
+            "appliance": "Fire Extinguisher",
+            "x": 508,
+            "y": 1008,
+            "radius": 30
+        },
+        {
+            "id": "speaker",
+            "appliance": "Big Speaker",
+            "x": 75,
+            "y": 220,
+            "radius": 45
+        },
+        {
+            "id": "globe",
+            "appliance": "Map Globe",
+            "x": 1120,
+            "y": 90,
+            "radius": 40
+        },
+        {
+            "id": "blackboard",
+            "appliance": "Blackboard",
+            "x": 912,
+            "y": 110,
+            "radius": 50
+        },
+        {
+            "id": "guitar",
+            "appliance": "Electric Guitar",
+            "x": 985,
+            "y": 1270,
+            "radius": 40
+        }
+    ]
+}

@@ -12,6 +12,8 @@ const WORLD_SPAWN_OFFSET = 20;
 const I18N = window.TRANSLATIONS || window.I18N || { pt: {}, en: {} };
 
 let currentLanguage = "pt";
+let currentLevel = 1;
+const MAX_LEVELS = 2; // We currently have 2 levels
 let gameStarted = false;
 let gameBooting = false;
 
@@ -53,6 +55,27 @@ const mineralIcons = {
   neodymium: "./source/minerals/neodimio.png",
   "terras raras": "./source/minerals/terrasRaras.png",
   "rare earth elements": "./source/minerals/terrasRaras.png",
+
+  // New Map 2 Minerals
+  magnesio: "./source/minerals/magnesio.png",
+  magnesium: "./source/minerals/magnesio.png",
+  calcite: "./source/minerals/calcite.png",
+  pigmentos: "./source/minerals/pigmentos.png",
+  pigments: "./source/minerals/pigmentos.png",
+  "pigmentos (oxido de ferro)": "./source/minerals/pigmentos.png",
+  "pigments (iron oxide)": "./source/minerals/pigmentos.png",
+  ardosia: "./source/minerals/ardosia.png",
+  slate: "./source/minerals/ardosia.png",
+  "gesso (gipsita)": "./source/minerals/gesso.png",
+  gypsum: "./source/minerals/gesso.png",
+  "vidro (silica)": "./source/minerals/vidro.png",
+  "glass (silica)": "./source/minerals/vidro.png",
+  aluminio: "./source/minerals/aluminio.png",
+  aluminum: "./source/minerals/aluminio.png",
+  "ferro (aco)": "./source/minerals/ferro.png",
+  "iron (steel)": "./source/minerals/ferro.png",
+  prata: "./source/minerals/prata.png",
+  silver: "./source/minerals/prata.png",
   default: "./source/minerals/generic.png"
 };
 
@@ -278,14 +301,25 @@ function setupSettingsMenu() {
   });
 }
 
-function getDataPaths(language) {
-  return language === "en"
-    ? { items: "./data/items.en.json", appliances: "./data/appliances.en.json" }
-    : { items: "./data/items.json", appliances: "./data/appliances.json" };
+function getDataPaths(language, level) {
+  const folderName = `items_map${level}`;
+  const langSuffix = language === "en" ? ".en" : "";
+
+  // Structure:
+  // web/data/items_map1/items.json
+  // web/data/items_map1/items.en.json
+
+  const baseItems = `./data/${folderName}/items${langSuffix}.json`;
+  const baseAppliances = `./data/${folderName}/appliances${langSuffix}.json`;
+
+  return {
+    items: baseItems,
+    appliances: baseAppliances
+  };
 }
 
-async function loadGameData(language) {
-  const paths = getDataPaths(language);
+async function loadGameData(language, level) {
+  const paths = getDataPaths(language, level);
   try {
     const [itemsData, appliancesData] = await Promise.all([
       fetch(paths.items).then((r) => r.json()),
@@ -293,17 +327,17 @@ async function loadGameData(language) {
     ]);
     return { items: itemsData.items || [], appliances: appliancesData.appliances || [] };
   } catch (error) {
-    if (language !== "pt") return loadGameData("pt");
+    if (language !== "pt") return loadGameData("pt", level);
     throw error;
   }
 }
-async function initGame(language) {
+async function initGame(language, level = 1) {
   const mem = new odin.WasmMemoryInterface();
   const log = document.getElementById("console");
   await odin.runWasm("index.wasm", log, null, mem);
   const exports = mem.exports;
 
-  const { items, appliances } = await loadGameData(language);
+  const { items, appliances } = await loadGameData(language, level);
   window.quizAppliances = appliances;
 
   function getAppliance(name) {
@@ -331,10 +365,12 @@ async function initGame(language) {
 
   playerImg.src = "./source/pixil-frame-2Frame.png";
   stationaryImg.src = "./source/pixil-frame-stationary.png";
-  floorImg.src = "./source/layers/chao.png";
-  wallsImg.src = "./source/layers/paredes.png";
-  objectsImg.src = "./source/layers/objetos.png";
-  itemsImg.src = "./source/layers/items.png";
+
+  const layerFolder = `layers_mapa${level}`;
+  floorImg.src = `./source/layers/${layerFolder}/chao.png`;
+  wallsImg.src = `./source/layers/${layerFolder}/paredes.png`;
+  objectsImg.src = `./source/layers/${layerFolder}/objetos.png`;
+  itemsImg.src = `./source/layers/${layerFolder}/items.png`;
 
   const frameW = 48;
   const frameH = 48;
@@ -350,7 +386,7 @@ async function initGame(language) {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  exports.init(canvas.width, canvas.height);
+  exports.init(canvas.width, canvas.height, level);
   const state = exports.getState();
   const worldPtr = exports.getWorld();
 
@@ -404,12 +440,13 @@ async function initGame(language) {
       const exitPos = exports.get_exit_pos();
       const exitX = mem.loadF32(exitPos);
       const exitY = mem.loadF32(exitPos + 4);
-      // Check if click is within the exit rectangle (2 blocks wide, 1 block high)
-      // The exit position is the center of the left block.
-      // Bounds: x from exitX - 24 to exitX + 72 (width 96)
-      //         y from exitY - 24 to exitY + 24 (height 48)
+      // Check if click is within the exit rectangle
+      // Level 1: 2 blocks wide. Level 2: 3 blocks wide.
+      const exitBlocks = currentLevel === 2 ? 3 : 2;
+      const exitWidth = exitBlocks * 48;
+
       const isClickOnExit = (
-        worldX >= exitX - 24 && worldX <= exitX + 72 &&
+        worldX >= exitX - 24 && worldX <= exitX - 24 + exitWidth &&
         worldY >= exitY - 24 && worldY <= exitY + 24
       );
 
@@ -660,8 +697,11 @@ async function initGame(language) {
     const exitPulseFactor = (Math.sin(exitPulseTime * 2) + 1) / 2;
     const exitPulseAlpha = 0.15 + exitPulseFactor * 0.25;
 
+    const exitBlocks = currentLevel === 2 ? 3 : 2;
+    const exitWidth = exitBlocks * 48;
+
     const isHoveringExit = (
-      worldMouseX >= exitX - 24 && worldMouseX <= exitX + 72 &&
+      worldMouseX >= exitX - 24 && worldMouseX <= exitX - 24 + exitWidth &&
       worldMouseY >= exitY - 24 && worldMouseY <= exitY + 24
     );
 
@@ -680,7 +720,7 @@ async function initGame(language) {
       ctx.shadowBlur = 10;
     }
 
-    ctx.fillRect(exitScreenX - exitSize / 2, exitScreenY - exitSize / 2, exitSize * 2, exitSize);
+    ctx.fillRect(exitScreenX - exitSize / 2, exitScreenY - exitSize / 2, exitBlocks * exitSize, exitSize);
     ctx.restore();
 
     requestAnimationFrame(render);
@@ -867,6 +907,7 @@ function nextQuestion() {
 }
 
 function showQuizResults() {
+  const modal = document.getElementById("item-modal");
   const modalBody = document.getElementById("modal-body");
   const percentage = Math.round((score / quizQuestions.length) * 100);
 
@@ -885,7 +926,9 @@ function showQuizResults() {
     message = t("keepMsg");
   }
 
-  modalBody.innerHTML = `
+  const passed = percentage >= 50;
+
+  let resultHTML = `
     <h2>${t("missionComplete")}</h2>
     <div style="text-align: center; padding: 20px;">
       <p class="quiz-final-score">${score} / ${quizQuestions.length}</p>
@@ -894,12 +937,21 @@ function showQuizResults() {
       <p style="margin-top: 16px;">${message}</p>
     </div>
     <div class="quiz-buttons">
+  `;
+
+  if (passed && currentLevel < MAX_LEVELS) {
+    resultHTML += `<button onclick="playSound('click'); loadNextLevel()" class="quiz-btn next-level">${t("nextLevel") || "Next Level"}</button>`;
+  }
+
+  resultHTML += `
       <button onclick="playSound('click'); startQuiz()" class="quiz-btn">${t("playAgain")}</button>
       <button onclick="playSound('click'); closeModal()" class="quiz-btn secondary">${t("close")}</button>
     </div>
   `;
 
-  if (percentage >= 70) {
+  modalBody.innerHTML = resultHTML;
+
+  if (passed) {
     const container = document.createElement("div");
     container.className = "confetti-container";
     modalBody.appendChild(container);
@@ -907,6 +959,27 @@ function showQuizResults() {
     playSound("collect");
   }
 }
+
+window.loadNextLevel = async function () {
+  const modal = document.getElementById("item-modal");
+  modal.classList.add("hidden");
+
+  currentLevel++;
+  gameStarted = false;
+
+  document.getElementById("start-menu").classList.remove("hidden");
+
+  // Reload the game with the new level
+  try {
+    await initGame(currentLanguage, currentLevel);
+    gameStarted = true;
+    document.getElementById("start-menu").classList.add("hidden");
+  } catch (e) {
+    console.error(e);
+    // Fallback to reload if something breaks
+    window.location.reload();
+  }
+};
 
 function showItemDiscovery(info) {
   const modal = document.getElementById("item-modal");

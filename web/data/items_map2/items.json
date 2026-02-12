@@ -1,0 +1,46 @@
+{
+    "items": [
+        {
+            "id": "camera",
+            "appliance": "Câmara de Filmar",
+            "x": 980,
+            "y": 864,
+            "radius": 35
+        },
+        {
+            "id": "extinguisher",
+            "appliance": "Extintor",
+            "x": 508,
+            "y": 1008,
+            "radius": 30
+        },
+        {
+            "id": "speaker",
+            "appliance": "Coluna de Som",
+            "x": 75,
+            "y": 220,
+            "radius": 45
+        },
+        {
+            "id": "globe",
+            "appliance": "Globo Terrestre",
+            "x": 1120,
+            "y": 90,
+            "radius": 40
+        },
+        {
+            "id": "blackboard",
+            "appliance": "Quadro Escolar",
+            "x": 912,
+            "y": 110,
+            "radius": 50
+        },
+        {
+            "id": "guitar",
+            "appliance": "Guitarra Elétrica",
+            "x": 985,
+            "y": 1270,
+            "radius": 40
+        }
+    ]
+}

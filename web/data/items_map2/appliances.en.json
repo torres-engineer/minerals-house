@@ -1,0 +1,145 @@
+{
+    "appliances": [
+        {
+            "name": "Filming Camera",
+            "category": "School",
+            "minerals": [
+                {
+                    "name": "Silicon",
+                    "origin": "China, Russia, USA",
+                    "use": "Image sensor and chips"
+                },
+                {
+                    "name": "Lithium",
+                    "origin": "Australia, Chile",
+                    "use": "Rechargeable battery"
+                },
+                {
+                    "name": "Glass (Silica)",
+                    "origin": "Global",
+                    "use": "Lenses"
+                },
+                {
+                    "name": "Magnesium",
+                    "origin": "China, Russia",
+                    "use": "Lightweight body casing"
+                }
+            ]
+        },
+        {
+            "name": "Fire Extinguisher",
+            "category": "Safety",
+            "minerals": [
+                {
+                    "name": "Iron (Steel)",
+                    "origin": "Australia, Brazil",
+                    "use": "Pressure cylinder"
+                },
+                {
+                    "name": "Copper",
+                    "origin": "Chile, Peru",
+                    "use": "Valve components (Brass)"
+                },
+                {
+                    "name": "Zinc",
+                    "origin": "China, Peru",
+                    "use": "Valve components (Brass)"
+                },
+                {
+                    "name": "Aluminum",
+                    "origin": "China, Russia",
+                    "use": "Nozzle and handle"
+                }
+            ]
+        },
+        {
+            "name": "Big Speaker",
+            "category": "Music Room",
+            "minerals": [
+                {
+                    "name": "Neodymium",
+                    "origin": "China",
+                    "use": "Powerful magnets"
+                },
+                {
+                    "name": "Copper",
+                    "origin": "Chile, USA",
+                    "use": "Voice coil wiring"
+                },
+                {
+                    "name": "Iron",
+                    "origin": "Australia, Brazil",
+                    "use": "Frame and magnet structure"
+                }
+            ]
+        },
+        {
+            "name": "Map Globe",
+            "category": "Geography",
+            "minerals": [
+                {
+                    "name": "Aluminum",
+                    "origin": "China, Australia",
+                    "use": "Stand and meridian ring"
+                },
+                {
+                    "name": "Calcite",
+                    "origin": "China, USA",
+                    "use": "Paper filler and coating"
+                },
+                {
+                    "name": "Pigments (Iron Oxide)",
+                    "origin": "Initial",
+                    "use": "Map colors"
+                }
+            ]
+        },
+        {
+            "name": "Blackboard",
+            "category": "Classroom",
+            "minerals": [
+                {
+                    "name": "Slate",
+                    "origin": "Spain, Brazil",
+                    "use": "Writing surface"
+                },
+                {
+                    "name": "Gypsum",
+                    "origin": "USA, China",
+                    "use": "Chalk (Calcite/Gypsum)"
+                },
+                {
+                    "name": "Aluminum",
+                    "origin": "China, Russia",
+                    "use": "Frame tray"
+                }
+            ]
+        },
+        {
+            "name": "Electric Guitar",
+            "category": "Music Room",
+            "minerals": [
+                {
+                    "name": "Nickel",
+                    "origin": "Indonesia, Philippines",
+                    "use": "Strings and frets"
+                },
+                {
+                    "name": "Copper",
+                    "origin": "Chile, Peru",
+                    "use": "Pickup coils and wiring"
+                },
+                {
+                    "name": "Silver",
+                    "origin": "Mexico, Peru",
+                    "use": "Fret wire"
+                },
+                {
+                    "name": "Chromium",
+                    "origin": "South Africa",
+                    "use": "Hardware plating"
+                }
+            ]
+        }
+    ]
+}

@@ -27,7 +27,7 @@ main :: proc() {
 }
 
 init :: proc() {
-	main.init(u32(rl.GetScreenWidth()), u32(rl.GetScreenHeight()))
+	main.init(u32(rl.GetScreenWidth()), u32(rl.GetScreenHeight()), 2)
 	state = main.getState()
 
 	camera = rl.Camera2D {

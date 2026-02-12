@@ -40,39 +40,49 @@ World :: struct {
 	spawn:         Vector2,
 	exit:          Vector2,
 }
-world_width :: 30
-world_height :: 20
+// Max possible map size
+MAX_TILES :: 4096
 
-/*world_map := [world_width * world_height]u32 {
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,
-	0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,
-	0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,
-	0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,
-	0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,
-	0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,1,1,1,1,1,1,0,0,
-	0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,1,1,1,1,1,1,0,0,
-	0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,1,1,1,1,1,1,0,0,
-	0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
-	0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,
-	0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,
-	0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,1,1,1,1,1,1,1,1,0,
-	0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,1,1,1,1,1,1,1,1,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-}*/
 
-MAP_RAW :: #load("world1.txt", string)
+MAP1_RAW :: #load("world1.txt", string)
+MAP2_RAW :: #load("world2.txt", string)
 
-world_map: [world_width * world_height]u32
+world_map: [MAX_TILES]u32
 
-init_map :: proc() {
+
+world := World {
+	width  = 30, // Default, will be overwritten in init_map
+	height = 20, // Default, will be overwritten in init_map
+	world  = world_map[:],
+	scale  = 48,
+	spawn  = Vector2{18, 18},
+	exit   = Vector2{18, 19} * 48 + 24,
+}
+
+init_map :: proc(level_id: i32) {
+	map_data := MAP1_RAW
+	w: u32 = 30
+	h: u32 = 20
+	// Default Spawn/Exit for Level 1
+	spawn_pos := Vector2{18, 18}
+	exit_pos := Vector2{18, 19}
+
+	if level_id == 2 {
+		map_data = MAP2_RAW
+		w = 25
+		h = 30
+		// Default Spawn/Exit for Level 2 (Placeholder)
+		spawn_pos = Vector2{12, 28}
+		exit_pos = Vector2{11, 3}
+	}
+
+	world.width = w
+	world.height = h
+	world.spawn = spawn_pos
+	world.exit = exit_pos * f32(world.scale) + f32(world.scale / 2) // Centered
+
 	cursor := 0
-	for char in MAP_RAW {
+	for char in map_data {
 		// Skip newlines or spaces
 		if char == '0' {
 			world_map[cursor] = 0
@@ -81,17 +91,12 @@ init_map :: proc() {
 			world_map[cursor] = 1
 			cursor += 1
 		}
+		if cursor >= MAX_TILES {
+			break
+		}
 	}
 }
 
-world := World {
-	width  = world_width,
-	height = world_height,
-	world  = world_map[:],
-	scale  = 48,
-	spawn  = Vector2{18, 18},
-	exit   = Vector2{18, 19} * 48 + 24, // Exit at tile (18,19), centered
-}
 
 @(export)
 getWorld :: proc() -> ^World {
@@ -104,13 +109,14 @@ get_exit_pos :: proc() -> ^Vector2 {
 }
 
 @(export)
-init :: proc(screen_width, screen_height: u32) {
+init :: proc(screen_width, screen_height: u32, level_id: i32) {
+	init_map(level_id)
 	state.player = Player {
 		pos   = world.spawn * f32(world.scale) + f32(world.scale / 2),
 		dest  = world.spawn * f32(world.scale) + f32(world.scale / 2),
 		speed = 120,
 	}
-	init_map()
+	state.found_items_count = 0
 }
 
 @(export)
