@@ -24,7 +24,7 @@ energia. Mas é que estão presentes em todo o lado mesmo:
   \item Se estás a ler isto através de um aparelho eletrónico,
     esquece, desde o cobre e ouro dos cabos elétricos até ao
     silício dos microchips;
-  \item mas mesmo lendo numa folha de papel, é capaz dessa folha
+  \item Mas mesmo lendo numa folha de papel, é capaz dessa folha
     ter vestígios de cádmio, cobalto e titânio.
 \end{itemize}
 
@@ -73,26 +73,11 @@ servirão como um incentivo opcional (conforme detalhado na secção
 \subsection{Para quem é o jogo?}
 \label{sec:forwho}
 
-O jogo têm como alvo principal as crianças e jovens, e serviria de
-apoio para o que eles estão a aprender nas aulas de Estudo de Meio
-e Ciências Naturais (no contexto de Portugal). Mas a verdade é que
-todos merecem aprender, por isso precisamos de pensar em fazer um
-jogo para todas as faixas etárias. Desde que tenha o interesse em
-adquirir conhecimento acerca dos minerais.
+O público-alvo principal são crianças e jovens, servindo como ferramenta de apoio às disciplinas de Estudo do Meio e Ciências Naturais (no contexto curricular português). No entanto, o design visual e a mecânica de exploração foram pensados para serem apelativos a qualquer faixa etária, desde que exista curiosidade em compreender a origem geológica dos objetos do nosso quotidiano. O jogo procura, assim, ser uma experiência transversal, capaz de captar o interesse tanto de alunos como de adultos.
 
-Mas esta inclusão não pode parar na idade. Existem pessoas com
-limitações a nível físico (controlo, mobilidade), cognitivo
-(pensamento, memória, processamento de informação), sensorial,
-visão, audição e/ou fala, e elas também merecem de ter o direito à
-sabedoria (e à diversão de jogar).
+Idealmente, o acesso ao conhecimento deve ser universal, independentemente de limitações físicas, cognitivas ou sensoriais. Reconhecemos que a verdadeira inclusão exige cuidados específicos, como o suporte a navegação por teclado, compatibilidade com leitores de ecrã e ajustes de contraste ou tipografia. Contudo, devido ao âmbito temporal e académico deste projeto, o protótipo atual foca-se na implementação das mecânicas base e na validação do conceito pedagógico, estando a interação limitada ao uso do rato e à interface visual padrão.
 
-O que pode parecer trabalhoso ter de se preocupar com todos na
-realidade pode ser algo bem simples de alcançar, por exemplo,
-escolhendo a tipografia correta, baseado no contraste da cor de
-letra, do tamanho de letra, e no tipo de letra. Especialmente no
-ambiente de navegadores web, estes estão muito preparados para
-serem úteis e utilizáveis por todos, basta aos programadores
-fazerem o seu trabalho corretamente.
+Desta forma, embora a versão atual esteja funcional para o público geral, a implementação plena de normas de acessibilidade (WCAG) permanece como uma prioridade identificada para iterações futuras, de modo a cumprir a visão de um jogo efetivamente para todos.
 
 \subsection{Aprendizagem por descoberta e contextualização}
 %Como “ancorar” conceitos abstratos (minerais) em exemplos concretos (objetos em casa/escola). Dá base teórica para o vosso design de cenário
@@ -156,7 +141,7 @@ e apresentação de informação, como:
   nomes dos minerais, e forma de escrita ao longo do jogo, para evitar confusão no utilizador.
 
   \item Estrutura uniforme do conteúdo: manter um formato semelhante nas descrições (ex.: mineral associado,
-  uso no objeto e nota curta), facilitando a leitura e a comparação entre objetos.
+  uso no objeto e país de origem), facilitando a leitura e a comparação entre objetos.
 
   \item Linguagem adequada ao público-alvo: textos claros e diretos, com o mínimo de palavreado técnico,
   para garantir compreensão por crianças e jovens, sem perder rigor.
@@ -165,12 +150,7 @@ e apresentação de informação, como:
 
 \section{Metodologia}
 
-Para a implementação, o projeto baseia-se em tecnologias de
-multiplataforma, tirando partido da linguagem de programação Odin.
-Para a parte gráfica escolhemos a Raylib, integrada com Odin. Esta
-combinação permite criar gráficos 2D interativos com desempenho
-nativo e exportação para WebAssembly (WASM), garantindo execução
-fluida diretamente no navegador.
+Para a implementação, o projeto baseia-se em tecnologias de multiplataforma, tirando partido da linguagem de programação Odin. Para a parte gráfica escolhemos a Raylib, integrada com Odin. Esta combinação permite criar gráficos 2D interativos com desempenho nativo e exportação para WebAssembly (WASM). A visualização final no navegador é assegurada pela integração deste módulo WASM com tecnologias web padrão (HTML5, CSS3 e JavaScript), garantindo compatibilidade e acesso universal.
 
 \subsection{Identificação dos minerais usados no quotidiano}
 
@@ -371,13 +351,6 @@ Por esse motivo, optou-se por adquirir um conjunto de assets estruturados,
 garantindo compatibilidade com o formato do mapa, consistência visual e uma 
 experiência mais polida.
 
-Outra decisão importante foi manter o fluxo de interação simples e repetível. 
-O utilizador pode regressar ao mapa após o questionário para rever objetos já 
-descobertos ou encontrar novos, permitindo aprendizagem progressiva sem impor 
-uma sequência rígida. Por fim, ao estruturar os dados de conteúdo (objetos, 
-minerais, origem e utilização) de forma consistente, o projeto facilita a 
-manutenção e a expansão para novos cenários, como a introdução de um nível 
-centrado numa escola.
 % todo meter melhores imagens com tamanhos parecidos para nao ficar aquele bloco 
 \begin{figure}[H]
   \centering
@@ -392,7 +365,7 @@ centrado numa escola.
   \hfill
   \begin{subfigure}[t]{0.38\textwidth}
     \centering
-    \includegraphics[width=\textwidth]{figuras/paid_assets.jpeg}
+    \includegraphics[width=\textwidth]{figuras/paid_assets.png}
     \caption{Tileset estruturado: elementos organizados e dimensionados, 
     facilitando integração, consistência visual e reutilização no cenário.}
     \label{fig:tileset-estruturado}
@@ -407,6 +380,45 @@ centrado numa escola.
 A Figura~\ref{fig:comparacao-gemini-tileset} ilustra que a principal limitação 
 não foi estética, mas sim técnica: o projeto exigia assets reutilizáveis em 
 tilesets com dimensões uniformes (32$\times$32\,px) para montagem eficiente do mapa.
+
+Em contrapartida, a utilização de IA (Gemini) revelou-se bastante útil para a criação de elementos individuais, nomeadamente as representações em \textit{pixel art} dos próprios minerais. Ao contrário dos \textit{tilesets} de mapa que exigem encaixe perfeito, as imagens isoladas foram geradas com qualidade satisfatória, necessitando apenas de pequenas correções pontuais (como limpeza de fundo ou ajustes de detalhes) realizadas em software de edição de imagem como o Photopea ou Photoshop.
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[t]{0.3\textwidth}
+    \centering
+    \frame{\includegraphics[width=0.6\textwidth]{figuras/mineral_ouro.png}}
+    \caption{Ouro}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.3\textwidth}
+    \centering
+    \frame{\includegraphics[width=0.6\textwidth]{figuras/mineral_litio.png}}
+    \caption{Lítio}
+  \end{subfigure}
+  \hfill
+  \begin{subfigure}[t]{0.3\textwidth}
+    \centering
+   \frame{ \includegraphics[width=0.6\textwidth]{figuras/mineral_cobre.png}}
+    \caption{Cobre}
+  \end{subfigure}
+  \caption{Exemplos de \textit{pixel art} de minerais gerados por IA (Gemini) e refinados manualmente.}
+  \label{fig:minerais-ia}
+\end{figure}
+
+Para obter estes resultados, foi necessário especificar características detalhadas no \textit{prompt} (instrução dada à IA), como o estilo visual, a perspetiva isométrica e a paleta de cores. Um exemplo do \textit{prompt} utilizado para gerar o ícone de ``Terras Raras'' foi:
+
+\begin{quote}
+``Terras Raras Pixel art icon of rare earth minerals, 32x32 pixels, multicolored iridescent crystalline rock cluster with rainbow shimmer effect (mix of green, blue, purple, pink hues), dark outlines, simple geometric facets showing 3D depth, clean retro RPG game item style matching these references, transparent background, isometric 3/4 view, magical glowing appearance''
+\end{quote}
+
+Outra decisão importante foi manter o fluxo de interação simples e repetível. 
+O utilizador pode regressar ao mapa após o questionário para rever objetos já 
+descobertos ou encontrar novos, permitindo aprendizagem progressiva sem impor 
+uma sequência rígida. Por fim, ao estruturar os dados de conteúdo (objetos, 
+minerais, origem e utilização) de forma consistente, o projeto facilita a 
+manutenção e a expansão para novos cenários, como a introdução de um nível 
+centrado numa escola.
 
 \subsection{Conceito, regras e âmbito do jogo}
 
