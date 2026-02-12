@@ -3,14 +3,53 @@
 
 \section{Enquadramento teórico}
 
-\subsection{``Estado da arte''}
+\subsection{Estado da arte}
 
-«Inspirado por jogos educativos como \textcite{briefcasegame},
-[...] o objetivo é aumentar a literacia sobre recursos
-geológicos, demonstrando de forma lúdica e visual a ligação direta
-entre a geologia e a nossa vida diária.»
+A utilização de jogos digitais no ensino das geociências tem crescido, procurando tornar conteúdos tradicionalmente áridos em experiências interativas. De modo a posicionar o \textit{Casa dos Minerais}, analisaram-se outros recursos educativos existentes, identificando as suas valências e lacunas.
 
-% O nosso toque pessoal, point click tipo Club Penguin...
+Comparativamente ao \textcite{briefcasegame}, o \textit{Casa dos Minerais} aposta numa abordagem mais exploratória. Enquanto o \textit{BriefCase} foca na associação imediata objeto-mineral, o nosso projeto privilegia a contextualização espacial (o objeto no seu ``habitat'') antes da validação.
+Relativamente ao \textcite{min4kids-minerals-house}, que funciona mais como uma enciclopédia interativa, o nosso jogo introduz um ciclo de \textit{gameplay} com desafios (quizzes) para testar a retenção.
+Por fim, ao contrário dos exercícios isolados do \textcite{wordwall-rochas-minerais}, oferecemos um cenário persistente e contínuo.
+
+Em síntese, o \textit{Casa dos Minerais} distingue-se por juntar a exploração livre à validação estruturada, conforme detalhado na Tabela~\ref{tab:comparacao-jogos}.
+
+\begin{longtable}{p{3.0cm} p{3.5cm} p{4.0cm} p{3.5cm}}
+\caption{Comparação entre recursos/jogos educativos sobre minerais.} \label{tab:comparacao-jogos} \\
+\hline
+\textbf{Recurso} & \textbf{Tipo de interação} & \textbf{Contexto (cenário)} & \textbf{Avaliação} \\
+\hline
+\endfirsthead
+\multicolumn{4}{c}%
+{\tablename\ \thetable\ -- \textit{Continuação da página anterior}} \\
+\hline
+\textbf{Recurso} & \textbf{Tipo de interação} & \textbf{Contexto (cenário)} & \textbf{Avaliação} \\
+\hline
+\endhead
+\hline \multicolumn{4}{r}{\textit{Continua na próxima página}} \\
+\endfoot
+\hline
+\endlastfoot
+
+\textcite{briefcasegame} 
+& Associação direta objeto--mineral 
+& Pouco contexto espacial; foco na correspondência 
+& Feedback imediato da associação \\
+
+\textcite{min4kids-minerals-house} 
+& Consulta/informação 
+& Conteúdo mais informacional 
+& Sem validação estruturada \\
+
+\textcite{wordwall-rochas-minerais} 
+& Mini-jogos simples 
+& Contexto reduzido; tarefas isoladas 
+& Feedback rápido por exercício \\
+
+\textit{Casa dos Minerais} 
+& Exploração \textit{point-and-click} + Quiz 
+& Cenários familiares (casa/escola) 
+& Quiz curto para reforço e desbloqueio de nível \\
+\end{longtable}
 
 \subsection{Os minerais}
 \label{sec:minerals}
@@ -55,273 +94,80 @@ material estar disponível.
 
 \subsection{Gamificação na pedagogia}
 
-A ``Casa dos Minerais'' utilizará elementos de gamificação para
-estruturar a aprendizagem, como a progressão por diferentes níveis
-e a inclusão de minijogos, por exemplo, um questionário no final de
-cada nível.
+A ``Casa dos Minerais'' utiliza elementos de gamificação para
+estruturar a aprendizagem e aumentar a motivação. A principal mecânica implementada é a inclusão de um \textbf{questionário no final de cada nível} (ver detalhes de implementação na Secção~\ref{sec:questions}).
 
-No entanto, a abordagem pedagógica deste projeto foca-se em usar a
-brincadeira como uma forma de descoberta e reflexão. O objetivo
-principal não é criar um sistema de avaliação rigoroso; o foco é a
-alegria de aprender. A aprendizagem é mais importante do que uma
-pontuação final ou a rapidez com que se termina o jogo.
+Este questionário atua como um ``guardião'' ou \textit{boss fight} educativa: o jogador explora livremente para adquirir conhecimento e, no final, deve demonstrar o que aprendeu para desbloquear o próximo estágio. Esta abordagem cria um ciclo de recompensa intrínseco, onde o conhecimento é a chave para a progressão.
 
-Desta forma, elementos como a pontuação ou um temporizador,
-servirão como um incentivo opcional (conforme detalhado na secção
-\ref{sec:future}) e não como o foco central da experiência.
+No entanto, a abordagem pedagógica foca-se em usar a
+brincadeira como uma forma de descoberta. O objetivo
+principal não é criar um sistema de avaliação punitivo, mas sim
+celebrar a aprendizagem. Elementos mais competitivos, como pontuações ou temporizadores, foram considerados opcionais para futuras iterações (\ref{sec:future}), para não desvirtuar o ambiente exploratório inicial.
 
 \subsection{Para quem é o jogo?}
 \label{sec:forwho}
 
-O público-alvo principal são crianças e jovens, servindo como ferramenta de apoio às disciplinas de Estudo do Meio e Ciências Naturais (no contexto curricular português). No entanto, o design visual e a mecânica de exploração foram pensados para serem apelativos a qualquer faixa etária, desde que exista curiosidade em compreender a origem geológica dos objetos do nosso quotidiano. O jogo procura, assim, ser uma experiência transversal, capaz de captar o interesse tanto de alunos como de adultos.
+O público-alvo principal são crianças e jovens, servindo como ferramenta de apoio às disciplinas de Estudo do Meio e Ciências Naturais. No entanto, o design visual e a mecânica de exploração foram pensados para serem apelativos a qualquer faixa etária.
 
-Idealmente, o acesso ao conhecimento deve ser universal, independentemente de limitações físicas, cognitivas ou sensoriais. Reconhecemos que a verdadeira inclusão exige cuidados específicos, como o suporte a navegação por teclado, compatibilidade com leitores de ecrã e ajustes de contraste ou tipografia. Contudo, devido ao âmbito temporal e académico deste projeto, o protótipo atual foca-se na implementação das mecânicas base e na validação do conceito pedagógico, estando a interação limitada ao uso do rato e à interface visual padrão.
-
-Desta forma, embora a versão atual esteja funcional para o público geral, a implementação plena de normas de acessibilidade (WCAG) permanece como uma prioridade identificada para iterações futuras, de modo a cumprir a visão de um jogo efetivamente para todos.
+Idealmente, o acesso deve ser universal. Para promover a inclusão de utilizadores com dificuldades de leitura, como a dislexia, optou-se pela utilização de \textbf{tipografia sem serifa (sans-serif)} com espaçamento generoso e bom contraste, seguindo recomendações de acessibilidade web. Embora o protótipo atual ainda não suporte navegação total por teclado ou leitores de ecrã (como referido na Secção~\ref{sec:limitacoes}), estas escolhas visuais de base formam um alicerce sólido para uma futura acessibilidade plena.
 
 \subsection{Aprendizagem por descoberta e contextualização}
-%Como “ancorar” conceitos abstratos (minerais) em exemplos concretos (objetos em casa/escola). Dá base teórica para o vosso design de cenário
-A aprendizagem por descoberta baseia-se na ideia de que o aluno compreende 
-melhor quando participa ativamente no processo, explorando, 
-pensando por ele mesmo e construindo ligações por iniciativa própria. 
-Em vez de receber a informação de forma expositiva, 
-o utilizador é colocado num ambiente interativo onde a curiosidade 
-e a exploração conduzem naturalmente à aprendizagem.
 
-No caso do Casa dos Minerais, 
-esta abordagem é reforçada pela contextualização: conceitos abstratos como “mineral”, 
-“recurso” ou “matéria-prima” são ancorados em exemplos 
-concretos e familiares, como objetos existentes numa casa ou numa escola. 
-Ao interagir com esses objetos, o jogador passa a associar materiais 
-e tecnologias do quotidiano à sua origem geológica, 
-tornando o conteúdo mais acessível e memorável. 
-Esta ligação direta entre o que o utilizador já reconhece 
-(um frigorífico, uma torradeira, um computador) e o 
-conceito que se pretende ensinar (minerais e o seu papel no fabrico) 
-reduz a distância entre teoria e prática.
+A aprendizagem por descoberta baseia-se na ideia de que o aluno compreende 
+melhor quando participa ativamente no processo. No \textit{Casa dos Minerais}, esta metodologia é aplicada através da ancoragem de conceitos abstratos em exemplos concretos.
+
+\subsubsection{Ancoragem na Cadeia Produtiva}
+Conceitos como ``Recurso Mineral'' ou ``Extração'' podem parecer distantes. O jogo encurta essa distância ao ligar o objeto familiar (ex: a torradeira na cozinha) à sua origem geológica.
+
+Esta estrutura permite, teoricamente, criar níveis para cada etapa da cadeia de produção:
+\begin{enumerate}
+    \item \textbf{Nível Casa:} Onde usamos o produto final.
+    \item \textbf{Nível Fábrica:} Onde vemos a montagem dos componentes.
+    \item \textbf{Nível Mina:} Onde ocorre a extração do minério bruto.
+\end{enumerate}
+
+Deste modo, o jogador pode seguir o ``caminho inverso'' da produção dos seus bens, compreendendo que o telemóvel não nasce na loja, mas começa como rocha na terra. O sistema de níveis do jogo foi desenhado para suportar essa expansão temática, permitindo adicionar novos cenários que representem estas diferentes etapas.
 
 \subsection{Ciclo pedagógico e questionários como reforço}
 
 O ciclo do jogo combina aprendizagem por descoberta 
 com reforço através de avaliação formativa. 
-Numa primeira fase, o utilizador explora o cenário, 
-interage com objetos do quotidiano e consulta a informação 
-sobre os minerais associados. Esta exploração permite 
-compreender os conceitos no respetivo contexto.
-
+Numa primeira fase, o utilizador explora o cenário e compreende os conceitos no respetivo contexto.
 Numa segunda fase, o utilizador inicia um questionário curto 
-para recuperar ativamente o que observou durante a exploração. 
-Este processo de recordação ativa reforça a retenção 
-e funciona como mecanismo de feedback, ao tornar visível 
-o que foi compreendido e o que precisa de revisão.
+para recuperar ativamente o que observou.
 
-No final, o ciclo pode ser repetido: o utilizador regressa 
-ao cenário, revê conteúdos e volta a testar conhecimentos. 
-Esta alternância entre descoberta, verificação e repetição 
-suporta aprendizagem progressiva em sessões curtas.
 \subsection{Qualidade do conteúdo e fontes}
-%Contraste, tamanho de texto, linguagem simples, input por rato/teclado. Mesmo que implementem pouco, dá para discutir “boas práticas”.
 
 A qualidade do conteúdo é fundamental para garantir que o jogo seja acessível,
-envolvente e educativo. Para conseguir isso, é importante seguir boas práticas
-e apresentação de informação, como:
+envolvente e educativo. Para conseguie isso, é importante seguir boas práticas:
 
 \begin{itemize}
-  \item Fontes fiáveis: as associações entre objetos do quotidiano e minerais
-  devem ser baseadas em fontes reconhecidas (por exemplo, recursos educativos oficiais,
-  instituições científicas ou bases de dados geológicas), evitando informação não verificada.
-  Neste trabalho foram privilegiadas fontes institucionais e educativas como a USGS
-  \textcite{usgs_education_mrp,usgs_minerals101} e a Minerals Education Coalition
-  \textcite{mec_mineralsinyourlife}.
-
-  \item Confirmação e coerência: sempre que possível, a informação é cruzada entre mais do que uma referência,
-  reduzindo erros e ambiguidades.
-
-  \item Consistência terminológica: utilização consistente dos termos (por exemplo, “mineral” vs “minério”),
-  nomes dos minerais, e forma de escrita ao longo do jogo, para evitar confusão no utilizador.
-
-  \item Estrutura uniforme do conteúdo: manter um formato semelhante nas descrições (ex.: mineral associado,
-  uso no objeto e país de origem), facilitando a leitura e a comparação entre objetos.
-
-  \item Linguagem adequada ao público-alvo: textos claros e diretos, com o mínimo de palavreado técnico,
-  para garantir compreensão por crianças e jovens, sem perder rigor.
+  \item \textbf{Fontes fiáveis:} As associações foram baseadas em fontes reconhecidas como a USGS \textcite{usgs_education_mrp,usgs_minerals101} e a Minerals Education Coalition \textcite{mec_mineralsinyourlife}.
+  \item \textbf{Coerência e Estrutura:} Utilização consistente de terminologia e estrutura uniforme nas descrições (Mineral, Uso, Origem).
+  \item \textbf{Linguagem adequada:} Textos claros e diretos.
 \end{itemize}
-
 
 \section{Metodologia}
 
-Para a implementação, o projeto baseia-se em tecnologias de multiplataforma, tirando partido da linguagem de programação Odin. Para a parte gráfica escolhemos a Raylib, integrada com Odin. Esta combinação permite criar gráficos 2D interativos com desempenho nativo e exportação para WebAssembly (WASM). A visualização final no navegador é assegurada pela integração deste módulo WASM com tecnologias web padrão (HTML5, CSS3 e JavaScript), garantindo compatibilidade e acesso universal.
+Para a implementação, o projeto baseia-se em tecnologias de multiplataforma, tirando partido da linguagem de programação Odin. Para a parte gráfica escolhemos a Raylib, integrada com Odin. Esta combinação permite criar gráficos 2D interativos com desempenho nativo e exportação para WebAssembly (WASM). A visualização final no navegador é assegurada pela integração deste módulo WASM com tecnologias web padrão (HTML5, CSS3 e JavaScript).
 
 \subsection{Identificação dos minerais usados no quotidiano}
 
 Minerais são todas as substâncias naturais formadas por processos
 geológicos que normalmente consegues encontrar na crosta da terra.
+A telha das casas pode ser feita com argila, o vidro com areia (quartzo).
+Na cozinha, tens pratos que podem conter feldspato, e panelas de ferro e crómio.
+O mais impressionante são os bens tecnológicos como telemóveis, que contêm uma vasta gama de metais raros e preciosos como ouro, lítio e cobalto.
 
-A telhado das casas podem ser feitos com argila, os vidros com areia.
-Na cozinha, tens pratos que podem conter areia, calcário, feldspato e
-argila. O sal vem do sal-gema. Uma panela pode ser de ferro, níquel e
-crómio. O frigorifico pode ser alumínio e cobre, e derivados de
-petróleo. Na cozinha também pode ser usado gás natural. Existem
-fotografias que usam prata e bronze. Um vaso de flores pode ser de
-argila. Um livro pode ter vestígios de cadmio, cobalto e titânio. Uma
-lâmpada pode ter níquel, alumínio e chumbo. Um relógio pode ter
-silício, crómio, ferro e níquel. Um espelho terá quartzo, alumínio e
-prata. O papel higiénico gesso e calcário. A pasta de dentes tem fluorite.
+\subsection{Critérios de seleção de objetos}
 
-O mais impressionante talvez são os bens tecnológicos como
-televisões/monitores, computadores e telemóveis, tão presentes no
-nosso dia"-a"-dia e que os levamos de um lado para o outro connosco.
-Estes podem conter zinco, crómio, silício, alumínio, cobre, estanho,
-manganês, cobalto, bário, platina, tungsténio, arsénio, lítio, ouro, prata, ...
-
-\subsection{Critérios de seleção de objetos (casa/escola)}
-
-A seleção de objetos para os níveis ``casa'' e ``escola'' foi guiada por critérios 
-pedagógicos e práticos, de forma a garantir que o conteúdo 
-fosse relevante, compreensível e adequado ao formato do jogo. 
-Em primeiro lugar, foram priorizados objetos comuns e facilmente 
-reconhecíveis, pois isso reduz a barreira de entrada e ajuda o 
-utilizador a relacionar o conteúdo com a sua experiência do dia a dia. 
-Em segundo lugar, deu-se preferência a objetos que permitissem associações 
-claras com minerais/minérios utilizados no seu fabrico, 
-garantindo que cada interação tivesse valor educativo. 
-
-Adicionalmente, procurou-se diversidade de categorias (por exemplo, cozinha, 
-lavandaria, eletrónica e música), evitando repetição e permitindo abordar 
-diferentes utilizações de recursos minerais. Do ponto de vista do design do jogo, 
-os objetos selecionados também tiveram de ser representáveis visualmente 
-e inseridos no cenário de forma coerente, com áreas de interação claras 
-e sem sobrecarregar o mapa com demasiados pontos clicáveis. 
-
-Por fim, a existência de dois contextos (casa e escola) permite variar o 
-conteúdo mantendo o mesmo fluxo de interação. O nível da casa favorece 
-objetos ligados à habitação e consumo doméstico, enquanto o nível da escola 
-introduz elementos típicos do ambiente escolar. Esta progressão por contexto 
-facilita aprendizagem comparativa e incentiva o utilizador a explorar 
-novamente para descobrir novas associações entre objetos e minerais.
-
-Para suportar esta seleção de forma consistente, os objetos e minerais foram 
-representados em dados estruturados, permitindo reutilização e extensão do 
-conteúdo sem alterar a lógica do jogo. Cada objeto inclui um nome, uma 
-categoria e uma lista de minerais/minérios associados, onde cada mineral 
-regista a sua origem e a função no objeto. Esta estrutura facilita a 
-manutenção do conteúdo e permite escalar o projeto para novos cenários 
-(como o nível de escola), mantendo o mesmo formato. 
-
-\begin{lstlisting}[language=json, caption={Excerto do dataset de objetos e minerais.}, label={lst:dataset-objetos}]
-[
-  {
-    "name": "Fogão Elétrico",
-    "category": "Cozinha",
-    "minerals": [
-      {
-        "name": "Ferro",
-        "origin": "Austrália, Brasil, China",
-        "use": "Corpo do fogão e resistências"
-      },
-      {
-        "name": "Crómio",
-        "origin": "África do Sul, Cazaquistão",
-        "use": "Resistências"
-      },
-      {
-        "name": "Níquel",
-        "origin": "Indonésia, Filipinas, Rússia",
-        "use": "Revestimento"
-      }
-    ]
-  }
-]
-\end{lstlisting}
-
-\subsection{Comparação com outros jogos}
-
-Em comparação com o \textcite{briefcasegame}, o \textit{Casa dos Minerais} 
-aposta numa abordagem mais exploratória. O jogador percorre um cenário 
-(point-and-click) e encontra objetos distribuídos no ambiente, 
-descobrindo informação associada a cada interação. No \textit{BriefCase game}, 
-a dinâmica é mais direta e centrada na associação imediata entre objeto 
-e mineral, com menor ênfase na exploração espacial e no contexto do objeto. 
-Assim, o nosso jogo privilegia a contextualização (objeto no seu ``habitat'') 
-antes do momento de verificação através do questionário.
-
-Relativamente ao \textcite{min4kids-minerals-house}, existe uma proximidade 
-no objetivo educativo (relacionar minerais com objetos do quotidiano), 
-mas a apresentação difere. Esse recurso tende a ser mais informacional, 
-funcionando como consulta/explicação, enquanto o \textit{Casa dos Minerais} 
-procura integrar a informação num fluxo de jogo, combinando descoberta no mapa 
-com um quiz de escolha múltipla (4 opções, 1 correta) para reforço do conteúdo. 
-Desta forma, o utilizador alterna entre explorar e testar o que aprendeu.
-
-No caso do \textcite{wordwall-rochas-minerais}, o foco está num conjunto de 
-atividades curtas e simples, normalmente com interações rápidas e regras 
-minimalistas. Embora sejam úteis como exercícios imediatos, tendem a ter menos 
-camada de contexto e menos continuidade. Em contraste, o nosso projeto mantém 
-um cenário persistente, permitindo aprender por exploração e regressar ao mapa 
-após o questionário para rever ou descobrir novos objetos.
-
-Em síntese, o \textit{Casa dos Minerais} distingue-se por juntar:
-\begin{enumerate}
-  \item exploração contextualizada em cenários familiares; e
-  \item validação por questionário curto, suportando a repetição do ciclo para
-  consolidação progressiva da aprendizagem.
-\end{enumerate}
-
-
-
-\begin{table}[H]
-\centering
-\caption{Comparação entre recursos/jogos educativos sobre minerais.}
-\label{tab:comparacao-jogos}
-\begin{tabular}{p{3.2cm} p{3.6cm} p{4.0cm} p{4.0cm}}
-\hline
-\textbf{Recurso} & \textbf{Tipo de interação} & \textbf{Contexto (cenário)} & \textbf{Avaliação / feedback} \\
-\hline
-\textcite{briefcasegame} 
-& Associação direta objeto--mineral 
-& Pouco contexto espacial; foco na correspondência 
-& Feedback imediato da associação \\
-\hline
-\textcite{min4kids-minerals-house} 
-& Consulta/informação com interação limitada 
-& Conteúdo mais informacional; menor componente de ``jogo'' 
-& Sem validação estruturada; reforço principalmente pela leitura \\
-\hline
-\textcite{wordwall-rochas-minerais} 
-& Mini-jogos simples (atividades curtas) 
-& Contexto reduzido; tarefas isoladas 
-& Feedback rápido por exercício, geralmente sem progressão contínua \\
-\hline
-\textit{Casa dos Minerais} 
-& Exploração point-and-click + quiz de escolha múltipla 
-& Cenários familiares (casa/escola) com objetos distribuídos 
-& Quiz curto (6 perguntas, 4 opções, 1 correta) e possibilidade de voltar a explorar \\
-\hline
-\end{tabular}
-\end{table}
-
+A seleção de objetos para os níveis ``casa'' e ``escola'' foi guiada por critérios pedagógicos e práticos: objetos comuns, facilmente reconhecíveis e com associações minerais claras e educativas.
 
 \subsection{Diferenças de abordagem (exploração vs associação direta)}
 
-Uma diferença central entre jogos educativos sobre minerais está na forma como 
-o conhecimento é apresentado e praticado. Numa abordagem de \textbf{exploração}, 
-o utilizador aprende ao interagir com um ambiente e ao descobrir conteúdo no 
-contexto em que os objetos aparecem. Isto favorece a contextualização, pois o 
-objeto não surge isolado: está inserido num cenário familiar (por exemplo, uma 
-casa ou uma escola), o que facilita a ligação entre o conceito abstrato 
-(mineral/minério) e o exemplo concreto (objeto do quotidiano).
+Uma diferença central entre jogos educativos sobre minerais está na forma como o conhecimento é apresentado. Numa abordagem de \textbf{exploração}, o utilizador aprende ao interagir com um ambiente. Numa abordagem de \textbf{associação direta}, foca-se na memorização rápida.
 
-Em contraste, numa abordagem de \textbf{associação direta}, o objetivo é mais 
-imediato: o utilizador recebe um objeto (ou um nome/imagem) e deve associá-lo 
-ao mineral correto. Este formato tende a ser mais rápido e focado em treino, 
-mas pode reduzir a componente de descoberta e o contexto de uso do objeto, 
-dependendo da implementação.
-
-No \textit{Casa dos Minerais}, a exploração funciona como fase inicial de 
-aprendizagem, permitindo observar e compreender as associações objeto--mineral 
-antes da validação. Em seguida, o questionário de escolha múltipla (4 opções, 
-1 correta) força a recordação ativa dessas associações, combinando os benefícios 
-de ambos os estilos: primeiro contextualiza-se, depois pratica-se e verifica-se.
+O \textit{Casa dos Minerais} combina ambas: exploração inicial para contextualização, seguida de quiz para validação e treino.
 
 \subsection{Limitações observadas e decisões adotadas no projeto}
 
