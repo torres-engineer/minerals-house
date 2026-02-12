@@ -5,13 +5,13 @@
 
 \subsection{Estado da arte}
 
-A utilização de jogos digitais no ensino das geociências tem crescido, procurando tornar conteúdos tradicionalmente áridos em experiências interativas. De modo a posicionar o \textit{Casa dos Minerais}, analisaram-se outros recursos educativos existentes, identificando as suas valências e lacunas.
+Existem já alguns jogos e recursos digitais sobre minerais e geociências. Para perceber onde o \textit{Casa dos Minerais} se encaixa, analisámos o que já existe e o que falta.
 
 Comparativamente ao \textcite{briefcasegame}, o \textit{Casa dos Minerais} aposta numa abordagem mais exploratória. Enquanto o \textit{BriefCase} foca na associação imediata objeto-mineral, o nosso projeto privilegia a contextualização espacial (o objeto no seu ``habitat'') antes da validação.
 Relativamente ao \textcite{min4kids-minerals-house}, que funciona mais como uma enciclopédia interativa, o nosso jogo introduz um ciclo de \textit{gameplay} com desafios (quizzes) para testar a retenção.
 Por fim, ao contrário dos exercícios isolados do \textcite{wordwall-rochas-minerais}, oferecemos um cenário persistente e contínuo.
 
-Em síntese, o \textit{Casa dos Minerais} distingue-se por juntar a exploração livre à validação estruturada, conforme detalhado na Tabela~\ref{tab:comparacao-jogos}.
+A Tabela~\ref{tab:comparacao-jogos} resume estas diferenças. O ponto que mais diferencia o nosso jogo é a combinação de exploração livre com questionário de validação.
 
 \begin{longtable}{p{3.0cm} p{3.5cm} p{4.0cm} p{3.5cm}}
 \caption{Comparação entre recursos/jogos educativos sobre minerais.} \label{tab:comparacao-jogos} \\
@@ -94,27 +94,22 @@ material estar disponível.
 
 \subsection{Gamificação na pedagogia}
 
-A ``Casa dos Minerais'' utiliza elementos de gamificação para
-estruturar a aprendizagem e aumentar a motivação. A principal mecânica implementada é a inclusão de um \textbf{questionário no final de cada nível} (ver detalhes de implementação na Secção~\ref{sec:questions}).
+A ``Casa dos Minerais'' usa elementos de gamificação para dar estrutura à aprendizagem. A mecânica principal é um \textbf{questionário no final de cada nível} (ver Secção~\ref{sec:questions}).
 
-Este questionário atua como um ``guardião'' ou \textit{boss fight} educativa: o jogador explora livremente para adquirir conhecimento e, no final, deve demonstrar o que aprendeu para desbloquear o próximo estágio. Esta abordagem cria um ciclo de recompensa intrínseco, onde o conhecimento é a chave para a progressão.
+Na prática, o questionário funciona como um ``guardião'' ou \textit{boss fight} educativa: o jogador explora livremente, e no final tem de demonstrar o que aprendeu para desbloquear o nível seguinte. O conhecimento é, literalmente, a chave para avançar.
 
-No entanto, a abordagem pedagógica foca-se em usar a
-brincadeira como uma forma de descoberta. O objetivo
-principal não é criar um sistema de avaliação punitivo, mas sim
-celebrar a aprendizagem. Elementos mais competitivos, como pontuações ou temporizadores, foram considerados opcionais para futuras iterações (\ref{sec:future}), para não desvirtuar o ambiente exploratório inicial.
+A ideia não é punir quem erra, mas incentivar a descoberta. Por isso, elementos mais competitivos como pontuações ou temporizadores ficaram de fora desta versão, podendo ser introduzidos mais tarde (\ref{sec:future}).
 
 \subsection{Para quem é o jogo?}
 \label{sec:forwho}
 
-O público-alvo principal são crianças e jovens, servindo como ferramenta de apoio às disciplinas de Estudo do Meio e Ciências Naturais. No entanto, o design visual e a mecânica de exploração foram pensados para serem apelativos a qualquer faixa etária.
+O público-alvo principal são crianças e jovens em idade escolar, como apoio a Estudo do Meio e Ciências Naturais. Dito isto, o visual e a mecânica de exploração foram pensados para funcionar com qualquer faixa etária.
 
-Idealmente, o acesso deve ser universal. Para promover a inclusão de utilizadores com dificuldades de leitura, como a dislexia, optou-se pela utilização de \textbf{tipografia sem serifa (sans-serif)} com espaçamento generoso e bom contraste, seguindo recomendações de acessibilidade web. Embora o protótipo atual ainda não suporte navegação total por teclado ou leitores de ecrã (como referido na Secção~\ref{sec:limitacoes}), estas escolhas visuais de base formam um alicerce sólido para uma futura acessibilidade plena.
+Do lado da acessibilidade, usámos \textbf{tipografia sem serifa (sans-serif)} com espaçamento generoso e bom contraste, pensando em utilizadores com dificuldades de leitura como a dislexia. O protótipo atual ainda não suporta navegação total por teclado nem leitores de ecrã (ver Secção~\ref{sec:limitacoes}), mas estas escolhas visuais já apontam nessa direção.
 
 \subsection{Aprendizagem por descoberta e contextualização}
 
-A aprendizagem por descoberta baseia-se na ideia de que o aluno compreende 
-melhor quando participa ativamente no processo. No \textit{Casa dos Minerais}, esta metodologia é aplicada através da ancoragem de conceitos abstratos em exemplos concretos.
+A ideia por trás da aprendizagem por descoberta é simples: quem participa ativamente compreende melhor. No \textit{Casa dos Minerais}, isto traduz-se em ancorar conceitos abstratos (como ``recurso mineral'') em exemplos concretos do dia a dia.
 
 \subsubsection{Ancoragem na Cadeia Produtiva}
 Conceitos como ``Recurso Mineral'' ou ``Extração'' podem parecer distantes. O jogo encurta essa distância ao ligar o objeto familiar (ex: a torradeira na cozinha) à sua origem geológica.
@@ -130,16 +125,11 @@ Deste modo, o jogador pode seguir o ``caminho inverso'' da produção dos seus b
 
 \subsection{Ciclo pedagógico e questionários como reforço}
 
-O ciclo do jogo combina aprendizagem por descoberta 
-com reforço através de avaliação formativa. 
-Numa primeira fase, o utilizador explora o cenário e compreende os conceitos no respetivo contexto.
-Numa segunda fase, o utilizador inicia um questionário curto 
-para recuperar ativamente o que observou.
+O ciclo do jogo tem duas fases. Primeiro, o utilizador explora o cenário e vai absorvendo os conceitos no seu contexto. Depois, responde a um questionário curto que o obriga a recuperar ativamente o que observou.
 
 \subsection{Qualidade do conteúdo e fontes}
 
-A qualidade do conteúdo é fundamental para garantir que o jogo seja acessível,
-envolvente e educativo. Para conseguie isso, é importante seguir boas práticas:
+Para que o conteúdo do jogo seja fiável e útil, seguiram-se algumas práticas:
 
 \begin{itemize}
   \item \textbf{Fontes fiáveis:} As associações foram baseadas em fontes reconhecidas como a USGS \textcite{usgs_education_mrp,usgs_minerals101} e a Minerals Education Coalition \textcite{mec_mineralsinyourlife}.
@@ -149,7 +139,7 @@ envolvente e educativo. Para conseguie isso, é importante seguir boas práticas
 
 \section{Metodologia}
 
-Para a implementação, o projeto baseia-se em tecnologias de multiplataforma, tirando partido da linguagem de programação Odin. Para a parte gráfica escolhemos a Raylib, integrada com Odin. Esta combinação permite criar gráficos 2D interativos com desempenho nativo e exportação para WebAssembly (WASM). A visualização final no navegador é assegurada pela integração deste módulo WASM com tecnologias web padrão (HTML5, CSS3 e JavaScript).
+O projeto usa a linguagem de programação Odin e a biblioteca gráfica Raylib. O Odin compila para WebAssembly (WASM), o que permite correr o jogo no navegador com desempenho próximo do nativo. No browser, o módulo WASM é integrado com HTML5, CSS3 e JavaScript para tratar da parte visual e da interação.
 
 \subsection{Identificação dos minerais usados no quotidiano}
 
@@ -165,37 +155,27 @@ A seleção de objetos para os níveis ``casa'' e ``escola'' foi guiada por crit
 
 \subsection{Diferenças de abordagem (exploração vs associação direta)}
 
-Uma diferença central entre jogos educativos sobre minerais está na forma como o conhecimento é apresentado. Numa abordagem de \textbf{exploração}, o utilizador aprende ao interagir com um ambiente. Numa abordagem de \textbf{associação direta}, foca-se na memorização rápida.
+Há duas formas comuns de apresentar este tipo de conteúdo: na \textbf{exploração}, o utilizador aprende ao interagir com um ambiente; na \textbf{associação direta}, o foco é a memorização rápida de pares.
 
-O \textit{Casa dos Minerais} combina ambas: exploração inicial para contextualização, seguida de quiz para validação e treino.
+O \textit{Casa dos Minerais} mistura as duas: primeiro explora-se para ganhar contexto, depois faz-se um quiz para verificar e treinar.
 
 \subsection{Limitações observadas e decisões adotadas no projeto}
 
-Durante a análise de recursos e ao longo do desenvolvimento, 
-foram identificadas limitações comuns em abordagens educativas sobre minerais. 
-Uma delas é a tendência para conteúdos demasiado expositivos, onde o utilizador 
-lê informação mas tem pouca oportunidade de a aplicar. Outra limitação é a 
-associação direta sem contexto, que pode treinar a memorização de pares 
-objeto--mineral, mas nem sempre ajuda a compreender a relevância desses minerais 
-no quotidiano.
+Ao analisar outros recursos e ao longo do desenvolvimento, encontrámos dois problemas recorrentes. O primeiro é a tendência para conteúdos demasiado expositivos , o utilizador lê informação mas não tem oportunidade de a aplicar. O segundo é a associação direta sem contexto: decorar que ``o cobre está no fio elétrico'' não ajuda muito se não se perceber porquê.
 
-Para responder a estas limitações, o \textit{Casa dos Minerais} adotou decisões 
-de design que equilibram simplicidade com contexto. Em vez de depender apenas 
-de exercícios isolados, o jogo organiza a aprendizagem em dois momentos: 
-(1) exploração num cenário familiar, onde a informação surge ligada a objetos 
-do dia a dia; e (2) um questionário curto de escolha múltipla para reforço e 
-validação, mantendo o ritmo e evitando fadiga.
+Para contornar isso, o jogo organiza a aprendizagem em dois momentos: 
+primeiro a exploração num cenário familiar, onde a informação aparece ligada a 
+objetos do dia a dia; depois um questionário curto de escolha múltipla para 
+reforço e validação.
 
-Do ponto de vista visual, também existiram limitações na produção de assets. 
-Numa fase inicial, foi testada a geração de elementos gráficos com o Gemini, 
-mas os resultados não cumpriam requisitos técnicos essenciais para um mapa 
-baseado em tiles, nomeadamente a disponibilização de um \textit{tileset} com 
-grelha 32$\times$32\,px. Apesar de visualmente apelativas, as imagens geradas 
-surgiam tipicamente em dimensões muito grandes e sem organização reutilizável, 
-o que dificultava recorte, alinhamento e integração consistente no cenário. 
-Por esse motivo, optou-se por adquirir um conjunto de assets estruturados, 
-garantindo compatibilidade com o formato do mapa, consistência visual e uma 
-experiência mais polida.
+Do ponto de vista visual, houve limitações na produção de assets. 
+Testámos a geração de elementos gráficos com o Gemini, 
+mas os resultados não serviam para um mapa baseado em tiles: faltava uma 
+grelha de \textit{tileset} 32$\times$32\,px. As imagens geradas vinham em 
+dimensões grandes demais e sem organização reutilizável, o que tornava difícil 
+o recorte, alinhamento e integração no cenário. 
+Por isso, comprámos um conjunto de assets já estruturados, 
+compatíveis com o formato do mapa e visualmente consistentes.
 
 % todo meter melhores imagens com tamanhos parecidos para nao ficar aquele bloco 
 \begin{figure}[H]
@@ -315,14 +295,12 @@ mantendo sessões curtas e um fluxo consistente entre cenários.
 
 \subsubsection{Regras e progressão}
 
-As regras do jogo privilegiam clareza e acessibilidade. A exploração 
-não impõe uma sequência fixa de objetos nem penaliza o jogador por 
-escolhas de percurso, permitindo diferentes estratégias de descoberta.
+As regras são simples. A exploração não impõe uma sequência fixa de objetos 
+nem penaliza o jogador por escolhas de percurso , cada um descobre à sua maneira.
 
-A progressão entre cenários é condicionada pelo desempenho no momento 
-de consolidação (questionário). Quando o jogador não atinge o critério 
-mínimo, a experiência incentiva a revisão do conteúdo através do regresso 
-ao mapa, promovendo repetição e melhoria incremental.
+A progressão entre cenários depende do desempenho no questionário. Quando 
+o jogador não atinge o mínimo, pode voltar ao mapa, rever os conteúdos e 
+tentar novamente.
 
 \subsubsection{Âmbito do jogo}
 
@@ -343,11 +321,9 @@ visual e a estabilidade da experiência em diferentes dispositivos.
 
 \subsubsection{Acessibilidade}
 
-Para que o jogo seja útil a diferentes públicos, a acessibilidade deve ser 
-considerada como parte do design e não apenas como um extra. Em contexto web, 
-existem recomendações consolidadas pelo W3C através da \textit{Web Accessibility 
-Initiative (WAI)}, que servem como referência para tornar interfaces mais 
-inclusivas.
+A acessibilidade deve fazer parte do design e não ser apenas um extra. Em 
+contexto web, as recomendações do W3C através da \textit{Web Accessibility 
+Initiative (WAI)} são a referência que seguimos.
 
 Como o jogo é renderizado num \textit{canvas}, é importante garantir que a 
 informação relevante (por exemplo, textos descritivos e botões/ações) não 
@@ -364,9 +340,8 @@ acessibilidade em diferentes dispositivos.
 
 \subsubsection{Internacionalização}
 
-A internacionalização é importante para que o jogo possa ser utilizado por 
-públicos com diferentes línguas e contextos culturais, sem alterar a lógica do 
-programa. A estratégia adotada passa por separar texto e conteúdo localizável 
+Para que o jogo funcione em diferentes línguas sem alterar a lógica do 
+programa, o texto e o conteúdo localizável são mantidos separados do código. A estratégia adotada passa por separar texto e conteúdo localizável 
 do código, mantendo strings de interface e textos informativos (nomes de 
 objetos, minerais e descrições) em ficheiros externos, selecionados consoante 
 o idioma.
@@ -388,15 +363,13 @@ estrutura apresentada no ecrã.
 Por este motivo, sempre que existe informação relevante para a aprendizagem 
 (por exemplo, descrições de minerais, botões de interface ou mensagens de 
 feedback), é preferível disponibilizá-la também através de HTML semântico, 
-com elementos apropriados. Esta abordagem 
-melhora a acessibilidade, facilita indexação e permite maior compatibilidade 
-com ferramentas de tradução e de apoio ao utilizador.
+com elementos apropriados. Isto melhora a acessibilidade e permite maior 
+compatibilidade com ferramentas de tradução e de apoio ao utilizador.
 
-No contexto deste projeto, esta distinção é particularmente importante porque 
-o conteúdo educativo não deve depender apenas da representação gráfica. Ao 
-separar a camada visual (canvas) da camada informativa (HTML semântico), 
-torna-se possível manter a experiência de jogo e, ao mesmo tempo, aumentar a 
-inclusão e a reutilização do conteúdo.
+No contexto deste projeto, o conteúdo educativo não deve depender apenas da 
+representação gráfica. Ao separar a camada visual (canvas) da camada 
+informativa (HTML semântico), é possível manter a experiência de jogo e, ao 
+mesmo tempo, tornar o conteúdo acessível e reutilizável.
 
 \begin{figure}[H]
   \centering
@@ -424,11 +397,10 @@ inclusão e a reutilização do conteúdo.
 
 \subsubsection{Independência de plataforma e performance}
 
-Um objetivo importante do projeto é garantir que o jogo possa ser utilizado em 
-diferentes plataformas e em dispositivos com capacidades variadas. Em contexto 
-educativo, é comum existirem restrições de hardware e de rede, pelo que uma 
-solução multiplataforma reduz barreiras de acesso e facilita adoção em sala de 
-aula ou em uso autónomo.
+O jogo precisa de correr em diferentes plataformas e em dispositivos com 
+capacidades variadas. Em contexto educativo, é comum haver restrições de 
+hardware e de rede, pelo que uma solução multiplataforma reduz barreiras de 
+acesso.
 
 Atualmente, o jogo é disponibilizado no navegador, permitindo acesso imediato 
 sem instalação. No entanto, a base de código foi estruturada de forma a manter 
@@ -464,29 +436,24 @@ A distribuição principal de responsabilidades foi a seguinte:
   suporte ao design e implementação do questionário.
 \end{itemize}
 
-Esta divisão permitiu manter uma estrutura de trabalho clara, onde cada 
-membro tinha um foco definido, mantendo coordenação através do planeamento 
-conjunto e da integração progressiva das funcionalidades.
+Com esta divisão, cada membro tinha um foco definido, e a coordenação 
+fazia-se pelo planeamento conjunto e pela integração progressiva do trabalho.
 
 \section{Tech Stack}
 
-Esta secção descreve as principais tecnologias utilizadas no desenvolvimento do 
-\textit{Casa dos Minerais}. A escolha da stack procurou equilibrar simplicidade, 
-performance e facilidade de manutenção, garantindo uma base sólida para execução 
-no navegador e expansão futura do projeto.
+Esta secção descreve as tecnologias usadas no desenvolvimento do 
+\textit{Casa dos Minerais} e as razões por trás de cada escolha.
 
 \subsection{Linguagem (Odin)}
 
-O \textit{Casa dos Minerais} foi feito em Odin, uma linguagem compilada 
-com foco em simplicidade, desempenho e controlo direto sobre recursos. 
-A escolha de Odin permitiu implementar a lógica do jogo numa base leve, 
-sem dependências excessivas, mantendo ao mesmo tempo um modelo de programação 
-próximo de linguagens de baixo nível, adequado para aplicações interativas.
+O \textit{Casa dos Minerais} usa Odin, uma linguagem compilada 
+com foco em simplicidade e controlo direto sobre recursos. Permite implementar 
+a lógica do jogo sem dependências excessivas, com um modelo de programação 
+próximo de C.
 
-Outro fator relevante foi a boa integração de Odin com bibliotecas C, o que 
-facilitou a utilização da raylib para gráficos e multimédia. Esta combinação 
-simplifica a organização do projeto e torna mais fácil manter o código e 
-adaptá-lo a diferentes plataformas no futuro, sem reescrever a lógica central.
+A integração de Odin com bibliotecas C facilitou o uso da raylib para gráficos 
+e multimédia, e simplifica a adaptação a diferentes plataformas sem reescrever 
+a lógica central.
 
 \subsection{Biblioteca gráfica/multimédia (raylib)}
 
@@ -548,11 +515,10 @@ a cópia do runtime \texttt{odin.js} e a geração do ficheiro \texttt{index.was
 Desta forma, o processo de compilação torna-se consistente entre sistemas 
 operativos e reduz erros associados a passos manuais.
 
-Adicionalmente, a execução local da versão web é feita através de um servidor 
+Para testar localmente, a versão web é servida por um servidor 
 HTTP estático (conforme descrito no \texttt{README.md}), contornando as 
 restrições do navegador relativas ao carregamento de módulos WASM a partir do 
-sistema de ficheiros. Esta organização permitiu testar rapidamente alterações 
-e manter um fluxo de desenvolvimento estável ao longo do projeto.
+sistema de ficheiros.
 
 \begin{figure}[H]
   \centering

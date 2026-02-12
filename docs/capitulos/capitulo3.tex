@@ -1,11 +1,11 @@
 \chapter{Implementação}
 \label{ch:implementacao}
 
-Este capítulo detalha as soluções técnicas adotadas para concretizar a ``Casa dos Minerais''. A implementação reflete a necessidade de criar um sistema robusto, capaz de correr nativamente e na web, mantendo uma separação clara entre a lógica de simulação e a camada de apresentação.
+Este capítulo descreve como o ``Casa dos Minerais'' foi implementado na prática. O jogo corre tanto nativamente como no browser, o que obrigou a separar a lógica de simulação da camada de apresentação.
 
 \section{Arquitetura geral}
 
-A arquitetura do projeto segue um modelo híbrido e modular, desenhado para tirar partido da portabilidade da linguagem Odin e das capacidades universais dos navegadores web. A base do sistema divide-se em dois componentes principais:
+A arquitetura divide-se em dois componentes:
 
 \begin{enumerate}
     \item \textbf{Núcleo Lógico (Core):} Implementado em Odin, é responsável por toda a gestão de estado do jogo, regras de simulação, \textit{pathfinding} (navegação) e deteção de colisões. Este código é agnóstico à plataforma, ou seja, não sabe se está a correr num PC ou num browser. Para a web, este núcleo é compilado para WebAssembly (WASM), gerando um ficheiro \texttt{index.wasm} de tamanho reduzido.
@@ -21,13 +21,13 @@ Esta separação permitiu à equipa desenvolver e testar a lógica complexa (com
 
 \section{Modelo de dados}
 
-A integridade e eficiência da simulação dependem de um modelo de dados bem definido. O projeto adota uma estratégia mista: estruturas estáticas e compactas para o estado do jogo (em Odin) e estruturas dinâmicas e flexíveis para o conteúdo descritivo (em JSON/JavaScript).
+O projeto usa dois tipos de estruturas de dados: estáticas e compactas em Odin para o estado do jogo, e dinâmicas em JSON/JavaScript para o conteúdo descritivo.
 
 \subsection{Estruturas de Estado (Core/Odin)}
 
 No núcleo da simulação, os dados são organizados em estruturas (\textit{structs}) de memória contígua, o que favorece a performance e a previsibilidade, essenciais para ambientes com recursos limitados como o WASM.
 
-A estrutura \texttt{GameState} centraliza toda a informção mutável, contendo o jogador e o registo de itens encontrados. A posição e o destino são vetores de 2 elementos (`[2]f32`), permitindo cálculos matemáticos diretos.
+A estrutura \texttt{GameState} centraliza toda a informação mutável, contendo o jogador e o registo de itens encontrados. A posição e o destino são vetores de 2 elementos (`[2]f32`), permitindo cálculos matemáticos diretos.
 
 \begin{lstlisting}[language=C, caption={Estruturas principais do estado de jogo em Odin.}, label={lst:odin-structs}]
 MAX_PATH_LENGTH :: 64
@@ -91,7 +91,7 @@ O mapa é construído através de camadas (\textit{layers}) exportadas como imag
     \item Aplicação de efeitos visuais dinâmicos, como a pulsação em itens interativos (calculada via função seno no tempo) ou o destaque na zona de saída.
 \end{enumerate}
 
-A Figura~\ref{fig:decomposicao-layers} ilustra como o cenário é composto por estas diferentes camadas, permitindo a sobreposição correta e a criação de um ambiente rico visualmente.
+A Figura~\ref{fig:decomposicao-layers} mostra como as diferentes camadas se sobrepõem para compor o cenário.
 
 \begin{figure}[H]
   \centering
@@ -169,4 +169,4 @@ O módulo de questionários funciona como um momento de avaliação formativa. A
     \item \textbf{Sugestão Automática:} Quando o jogador recolhe a totalidade dos itens disponíveis no cenário e se dirige à saída, o jogo assume que a fase de exploração terminou e inicia o questionário automaticamente.
 \end{itemize}
 
-As perguntas são geradas proceduralmente com base no conteúdo JSON carregado. O sistema escolhe aleatoriamente um eletrodoméstico ou mineral encontrado e apresenta quatro opções de resposta. O estado de progresso (quantas perguntas acertou) determina se o nível seguinte é desbloqueado. Esta lógica reside inteiramente no JavaScript, permitindo uma integração fluida com a interface HTML modal onde o utilizador seleciona as respostas.
+As perguntas são geradas proceduralmente com base no conteúdo JSON carregado. O sistema escolhe aleatoriamente um eletrodoméstico ou mineral encontrado e apresenta quatro opções de resposta. O estado de progresso (quantas perguntas acertou) determina se o nível seguinte é desbloqueado. Esta lógica reside inteiramente no JavaScript, o que simplifica a integração com a interface HTML modal onde o utilizador seleciona as respostas.
