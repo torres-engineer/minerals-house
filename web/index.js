@@ -462,9 +462,16 @@ async function initGame(language) {
       const exitPos = exports.get_exit_pos();
       const exitX = mem.loadF32(exitPos);
       const exitY = mem.loadF32(exitPos + 4);
-      const clickDistToExit = Math.hypot(worldX - exitX, worldY - exitY);
+      // Check if click is within the exit rectangle (2 blocks wide, 1 block high)
+      // The exit position is the center of the left block.
+      // Bounds: x from exitX - 24 to exitX + 72 (width 96)
+      //         y from exitY - 24 to exitY + 24 (height 48)
+      const isClickOnExit = (
+        worldX >= exitX - 24 && worldX <= exitX + 72 &&
+        worldY >= exitY - 24 && worldY <= exitY + 24
+      );
 
-      if (clickDistToExit < 40) {
+      if (isClickOnExit) {
         if (exports.is_near_exit(100)) {
           showQuizEvent({
             items,
@@ -711,8 +718,10 @@ async function initGame(language) {
     const exitPulseFactor = (Math.sin(exitPulseTime * 2) + 1) / 2;
     const exitPulseAlpha = 0.15 + exitPulseFactor * 0.25;
 
-    const distToExit = Math.hypot(worldMouseX - exitX, worldMouseY - exitY);
-    const isHoveringExit = distToExit < 80;
+    const isHoveringExit = (
+      worldMouseX >= exitX - 24 && worldMouseX <= exitX + 72 &&
+      worldMouseY >= exitY - 24 && worldMouseY <= exitY + 24
+    );
 
     ctx.save();
     const exitSize = 48;
@@ -894,9 +903,8 @@ function answerQuestion(answer) {
       <p style="font-size: 14px; line-height: 1.8;">${q.explanation}</p>
     </div>
     <div class="quiz-buttons">
-      <button onclick="playSound('click'); nextQuestion()" class="quiz-btn">${
-        currentQuestion < quizQuestions.length - 1 ? t("next") : t("seeResult")
-      }</button>
+      <button onclick="playSound('click'); nextQuestion()" class="quiz-btn">${currentQuestion < quizQuestions.length - 1 ? t("next") : t("seeResult")
+    }</button>
     </div>
   `;
 

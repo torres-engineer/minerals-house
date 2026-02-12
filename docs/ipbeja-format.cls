@@ -87,7 +87,7 @@ Defaulting to PT (Portuguese).}
 \RequirePackage{titletoc}
 
 % --- Language-dependent settings (including babel loading) ---
-\DeclareRobustCommand{\pt-en}[2]{%
+\DeclareRobustCommand{\pten}[2]{%
   \ifx\SelectedLang\LangOptPT
   #1%
   \else
@@ -312,7 +312,7 @@ Defaulting to PT (Portuguese).}
 }
 
 \DeclareRobustCommand{\anexos}{%
-  \pt-en{%
+  \pten{%
     \renewcommand{\appendixpagename}{Anexos}%
     \renewcommand{\appendixname}{Anexo}%
     \renewcommand{\appendixtocname}{Anexos}%
