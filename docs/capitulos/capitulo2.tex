@@ -94,6 +94,76 @@ ambiente de navegadores web, estes estão muito preparados para
 serem úteis e utilizáveis por todos, basta aos programadores
 fazerem o seu trabalho corretamente.
 
+\subsection{Aprendizagem por descoberta e contextualização}
+%Como “ancorar” conceitos abstratos (minerais) em exemplos concretos (objetos em casa/escola). Dá base teórica para o vosso design de cenário
+A aprendizagem por descoberta baseia-se na ideia de que o aluno compreende 
+melhor quando participa ativamente no processo, explorando, 
+pensando por ele mesmo e construindo ligações por iniciativa própria. 
+Em vez de receber a informação de forma expositiva, 
+o utilizador é colocado num ambiente interativo onde a curiosidade 
+e a exploração conduzem naturalmente à aprendizagem.
+
+No caso do Casa dos Minerais, 
+esta abordagem é reforçada pela contextualização: conceitos abstratos como “mineral”, 
+“recurso” ou “matéria-prima” são ancorados em exemplos 
+concretos e familiares, como objetos existentes numa casa ou numa escola. 
+Ao interagir com esses objetos, o jogador passa a associar materiais 
+e tecnologias do quotidiano à sua origem geológica, 
+tornando o conteúdo mais acessível e memorável. 
+Esta ligação direta entre o que o utilizador já reconhece 
+(um frigorífico, uma torradeira, um computador) e o 
+conceito que se pretende ensinar (minerais e o seu papel no fabrico) 
+reduz a distância entre teoria e prática.
+
+\subsection{Ciclo pedagógico do jogo}
+%Justifica o vosso fluxo: explorar, ler info, depois quiz de 6 perguntas (reforço/avaliação formativa).
+
+O ciclo do jogo foi feito de maneira a combinar aprendizagem por descoberta 
+com reforço através de avaliação formativa. 
+O jogo organiza-se em duas fases complementares: uma fase de exploração guiada pela 
+curiosidade e uma fase de consolidação através de um questionário curto. 
+Esta estrutura permite que o utilizador primeiro compreenda os conceitos no seu 
+contexto e, de seguida, os recupere ativamente, promovendo retenção.
+
+Na fase inicial, o utilizador explora o cenário e interage com objetos do quotidiano. 
+Cada interação mostra informação sobre os minerais associados, 
+permitindo aprender de forma simples e ao próprio ritmo, sem uma ordem obrigatória.
+
+Quando termina a exploração, o utilizador sai do cenário 
+e pode iniciar o quiz. O questionário tem seis perguntas 
+e serve para verificar e reforçar o que foi aprendido, 
+através de recordação direta dos conteúdos.
+
+No final do quiz, o jogo reinicia e o ciclo pode ser repetido. 
+Isto incentiva a revisão dos conteúdos 
+e ajuda a consolidar as ligações entre objetos 
+e minerais, sendo adequado para sessões curtas em contexto educativo.
+
+\subsection{Questionários como reforço}
+%Porque quizzes curtos funcionam (recall ativo, reforço, feedback imediato). Perfeito para explicar porquê 6 perguntas e repetição do jogo.
+
+Os questionários são uma forma eficaz de reforçar a aprendizagem porque 
+obrigam o utilizador a recuperar a informação da memória, em vez de apenas 
+a reconhecer. Este processo, muitas vezes designado por recordação ativa, 
+tende a melhorar a retenção a médio e longo prazo, especialmente quando é 
+feito pouco tempo depois do contacto inicial com o conteúdo.
+
+No Casa dos Minerais, o quiz surge após a fase de exploração para consolidar 
+as associações entre objetos do quotidiano e os minerais envolvidos no seu fabrico. 
+Como as perguntas aparecem depois do utilizador ter visto a informação no jogo, 
+o questionário funciona como avaliação formativa: identifica o que foi compreendido, 
+reforça os conteúdos principais sem transformar o jogo num teste “pesado”.
+
+A escolha de um questionário curto com seis perguntas procura equilibrar 
+duas necessidades. Por um lado, é suficientemente pequeno para manter o 
+ritmo do jogo e evitar fadiga, tornando-o adequado a sessões curtas. Por 
+outro, é suficiente para obrigar a várias recuperações de informação, 
+reforçando o essencial do conteúdo explorado. No final, o reinício do ciclo 
+incentiva a repetição do processo, permitindo ao utilizador voltar a explorar, 
+rever informação e melhorar no questionário, o que contribui para aprendizagem progressiva
+\subsection{Qualidade do conteúdo e fontes}
+%Contraste, tamanho de texto, linguagem simples, input por rato/teclado. Mesmo que implementem pouco, dá para discutir “boas práticas”.
+
 \section{Metodologia}
 
 Para a implementação, o projeto baseia-se em tecnologias de
@@ -125,6 +195,8 @@ nosso dia"-a"-dia e que os levamos de um lado para o outro connosco.
 Estes podem conter zinco, crómio, silício, alumínio, cobre, estanho,
 manganês, cobalto, bário, platina, tungsténio, arsénio, lítio, ouro, prata, ...
 
+\subsection{Critérios de seleção de objetos (casa/escola)}
+
 \subsection{Comparação com outros jogos}
 
 Em comparação com o \textcite{briefcasegame}, o nosso jogo seria um
@@ -139,8 +211,11 @@ informacional, oque o nosso jogo também tem.
 No \textcite{wordwall-rochas-minerais}, é um conjunto de jogos sobre
 minerais, mas muito simples em comparação ao nosso.
 
-\subsection{Conceito, regras e âmbito do jogo}
+\subsection{Diferenças de abordagem (exploração vs associação direta)}
+\subsection{Limitações observadas e decisões adotadas no projeto}
 
+\subsection{Conceito, regras e âmbito do jogo}
+% todo separar conceito de regras
 O conceito central do ``Casa dos Minerais'' assenta na exploração
 interativa e autoguiada de um ambiente virtual, primariamente uma
 casa. Inspirado num formato point-and-click, semelhante ao ``Club
@@ -156,9 +231,11 @@ sua proveniência e a sua relevância.
 Embora a exploração dentro de cada nível seja livre, permitindo ao
 jogador criar o seu próprio
 percurso de aprendizagem, a progressão no jogo será linear e estruturada
+\subsection{Loop de gameplay}
+%exploração → sair → quiz (6) → reinício
 
-\subsubsection{Regras e Progressão}
-
+\subsection{Regras e Progressão}
+% todo atualizar
 \begin{itemize}
   \item Estrutura de Níveis: O jogo será dividido em níveis (ex:
     cozinha, sala, exterior da casa).
@@ -177,7 +254,7 @@ percurso de aprendizagem, a progressão no jogo será linear e estruturada
     rejogabilidade.
 \end{itemize}
 
-\subsubsection{Âmbito do Jogo}
+\subsection{Âmbito do Jogo}
 
 O âmbito do jogo foca-se na experiência de descoberta dentro deste
 ``mundo'' virtual. O jogador não tem ``regras'' de exploração; pode
@@ -213,7 +290,7 @@ inglês. Os browsers normalmente conseguem traduzir um website, mas
 se não quisermos depender disso, podemos explorar opções como
 \href{https://github.com/argosopentech/argos-translate}{Argos}.
 
-\subsubsection{Informação semântica}
+\subsubsection{Informação semântica (HTML vs canvas)}
 
 O jogo quando jogado no navegador, não podemos depender só do HTML
 `canvas` para mostrar a informação, porque a informação no `canvas`
@@ -221,7 +298,7 @@ não passa de pixéis, de bits num bitmap (um leitor de ecrãs não
 consegue ler texto no `canvas`). Devemos usar HTML semântico para
 qualquer informação que seja de valor.
 
-\subsubsection{Independência de uma plataforma}
+\subsubsection{Independência de plataforma e performance}
 
 O jogo tem de ser possível de ser jogado na maioria dos
 dispositivos, e não só no nosso computador. Existem pessoas que
@@ -240,52 +317,14 @@ offline. O jogo não vai ser só para os computadores mais topo de
 gama. Não vais ter de comprar um novo dispositivo para jogar. Uma
 decisão ecológica e amiga do ambiente, mas também amiga da tua carteira!
 
-\section{\textit{Tech Stack}}
+\subsection{Planeamento e organização do trabalho}
 
-Começamos por pensar de que forma íamos implementar o jogo. Como o
-nosso objetivo e eventualmente o jogo ser multiplataforma, surgiu a
-ideia de usarmos a biblioteca \href{https://www.raylib.com/}{Raylib}.
-E uma biblioteca bem simples, mas que faz tudo o que necessitamos. E
-fácil de usar e tem uma boa documentação e exemplos. Agora só tivemos
-de pensar como e que faríamos para usar o Raylib para a Web. A
-resposta talvez seja obvia, precisávamos de usar WebAssembly (WASM).
-Mas ainda tivemos de decidir entre compilar a biblioteca Raylib para
-WASM, ou ter a logica do jogo em WASM mas depois usar as API que os
-navegadores Web oferecem para criar a parte gráfica do jogo.
-Escolhemos a segunda. Parece ser a que causa menos problemas, apesar
-de que agora temos de manter duas interfaces gráficas diferentes: A
-que usa a API Canvas do HTML, e a que usa Raylib.
+\section{Tech Stack}
 
-Bom, e agora, em que linguagem vamos criar a logica e a interface
-gráfica do jogo? Tínhamos basicamente qualquer linguagem com FFI,
-quase todas as linguagens compiladas e que conseguem dar link com
-binarios compilados criando ABI shims. Raylib e implementada em C,
-mas a comunidade já criou bindings para múltiplas linguagens. Nós
-queríamos usar uma linguagem que ainda não tínhamos usado, como forma
-de aprender essa linguagem e os seus paradigmas, mas também para
-mostrar que somos programadores, independentemente da linguagem. Um
-de nos lembrou-se da linguagem \href{https://odin-lang.org/}{Odin} e
-não discutimos mais acerca disso. Por acaso a linguagem já tem até um
-binding oficial para o Raylib, nesse sentido facilitou o nosso
-trabalho. Odin oferece programação de vetores, matrizes e quaterniões
-como tipo de dados, e estruturas de dados que facilitam programação
-SIMD e SIMT, que talvez não iremos usar diretamente, mas que com
-certeza ajuda bastante na criação de jogos 3D, na performance.
-
-Também tivemos a surpresa da linguagem estar relativamente preparada
-para compilação em WebAssembly, sem ter de fazer trabalho
-intermediário com
-\href{https://emscripten.org/index.html}{Emscripten}, LLVM e
-ficheiros de objetos, e ainda a gestão da memoria no JavaScript, já
-que Odin oferece um ficheiro preparado para o runtime, com integração
-com DOM e até WebGL.
-
-Odin não é uma linguagem qualquer, e já tem usos no mundo
-profissional, por exemplo, \href{https://jangafx.com/}{JangaFX}
-desenvolve ferramentas como EmberGen, GeoGen e LiquiGen inteiramente
-em Odin, mostrando o desempenho e a facilidade da linguagem para
-aplicações gráficas complexas. E é isso. Depois conforme a
-necessidade podemos ir buscar outras bibliotecas, mas por enquanto, basta.
+\subsection{Linguagem (Odin)}
+\subsection{Biblioteca gráfica/multimédia (raylib)}
+\subsection{Build web / WebAssembly (WASM)}
+\subsection{Scripts/ferramentas de build e colaboração (Git, etc.)}
 
 %%%
 

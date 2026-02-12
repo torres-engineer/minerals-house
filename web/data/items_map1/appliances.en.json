@@ -7,58 +7,38 @@
         {
           "name": "Iron",
           "origin": "Australia, Brazil, China",
-          "use": "Heating elements and body"
+          "use": "Stove body and heating elements"
         },
         {
           "name": "Chromium",
-          "origin": "South Africa, Kazakhstan, India",
-          "use": "Nichrome heating elements"
+          "origin": "South Africa, Kazakhstan",
+          "use": "Heating elements"
         },
         {
           "name": "Nickel",
           "origin": "Indonesia, Philippines, Russia",
-          "use": "Nichrome heating elements"
-        },
-        {
-          "name": "Copper",
-          "origin": "Chile, Peru, China",
-          "use": "Wiring"
-        },
-        {
-          "name": "Ceramic minerals",
-          "origin": "China, United States, Germany",
-          "use": "Cooktop surface (glass-ceramic)"
+          "use": "Protective coating"
         }
       ]
     },
     {
-      "name": "Microwave Oven",
+      "name": "Toaster",
       "category": "Kitchen",
       "minerals": [
         {
-          "name": "Copper",
-          "origin": "Chile, Peru, China",
-          "use": "Magnetron and wiring"
-        },
-        {
           "name": "Iron",
           "origin": "Australia, Brazil, China",
-          "use": "Steel casing and transformer"
-        },
-        {
-          "name": "Aluminum",
-          "origin": "Australia, Guinea, China",
-          "use": "Waveguide and interior cavity"
+          "use": "Toaster frame"
         },
         {
           "name": "Mica",
-          "origin": "China, Finland, United States",
-          "use": "Waveguide cover"
+          "origin": "China, Finland",
+          "use": "Thermal insulation"
         },
         {
-          "name": "Silicon",
-          "origin": "China, Russia, United States",
-          "use": "Control electronics"
+          "name": "Copper",
+          "origin": "Chile, Peru, China",
+          "use": "Electrical wires"
         }
       ]
     },
@@ -69,27 +49,17 @@
         {
           "name": "Iron",
           "origin": "Australia, Brazil, China",
-          "use": "Drum and motor components"
+          "use": "Drum and motor"
+        },
+        {
+          "name": "Neodymium",
+          "origin": "China, United States",
+          "use": "Motor magnets"
         },
         {
           "name": "Copper",
           "origin": "Chile, Peru, China",
-          "use": "Motor windings and wiring"
-        },
-        {
-          "name": "Aluminum",
-          "origin": "Australia, Guinea, China",
-          "use": "Drum and structural parts"
-        },
-        {
-          "name": "Zinc",
-          "origin": "China, Peru, Australia",
-          "use": "Galvanized parts for rust prevention"
-        },
-        {
-          "name": "Neodymium",
-          "origin": "China, United States, Myanmar",
-          "use": "Permanent magnets in motors"
+          "use": "Motor wiring"
         }
       ]
     },
@@ -98,80 +68,61 @@
       "category": "Electronics",
       "minerals": [
         {
-          "name": "Indium",
-          "origin": "China, South Korea, Japan",
-          "use": "LCD screen (indium tin oxide)"
+          "name": "Silicon",
+          "origin": "China, Russia, United States",
+          "use": "Chips and processors"
         },
         {
-          "name": "Copper",
-          "origin": "Chile, Peru, China",
-          "use": "Wiring and circuit boards"
+          "name": "Rare Earth Elements",
+          "origin": "China, United States",
+          "use": "Color display"
         },
         {
           "name": "Gold",
           "origin": "China, Australia, Russia",
           "use": "Connectors"
-        },
-        {
-          "name": "Silicon",
-          "origin": "China, Russia, United States",
-          "use": "Semiconductors and chips"
-        },
-        {
-          "name": "Rare Earth Elements",
-          "origin": "China, United States, Myanmar",
-          "use": "Phosphors and magnets"
-        },
-        {
-          "name": "Aluminum",
-          "origin": "Australia, Guinea, China",
-          "use": "Frame and heat sinks"
         }
       ]
     },
     {
-      "name": "Laptop Computer",
+      "name": "Computer",
       "category": "Electronics",
       "minerals": [
+        {
+          "name": "Silicon",
+          "origin": "China, Russia, United States",
+          "use": "Processor and memory"
+        },
         {
           "name": "Lithium",
           "origin": "Australia, Chile, China",
           "use": "Battery"
         },
         {
-          "name": "Cobalt",
-          "origin": "Democratic Republic of Congo, Russia, Australia",
-          "use": "Battery cathode"
+          "name": "Zinc",
+          "origin": "China, Peru, Australia",
+          "use": "Battery protection"
+        }
+      ]
+    },
+    {
+      "name": "Piano",
+      "category": "Music",
+      "minerals": [
+        {
+          "name": "Iron",
+          "origin": "Australia, Brazil, China",
+          "use": "Piano strings"
         },
         {
           "name": "Copper",
           "origin": "Chile, Peru, China",
-          "use": "Wiring and heat pipes"
+          "use": "Bass strings"
         },
         {
-          "name": "Gold",
-          "origin": "China, Australia, Russia",
-          "use": "Connectors and circuit boards"
-        },
-        {
-          "name": "Silver",
-          "origin": "Mexico, Peru, China",
-          "use": "Solder and contacts"
-        },
-        {
-          "name": "Aluminum",
-          "origin": "Australia, Guinea, China",
-          "use": "Casing and heat sinks"
-        },
-        {
-          "name": "Silicon",
-          "origin": "China, Russia, United States",
-          "use": "Processor and memory chips"
-        },
-        {
-          "name": "Rare Earth Elements",
-          "origin": "China, United States, Myanmar",
-          "use": "Hard drive magnets, speakers"
+          "name": "Zinc",
+          "origin": "China, Peru, Australia",
+          "use": "Tuning pins"
         }
       ]
     }
