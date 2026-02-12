@@ -52,6 +52,7 @@ Defaulting to PT (Portuguese).}
 \RequirePackage{float}
 
 \RequirePackage[position=top,hypcap=false]{caption}
+\RequirePackage{subcaption}
 
 % --- BEGIN CUSTOM CAPTION SETUP ---
 \DeclareCaptionFormat{ipbejacaption}{#1\par#3}
@@ -176,7 +177,11 @@ Defaulting to PT (Portuguese).}
 % --- End Language-dependent settings ---
 
 \addbibresource{03-bibliography.bib}
-\setmathfont{TeX Gyre Pagella Math}
+\IfFontExistsTF{TeX Gyre Pagella Math}{%
+  \setmathfont{TeX Gyre Pagella Math}%
+}{%
+  \setmathfont{latinmodern-math.otf}%
+}
 
 \AtBeginDocument{%
   \counterwithout{figure}{chapter}%
@@ -186,7 +191,7 @@ Defaulting to PT (Portuguese).}
   \renewcommand{\thetable}{\arabic{table}}%
 }
 
-\defbibheading{bibliography}[\pt-en{\bibstring{references}}{\bibstring{references}}]{%
+\defbibheading{bibliography}[\pten{\bibstring{references}}{\bibstring{references}}]{%
   \clearpage
   \phantomsection
   \addcontentsline{toc}{chapter}{\protect\textsc{#1}}%
@@ -200,6 +205,33 @@ Defaulting to PT (Portuguese).}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codedarkred}{rgb}{0.459,0.08,0.114}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.95}
+
+\lstdefinelanguage{json}{
+  basicstyle=\ttfamily\footnotesize,
+  numbers=left,
+  numberstyle=\tiny\color{codegray},
+  stepnumber=1,
+  numbersep=8pt,
+  showstringspaces=false,
+  breaklines=true,
+  literate=
+   *{0}{{{\color{codeblue}0}}}{1}
+    {1}{{{\color{codeblue}1}}}{1}
+    {2}{{{\color{codeblue}2}}}{1}
+    {3}{{{\color{codeblue}3}}}{1}
+    {4}{{{\color{codeblue}4}}}{1}
+    {5}{{{\color{codeblue}5}}}{1}
+    {6}{{{\color{codeblue}6}}}{1}
+    {7}{{{\color{codeblue}7}}}{1}
+    {8}{{{\color{codeblue}8}}}{1}
+    {9}{{{\color{codeblue}9}}}{1}
+    {:}{{{\color{codedarkred}{:}}}}{1}
+    {,}{{{\color{codedarkred}{,}}}}{1}
+    {\{}{{{\color{codedarkred}{\{}}}}{1}
+    {\}}{{{\color{codedarkred}{\}}}}}{1}
+    {[}{{{\color{codedarkred}{[}}}}{1}
+    {]}{{{\color{codedarkred}{]}}}}{1},
+}
 
 \lstdefinestyle{mystyle}{
   backgroundcolor=\color{backcolour}, commentstyle=\color{codegreen},
