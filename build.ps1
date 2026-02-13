@@ -1,8 +1,13 @@
 $odin_js = (odin root) + "/core/sys/wasm/js/odin.js"
 Copy-Item $odin_js "web/odin.js"
 
-odin build . -target:js_wasm32 -out:web/index.wasm
+Remove-Item -Recurse -Force web/worlds -ErrorAction SilentlyContinue
+Copy-Item -Recurse worlds web/worlds
 
-# ln -sf worlds web/worlds → Remove-Item + New-Item SymbolicLink
-if (Test-Path "web/worlds") { Remove-Item "web/worlds" -Force }
-New-Item -ItemType SymbolicLink -Path "web/worlds" -Target "worlds" | Out-Null
+# Generate worlds.json (equivalent to find)
+$worlds = Get-ChildItem worlds -Directory | ForEach-Object { $_.Name }
+$json = "[$($worlds | ForEach-Object { "`"$_`"," } | Join-String -Separator '')]"
+$json = $json.TrimEnd(',') + ']'
+$json | Out-File -Encoding utf8 web/worlds.json
+
+odin build . -target:js_wasm32 -out:web/index.wasm
