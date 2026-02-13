@@ -1,90 +1,133 @@
 <!DOCTYPE html>
 <!-- LICENSE -->
 <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Minerals' House</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Minerals' House</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-</head>
+  <body>
+    <canvas id="game"></canvas>
 
-<body>
-  <canvas id="game"></canvas>
+    <section id="start-menu" class="menu-overlay">
+      <div class="menu-card">
+        <p class="menu-kicker" id="start-kicker">Educational Adventure</p>
+        <h1 id="start-title">Minerals' House</h1>
+        <p class="menu-subtitle" id="start-subtitle">
+          Choose a language and start exploring.
+        </p>
 
-  <section id="start-menu" class="menu-overlay">
-    <div class="menu-card">
-      <p class="menu-kicker" id="start-kicker">Educational Adventure</p>
-      <h1 id="start-title">Minerals' House</h1>
-      <p class="menu-subtitle" id="start-subtitle">Choose a language and start exploring.</p>
-
-      <div class="language-picker">
-        <p id="language-label">Language</p>
-        <div class="language-buttons">
-          <button class="lang-btn active" data-lang="pt" type="button">Portuguese</button>
-          <button class="lang-btn" data-lang="en" type="button">English</button>
+        <div class="language-picker">
+          <p id="language-label">Language</p>
+          <div class="language-buttons">
+            <button class="lang-btn active" data-lang="pt" type="button">
+              Portuguese
+            </button>
+            <button class="lang-btn" data-lang="en" type="button">
+              English
+            </button>
+          </div>
         </div>
+
+        <button id="start-game-btn" class="menu-start-btn" type="button">
+          Start Game
+        </button>
       </div>
+    </section>
 
-      <button id="start-game-btn" class="menu-start-btn" type="button">Start Game</button>
-    </div>
-  </section>
+    <button
+      id="settings-button"
+      class="settings-button hidden"
+      type="button"
+      aria-label="Settings"
+      title="Settings"
+    >
+      <svg
+        class="settings-gear-icon"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          d="M19.14 12.94a7.96 7.96 0 0 0 .06-.94 7.96 7.96 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.52 7.52 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 13.9 2h-3.8a.5.5 0 0 0-.49.42l-.36 2.54a7.52 7.52 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.48a.5.5 0 0 0 .12.64l2.03 1.58a7.96 7.96 0 0 0-.06.94c0 .32.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.39 1.05.72 1.63.94l.36 2.54a.5.5 0 0 0 .49.42h3.8a.5.5 0 0 0 .49-.42l.36-2.54c.58-.22 1.13-.55 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"
+        >
+        </path>
+      </svg>
+    </button>
 
-  <button id="settings-button" class="settings-button hidden" type="button" aria-label="Settings" title="Settings">
-    <svg class="settings-gear-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M19.14 12.94a7.96 7.96 0 0 0 .06-.94 7.96 7.96 0 0 0-.06-.94l2.03-1.58a.5.5 0 0 0 .12-.64l-1.92-3.32a.5.5 0 0 0-.6-.22l-2.39.96a7.52 7.52 0 0 0-1.63-.94l-.36-2.54A.5.5 0 0 0 13.9 2h-3.8a.5.5 0 0 0-.49.42l-.36 2.54a7.52 7.52 0 0 0-1.63.94l-2.39-.96a.5.5 0 0 0-.6.22L2.71 8.48a.5.5 0 0 0 .12.64l2.03 1.58a7.96 7.96 0 0 0-.06.94c0 .32.02.63.06.94l-2.03 1.58a.5.5 0 0 0-.12.64l1.92 3.32a.5.5 0 0 0 .6.22l2.39-.96c.5.39 1.05.72 1.63.94l.36 2.54a.5.5 0 0 0 .49.42h3.8a.5.5 0 0 0 .49-.42l.36-2.54c.58-.22 1.13-.55 1.63-.94l2.39.96a.5.5 0 0 0 .6-.22l1.92-3.32a.5.5 0 0 0-.12-.64l-2.03-1.58zM12 15.5A3.5 3.5 0 1 1 12 8.5a3.5 3.5 0 0 1 0 7z"></path>
-    </svg>
-  </button>
-
-  <!-- Modal for item discovery -->
-  <div id="item-modal" class="modal hidden" oncontextmenu="return false;">
-    <div class="modal-content">
-      <button class="modal-close" onclick="playSound('click'); closeModal()">&times;</button>
-      <div id="modal-body"></div>
-    </div>
-  </div>
-
-  <div id="settings-modal" class="modal hidden">
-    <div class="modal-content settings-content">
-      <button class="modal-close" id="settings-close-btn" type="button">&times;</button>
-      <div id="settings-body">
-        <h2 id="settings-title">Settings</h2>
-        <div class="setting-row">
-          <label for="master-volume" id="master-volume-label">Master Volume</label>
-          <input id="master-volume" type="range" min="0" max="100" value="100">
-          <span id="master-volume-value">100%</span>
-        </div>
-        <div class="setting-row">
-          <label for="music-volume" id="music-volume-label">Music Volume</label>
-          <input id="music-volume" type="range" min="0" max="100" value="100">
-          <span id="music-volume-value">100%</span>
-        </div>
-        <div class="setting-row">
-          <label for="sfx-volume" id="sfx-volume-label">SFX Volume</label>
-          <input id="sfx-volume" type="range" min="0" max="100" value="100">
-          <span id="sfx-volume-value">100%</span>
-        </div>
-        <div class="setting-row mute-row">
-          <label for="mute-audio" id="mute-audio-label">Mute all audio</label>
-          <input id="mute-audio" type="checkbox">
-        </div>
-        <div class="quiz-buttons">
-          <button id="restart-game-btn" class="quiz-btn secondary" type="button">Restart Game</button>
-          <button id="close-settings-btn" class="quiz-btn" type="button">Close</button>
-        </div>
+    <!-- Modal for item discovery -->
+    <div id="item-modal" class="modal hidden" oncontextmenu="return false;">
+      <div class="modal-content">
+        <button class="modal-close" onclick="playSound('click'); closeModal()">
+          &times;
+        </button>
+        <div id="modal-body"></div>
       </div>
     </div>
-  </div>
 
-  <pre id="console" style="display:none;"></pre>
-  <script type="text/javascript" src="odin.js"></script>
-  <script type="text/javascript" src="translations.js"></script>
-  <script type="text/javascript" src="index.js"></script>
-  <noscript>This page needs JavaScript to work!</noscript>
-</body>
+    <div id="settings-modal" class="modal hidden">
+      <div class="modal-content settings-content">
+        <button class="modal-close" id="settings-close-btn" type="button">
+          &times;
+        </button>
+        <div id="settings-body">
+          <h2 id="settings-title">Settings</h2>
+          <div class="setting-row">
+            <label for="master-volume" id="master-volume-label"
+            >Master Volume</label>
+            <input
+              id="master-volume"
+              type="range"
+              min="0"
+              max="100"
+              value="100"
+            >
+            <span id="master-volume-value">100%</span>
+          </div>
+          <div class="setting-row">
+            <label for="music-volume" id="music-volume-label"
+            >Music Volume</label>
+            <input id="music-volume" type="range" min="0" max="100" value="100">
+            <span id="music-volume-value">100%</span>
+          </div>
+          <div class="setting-row">
+            <label for="sfx-volume" id="sfx-volume-label">SFX Volume</label>
+            <input id="sfx-volume" type="range" min="0" max="100" value="100">
+            <span id="sfx-volume-value">100%</span>
+          </div>
+          <div class="setting-row mute-row">
+            <label for="mute-audio" id="mute-audio-label">Mute all audio</label>
+            <input id="mute-audio" type="checkbox">
+          </div>
+          <div class="quiz-buttons">
+            <button
+              id="restart-game-btn"
+              class="quiz-btn secondary"
+              type="button"
+            >
+              Restart Game
+            </button>
+            <button id="close-settings-btn" class="quiz-btn" type="button">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <pre id="console" style="display: none"></pre>
+    <script type="text/javascript" src="odin.js"></script>
+    <script type="text/javascript" src="translations.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    <noscript>This page needs JavaScript to work!</noscript>
+  </body>
 </html>

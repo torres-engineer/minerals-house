@@ -1,11 +1,49 @@
 {
   "items": [
-    { "id": "oven", "appliance": "Electric Stove", "x": 1225, "y": 528, "radius": 40 },
-    { "id": "toaster", "appliance": "Toaster", "x": 1379, "y": 504, "radius": 35 },
-    { "id": "laundry", "appliance": "Washing Machine", "x": 993, "y": 149, "radius": 40 },
-    { "id": "computer", "appliance": "Laptop Computer", "x": 68, "y": 256, "radius": 35 },
-    { "id": "monitor", "appliance": "Television", "x": 113, "y": 330, "radius": 35 },
+    {
+      "id": "oven",
+      "appliance": "Electric Stove",
+      "x": 1225,
+      "y": 528,
+      "radius": 40
+    },
+    {
+      "id": "toaster",
+      "appliance": "Toaster",
+      "x": 1379,
+      "y": 504,
+      "radius": 35
+    },
+    {
+      "id": "laundry",
+      "appliance": "Washing Machine",
+      "x": 993,
+      "y": 149,
+      "radius": 40
+    },
+    {
+      "id": "computer",
+      "appliance": "Laptop Computer",
+      "x": 68,
+      "y": 256,
+      "radius": 35
+    },
+    {
+      "id": "monitor",
+      "appliance": "Television",
+      "x": 113,
+      "y": 330,
+      "radius": 35
+    },
     { "id": "tv", "appliance": "Television", "x": 267, "y": 497, "radius": 40 },
-    { "id": "piano", "appliance": null, "x": 509, "y": 805, "radius": 50, "customName": "Piano", "customInfo": "A beautiful musical instrument!" }
+    {
+      "id": "piano",
+      "appliance": null,
+      "x": 509,
+      "y": 805,
+      "radius": 50,
+      "customName": "Piano",
+      "customInfo": "A beautiful musical instrument!"
+    }
   ]
 }

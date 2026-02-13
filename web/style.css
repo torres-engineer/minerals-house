@@ -10,7 +10,7 @@ body {
   height: 100%;
   overflow: hidden;
   background: #181818;
-  cursor: url('./source/ui/cursor.png'), auto;
+  cursor: url("./source/ui/cursor.png"), auto;
 }
 
 #game {
@@ -54,7 +54,7 @@ body {
   --glow-orange: rgba(225, 112, 85, 0.5);
 
   /* Main Font */
-  --font-main: 'Outfit', sans-serif;
+  --font-main: "Outfit", sans-serif;
 }
 
 /* ========================================
@@ -69,8 +69,16 @@ body {
   justify-content: center;
   padding: 24px;
   background:
-    radial-gradient(circle at 20% 20%, rgba(212, 167, 84, 0.18), transparent 45%),
-    radial-gradient(circle at 80% 70%, rgba(184, 115, 51, 0.22), transparent 40%),
+    radial-gradient(
+      circle at 20% 20%,
+      rgba(212, 167, 84, 0.18),
+      transparent 45%
+    ),
+    radial-gradient(
+    circle at 80% 70%,
+    rgba(184, 115, 51, 0.22),
+    transparent 40%
+  ),
     rgba(10, 8, 7, 0.86);
 }
 
@@ -269,7 +277,6 @@ body {
 }
 
 @keyframes shimmer {
-
   0%,
   100% {
     filter: brightness(1);
@@ -281,7 +288,6 @@ body {
 }
 
 @keyframes shake {
-
   0%,
   100% {
     transform: translateX(0);
@@ -304,7 +310,6 @@ body {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translateY(0);
@@ -316,7 +321,6 @@ body {
 }
 
 @keyframes glow {
-
   0%,
   100% {
     box-shadow: 0 0 5px var(--glow-orange);
@@ -411,7 +415,11 @@ body {
    TYPOGRAPHY IN MODAL
    ======================================== */
 .modal-content h2 {
-  background: linear-gradient(180deg, var(--accent-copper) 0%, var(--border-medium) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--accent-copper) 0%,
+    var(--border-medium) 100%
+  );
   color: var(--text-light);
   margin: -24px -24px 20px -24px;
   padding: 20px 24px;
@@ -570,24 +578,18 @@ body {
   transition: all 0.2s;
   position: relative;
 
-  box-shadow:
-    0 4px 0 #8b2a1f,
-    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 0 #8b2a1f, inset 0 2px 0 rgba(255, 255, 255, 0.2);
 }
 
 .quiz-btn:hover {
   background: linear-gradient(180deg, #e74c3c 0%, var(--accent-rust) 100%);
   transform: translateY(-2px);
-  box-shadow:
-    0 6px 0 #8b2a1f,
-    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 6px 0 #8b2a1f, inset 0 2px 0 rgba(255, 255, 255, 0.2);
 }
 
 .quiz-btn:active {
   transform: translateY(2px);
-  box-shadow:
-    0 2px 0 #8b2a1f,
-    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  box-shadow: 0 2px 0 #8b2a1f, inset 0 2px 0 rgba(255, 255, 255, 0.2);
 }
 
 .quiz-btn.secondary {
@@ -779,7 +781,7 @@ body {
 }
 
 .fun-fact::before {
-  content: 'Sabias que? ';
+  content: "Sabias que? ";
   color: var(--accent-orange);
   font-weight: bold;
 }
@@ -792,7 +794,11 @@ body {
 }
 
 .continue-btn:hover {
-  background: linear-gradient(180deg, var(--accent-orange) 0%, var(--accent-copper) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--accent-orange) 0%,
+    var(--accent-copper) 100%
+  );
 }
 
 /* ========================================

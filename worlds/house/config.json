@@ -1,17 +1,17 @@
 {
-    "scale": 48,
-    "items": [
-        {
-            "name": "ball",
-            "description": "A ball",
-            "offset": {
-                "pos": [
-                    120,
-                    120
-                ],
-                "r": 16
-            },
-            "minerals": ["gold"]
-        }
-    ]
+  "scale": 48,
+  "items": [
+    {
+      "name": "ball",
+      "description": "A ball",
+      "offset": {
+        "pos": [
+          120,
+          120
+        ],
+        "r": 16
+      },
+      "minerals": ["gold"]
+    }
+  ]
 }

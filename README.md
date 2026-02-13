@@ -81,11 +81,9 @@ busybox httpd -f -p 8000
 - https://www.go-fair.org/
 - https://zenodo.org/
 
-
 ## Credits
 
 Small 8-direction Characters:
 
-By: AxulArt
-https://axulart.itch.io/small-8-direction-characters
+By: AxulArt https://axulart.itch.io/small-8-direction-characters
 https://axulart.tumblr.com/

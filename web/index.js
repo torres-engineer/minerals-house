@@ -1,5 +1,7 @@
 "use strict";
 
+import { config } from "node:process";
+
 const PLAYER_POS_OFFSET = 0;
 const PLAYER_DEST_OFFSET = PLAYER_POS_OFFSET + 8;
 const WORLD_WIDTH_OFFSET = 0;
@@ -23,12 +25,47 @@ let audioCtx = null;
 const audioSettings = { master: 1, music: 1, sfx: 1, muted: false };
 
 const sounds = {
-  bgm: { url: "./data/audio/bgm.mp3", buffer: null, source: null, gainNode: null, loop: true, baseVolume: 0.05, channel: "music" },
-  footstep: { url: "./data/audio/footstep.mp3", buffer: null, minInterval: 350, lastPlay: 0, baseVolume: 0.2, channel: "sfx" },
-  click: { url: "./data/audio/click.mp3", buffer: null, baseVolume: 0.4, channel: "sfx" },
-  collect: { url: "./data/audio/collect.mp3", buffer: null, baseVolume: 0.5, channel: "sfx" },
-  correct: { url: "./data/audio/correct.mp3", buffer: null, baseVolume: 0.5, channel: "sfx" },
-  wrong: { url: "./data/audio/wrong.mp3", buffer: null, baseVolume: 0.5, channel: "sfx" }
+  bgm: {
+    url: "./data/audio/bgm.mp3",
+    buffer: null,
+    source: null,
+    gainNode: null,
+    loop: true,
+    baseVolume: 0.05,
+    channel: "music",
+  },
+  footstep: {
+    url: "./data/audio/footstep.mp3",
+    buffer: null,
+    minInterval: 350,
+    lastPlay: 0,
+    baseVolume: 0.2,
+    channel: "sfx",
+  },
+  click: {
+    url: "./data/audio/click.mp3",
+    buffer: null,
+    baseVolume: 0.4,
+    channel: "sfx",
+  },
+  collect: {
+    url: "./data/audio/collect.mp3",
+    buffer: null,
+    baseVolume: 0.5,
+    channel: "sfx",
+  },
+  correct: {
+    url: "./data/audio/correct.mp3",
+    buffer: null,
+    baseVolume: 0.5,
+    channel: "sfx",
+  },
+  wrong: {
+    url: "./data/audio/wrong.mp3",
+    buffer: null,
+    baseVolume: 0.5,
+    channel: "sfx",
+  },
 };
 
 const mineralIcons = {
@@ -53,7 +90,7 @@ const mineralIcons = {
   neodymium: "./source/minerals/neodimio.png",
   "terras raras": "./source/minerals/terrasRaras.png",
   "rare earth elements": "./source/minerals/terrasRaras.png",
-  default: "./source/minerals/generic.png"
+  default: "./source/minerals/generic.png",
 };
 
 function normalizeText(value) {
@@ -86,12 +123,15 @@ async function initAudio() {
     return;
   }
   try {
-    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+    const AudioContextCtor = window.AudioContext ||
+      window.webkitAudioContext;
     audioCtx = new AudioContextCtor();
     for (const sound of Object.values(sounds)) {
       try {
         const response = await fetch(sound.url);
-        sound.buffer = await audioCtx.decodeAudioData(await response.arrayBuffer());
+        sound.buffer = await audioCtx.decodeAudioData(
+          await response.arrayBuffer(),
+        );
       } catch (error) {
         console.warn("Failed to load sound", sound.url, error);
       }
@@ -103,12 +143,16 @@ async function initAudio() {
 
 function resolveSoundVolume(sound) {
   if (!sound || audioSettings.muted) return 0;
-  const channelGain = sound.channel === "music" ? audioSettings.music : audioSettings.sfx;
+  const channelGain = sound.channel === "music"
+    ? audioSettings.music
+    : audioSettings.sfx;
   return sound.baseVolume * audioSettings.master * channelGain;
 }
 
 function applyAudioMix() {
-  if (sounds.bgm.gainNode) sounds.bgm.gainNode.gain.value = resolveSoundVolume(sounds.bgm);
+  if (sounds.bgm.gainNode) {
+    sounds.bgm.gainNode.gain.value = resolveSoundVolume(sounds.bgm);
+  }
 }
 
 function playSound(name) {
@@ -165,7 +209,7 @@ function applyStaticTranslations() {
     ["sfx-volume-label", "sfxVolume"],
     ["mute-audio-label", "muteAll"],
     ["restart-game-btn", "restartGame"],
-    ["close-settings-btn", "close"]
+    ["close-settings-btn", "close"],
   ];
 
   for (const [id, key] of map) {
@@ -186,7 +230,10 @@ function applyStaticTranslations() {
 function selectLanguage(language) {
   currentLanguage = language === "en" ? "en" : "pt";
   for (const button of document.querySelectorAll(".lang-btn")) {
-    button.classList.toggle("active", button.dataset.lang === currentLanguage);
+    button.classList.toggle(
+      "active",
+      button.dataset.lang === currentLanguage,
+    );
   }
   applyStaticTranslations();
 }
@@ -214,11 +261,15 @@ function setupStartMenu() {
       playSound("bgm");
       gameStarted = true;
       document.getElementById("start-menu").classList.add("hidden");
-      document.getElementById("settings-button").classList.remove("hidden");
+      document.getElementById("settings-button").classList.remove(
+        "hidden",
+      );
     } catch (error) {
       console.error(error);
       const subtitle = document.getElementById("start-subtitle");
-      if (subtitle) subtitle.textContent = `${t("startSubtitle")} (${String(error)})`;
+      if (subtitle) {
+        subtitle.textContent = `${t("startSubtitle")} (${String(error)})`;
+      }
       startButton.disabled = false;
       startButton.textContent = t("startButton");
       gameBooting = false;
@@ -267,10 +318,13 @@ function setupSettingsMenu() {
     updateVolumeReadout("sfx-volume", "sfx-volume-value", "sfx");
   });
 
-  document.getElementById("mute-audio").addEventListener("change", (event) => {
-    audioSettings.muted = Boolean(event.target.checked);
-    applyAudioMix();
-  });
+  document.getElementById("mute-audio").addEventListener(
+    "change",
+    (event) => {
+      audioSettings.muted = Boolean(event.target.checked);
+      applyAudioMix();
+    },
+  );
 
   restartBtn.addEventListener("click", () => {
     playSound("click");
@@ -280,7 +334,10 @@ function setupSettingsMenu() {
 
 function getDataPaths(language) {
   return language === "en"
-    ? { items: "./data/items.en.json", appliances: "./data/appliances.en.json" }
+    ? {
+      items: "./data/items.en.json",
+      appliances: "./data/appliances.en.json",
+    }
     : { items: "./data/items.json", appliances: "./data/appliances.json" };
 }
 
@@ -289,9 +346,12 @@ async function loadGameData(language) {
   try {
     const [itemsData, appliancesData] = await Promise.all([
       fetch(paths.items).then((r) => r.json()),
-      fetch(paths.appliances).then((r) => r.json())
+      fetch(paths.appliances).then((r) => r.json()),
     ]);
-    return { items: itemsData.items || [], appliances: appliancesData.appliances || [] };
+    return {
+      items: itemsData.items || [],
+      appliances: appliancesData.appliances || [],
+    };
   } catch (error) {
     if (language !== "pt") return loadGameData("pt");
     throw error;
@@ -319,6 +379,15 @@ async function initGame(language) {
     return null;
   }
 
+  const worldsResponse = await fetch("./worlds.json");
+  const worldEntries = await worldsResponse.json().map((x) => ({
+    id: x,
+    config_path: `worlds/${x}/config.json`,
+    mask_path: `worlds/${x}/mask.png`,
+    background_path: `worlds/${x}/background.png`,
+    overlay_path: `worlds/${x}/overlay.png`,
+  }));
+
   const canvas = document.getElementById("game");
   const ctx = canvas.getContext("2d");
 
@@ -345,12 +414,19 @@ async function initGame(language) {
   let currentRow = 0;
   let animTimer = 0;
   const animInterval = 180;
-  let lastTime = (typeof performance !== "undefined") ? performance.now() : Date.now();
+  let lastTime = (typeof performance !== "undefined")
+    ? performance.now()
+    : Date.now();
 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  exports.init(canvas.width, canvas.height);
+  exports.init(
+    canvas.width,
+    canvas.height,
+    worldEntries,
+    async (path) => await fetch(path).then((x) => x.bytes()),
+  );
   const state = exports.getState();
   const worldPtr = exports.getWorld();
 
@@ -358,7 +434,7 @@ async function initGame(language) {
     target: mem.loadF32Array(state + PLAYER_POS_OFFSET, 2),
     offset: [canvas.width / 2, canvas.height / 2],
     rotation: 0,
-    zoom: 1
+    zoom: 1,
   };
 
   function resizeCanvas() {
@@ -412,7 +488,9 @@ async function initGame(language) {
             items,
             appliances,
             foundCount: exports.get_found_items_count(),
-            totalItems: items.filter((entry) => entry.appliance !== null).length
+            totalItems: items.filter((entry) =>
+              entry.appliance !== null
+            ).length,
           });
           playSound("click");
           return;
@@ -423,11 +501,21 @@ async function initGame(language) {
 
       const found = findItemNear(worldX, worldY);
       if (found) {
-        const playerDistToItem = Math.hypot(pos[0] - found.item.x, pos[1] - found.item.y);
+        const playerDistToItem = Math.hypot(
+          pos[0] - found.item.x,
+          pos[1] - found.item.y,
+        );
         if (playerDistToItem <= 120) {
           const isNewFind = exports.add_found_item(found.index);
-          const appliance = found.item.appliance ? getAppliance(found.item.appliance) : null;
-          showItemDiscovery({ item: found.item, appliance, isNew: isNewFind, playerPos: pos });
+          const appliance = found.item.appliance
+            ? getAppliance(found.item.appliance)
+            : null;
+          showItemDiscovery({
+            item: found.item,
+            appliance,
+            isNew: isNewFind,
+            playerPos: pos,
+          });
           playSound("click");
         } else {
           exports.player_click(found.item.x, found.item.y);
@@ -449,7 +537,9 @@ async function initGame(language) {
   });
 
   function render(now) {
-    const tNow = (typeof now !== "undefined") ? now : ((typeof performance !== "undefined") ? performance.now() : Date.now());
+    const tNow = (typeof now !== "undefined")
+      ? now
+      : ((typeof performance !== "undefined") ? performance.now() : Date.now());
     const deltaTime = (tNow - lastTime) / 1000;
     lastTime = tNow;
 
@@ -471,9 +561,33 @@ async function initGame(language) {
         const wX = i * world.scale;
         const wY = j * world.scale;
         const z = wY + world.scale;
-        renderList.push({ type: "layer_part", img: wallsImg, x: wX, y: wY, w: world.scale, h: world.scale, z });
-        renderList.push({ type: "layer_part", img: objectsImg, x: wX, y: wY, w: world.scale, h: world.scale, z });
-        renderList.push({ type: "layer_part", img: itemsImg, x: wX, y: wY, w: world.scale, h: world.scale, z });
+        renderList.push({
+          type: "layer_part",
+          img: wallsImg,
+          x: wX,
+          y: wY,
+          w: world.scale,
+          h: world.scale,
+          z,
+        });
+        renderList.push({
+          type: "layer_part",
+          img: objectsImg,
+          x: wX,
+          y: wY,
+          w: world.scale,
+          h: world.scale,
+          z,
+        });
+        renderList.push({
+          type: "layer_part",
+          img: itemsImg,
+          x: wX,
+          y: wY,
+          w: world.scale,
+          h: world.scale,
+          z,
+        });
       }
     }
 
@@ -531,10 +645,15 @@ async function initGame(language) {
         dy: dyCanvas,
         dW: drawW,
         dH: drawH,
-        z: pos[1] + drawH / 2
+        z: pos[1] + drawH / 2,
       });
     } else {
-      renderList.push({ type: "fallback_circle", x: screenToWorldX(pos[0]), y: screenToWorldY(pos[1]), z: pos[1] });
+      renderList.push({
+        type: "fallback_circle",
+        x: screenToWorldX(pos[0]),
+        y: screenToWorldY(pos[1]),
+        z: pos[1],
+      });
     }
 
     renderList.sort((a, b) => a.z - b.z);
@@ -551,11 +670,21 @@ async function initGame(language) {
             screenToWorldX(entry.x),
             screenToWorldY(entry.y),
             entry.w + 1,
-            entry.h + 1
+            entry.h + 1,
           );
         }
       } else if (entry.type === "player") {
-        ctx.drawImage(entry.img, entry.sx, entry.sy, entry.sW, entry.sH, entry.dx, entry.dy, entry.dW, entry.dH);
+        ctx.drawImage(
+          entry.img,
+          entry.sx,
+          entry.sy,
+          entry.sW,
+          entry.sH,
+          entry.dx,
+          entry.dy,
+          entry.dW,
+          entry.dH,
+        );
       } else if (entry.type === "fallback_circle") {
         ctx.fillStyle = "darkblue";
         ctx.beginPath();
@@ -587,7 +716,9 @@ async function initGame(language) {
         const sX = item.x - halfSize;
         const sY = item.y - halfSize;
 
-        const isHovered = Boolean(foundNearMouse && foundNearMouse.item === item);
+        const isHovered = Boolean(
+          foundNearMouse && foundNearMouse.item === item,
+        );
         const isFound = exports.has_found_item(index + 1);
 
         if (isFound && !isHovered) return;
@@ -613,14 +744,25 @@ async function initGame(language) {
         ctx.save();
         ctx.shadowColor = "rgba(255, 215, 0, 1)";
         ctx.shadowBlur = shadowBlur;
-        ctx.drawImage(window.highlightCanvas, 0, 0, size, size, screenToWorldX(sX), screenToWorldY(sY), size, size);
+        ctx.drawImage(
+          window.highlightCanvas,
+          0,
+          0,
+          size,
+          size,
+          screenToWorldX(sX),
+          screenToWorldY(sY),
+          size,
+          size,
+        );
         ctx.restore();
       });
     }
 
     if (foundNearMouse) {
       const item = foundNearMouse.item;
-      const label = item.appliance || item.customName || t("itemFallback");
+      const label = item.appliance || item.customName ||
+        t("itemFallback");
 
       ctx.save();
       ctx.font = "bold 14px sans-serif";
@@ -633,7 +775,13 @@ async function initGame(language) {
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
       ctx.beginPath();
       if (ctx.roundRect) {
-        ctx.roundRect(labelX - textW / 2 - 5, labelY - 15, textW + 10, 20, 5);
+        ctx.roundRect(
+          labelX - textW / 2 - 5,
+          labelY - 15,
+          textW + 10,
+          20,
+          5,
+        );
       } else {
         ctx.rect(labelX - textW / 2 - 5, labelY - 15, textW + 10, 20);
       }
@@ -671,7 +819,12 @@ async function initGame(language) {
       ctx.shadowBlur = 10;
     }
 
-    ctx.fillRect(exitScreenX - exitSize / 2, exitScreenY - exitSize / 2, exitSize * 2, exitSize);
+    ctx.fillRect(
+      exitScreenX - exitSize / 2,
+      exitScreenY - exitSize / 2,
+      exitSize * 2,
+      exitSize,
+    );
     ctx.restore();
 
     requestAnimationFrame(render);
@@ -695,7 +848,8 @@ function createConfetti(container) {
     const confetti = document.createElement("div");
     confetti.className = "confetti";
     confetti.style.left = `${Math.random() * 100}%`;
-    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.backgroundColor =
+      colors[Math.floor(Math.random() * colors.length)];
     confetti.style.animationDelay = `${Math.random() * 0.5}s`;
     container.appendChild(confetti);
     setTimeout(() => confetti.remove(), 1500);
@@ -719,8 +873,12 @@ function showQuizEvent(info) {
         <p>${t("quizPrompt")}</p>
       </div>
       <div class="quiz-buttons">
-        <button onclick="playSound('click'); startQuiz()" class="quiz-btn">${t("startQuiz")}</button>
-        <button onclick="playSound('click'); closeModal()" class="quiz-btn secondary">${t("continueExploring")}</button>
+        <button onclick="playSound('click'); startQuiz()" class="quiz-btn">${
+      t("startQuiz")
+    }</button>
+        <button onclick="playSound('click'); closeModal()" class="quiz-btn secondary">${
+      t("continueExploring")
+    }</button>
       </div>
     `;
     modal.classList.remove("hidden");
@@ -743,7 +901,9 @@ function startQuiz() {
       <h2>${t("noQuestionsTitle")}</h2>
       <p style="text-align: center;">${t("noQuestionsBody")}</p>
       <div class="quiz-buttons">
-        <button onclick="playSound('click'); closeModal()" class="quiz-btn">${t("back")}</button>
+        <button onclick="playSound('click'); closeModal()" class="quiz-btn">${
+      t("back")
+    }</button>
       </div>
     `;
     modal.classList.remove("hidden");
@@ -766,9 +926,14 @@ function generateQuizQuestions() {
   appliances.forEach((appliance) => {
     if (!appliance.minerals || appliance.minerals.length === 0) return;
 
-    const correct = appliance.minerals[Math.floor(Math.random() * appliance.minerals.length)];
+    const correct = appliance
+      .minerals[
+        Math.floor(Math.random() * appliance.minerals.length)
+      ];
     const wrong = mineralsList
-      .filter((name) => !appliance.minerals.some((entry) => entry.name === name))
+      .filter((name) =>
+        !appliance.minerals.some((entry) => entry.name === name)
+      )
       .sort(() => Math.random() - 0.5)
       .slice(0, 3);
 
@@ -778,7 +943,10 @@ function generateQuizQuestions() {
       question: t("questionTemplate", { appliance: appliance.name }),
       options: [correct.name, ...wrong].sort(() => Math.random() - 0.5),
       correct: correct.name,
-      explanation: t("usedFor", { mineral: correct.name, use: correct.use })
+      explanation: t("usedFor", {
+        mineral: correct.name,
+        use: correct.use,
+      }),
     });
   });
 
@@ -796,7 +964,12 @@ function showQuestion() {
 
   const q = quizQuestions[currentQuestion];
   let html = `
-    <h2>${t("questionOf", { current: currentQuestion + 1, total: quizQuestions.length })}</h2>
+    <h2>${
+    t("questionOf", {
+      current: currentQuestion + 1,
+      total: quizQuestions.length,
+    })
+  }</h2>
     ${generateProgressGems(quizQuestions.length, score)}
     <p class="quiz-question">${q.question}</p>
     <div class="quiz-options">
@@ -805,14 +978,20 @@ function showQuestion() {
   q.options.forEach((opt) => {
     const encoded = encodeURIComponent(opt);
     const iconSrc = getMineralIcon(opt);
-    html += `<button onclick="playSound('click'); answerQuestion(decodeURIComponent('${encoded}'))" class="quiz-option">
+    html +=
+      `<button onclick="playSound('click'); answerQuestion(decodeURIComponent('${encoded}'))" class="quiz-option">
       <img src="${iconSrc}" class="mineral-btn-icon" alt="">
       ${opt}
     </button>`;
   });
 
   html += `</div>
-    <p class="quiz-score">${t("scoreLine", { score, remaining: quizQuestions.length - currentQuestion })}</p>
+    <p class="quiz-score">${
+    t("scoreLine", {
+      score,
+      remaining: quizQuestions.length - currentQuestion,
+    })
+  }</p>
   `;
 
   modalBody.innerHTML = html;
@@ -832,18 +1011,26 @@ function answerQuestion(answer) {
 
   modalBody.innerHTML = `
     <h2>${isCorrect ? t("correct") : t("incorrect")}</h2>
-    <div class="${isCorrect ? "correct-feedback" : "wrong-feedback"}" style="text-align: center; padding: 16px;">
+    <div class="${
+    isCorrect ? "correct-feedback" : "wrong-feedback"
+  }" style="text-align: center; padding: 16px;">
       <p style="font-size: 14px; line-height: 1.8;">${q.explanation}</p>
     </div>
     <div class="quiz-buttons">
       <button onclick="playSound('click'); nextQuestion()" class="quiz-btn">${
-        currentQuestion < quizQuestions.length - 1 ? t("next") : t("seeResult")
-      }</button>
+    currentQuestion < quizQuestions.length - 1 ? t("next") : t("seeResult")
+  }</button>
     </div>
   `;
 
-  const feedbackDiv = modalBody.querySelector(".correct-feedback, .wrong-feedback");
-  if (feedbackDiv) feedbackDiv.classList.add(isCorrect ? "correct-answer" : "wrong-answer");
+  const feedbackDiv = modalBody.querySelector(
+    ".correct-feedback, .wrong-feedback",
+  );
+  if (feedbackDiv) {
+    feedbackDiv.classList.add(
+      isCorrect ? "correct-answer" : "wrong-answer",
+    );
+  }
 
   if (isCorrect) {
     const container = document.createElement("div");
@@ -886,8 +1073,12 @@ function showQuizResults() {
       <p style="margin-top: 16px;">${message}</p>
     </div>
     <div class="quiz-buttons">
-      <button onclick="playSound('click'); startQuiz()" class="quiz-btn">${t("playAgain")}</button>
-      <button onclick="playSound('click'); closeModal()" class="quiz-btn secondary">${t("close")}</button>
+      <button onclick="playSound('click'); startQuiz()" class="quiz-btn">${
+    t("playAgain")
+  }</button>
+      <button onclick="playSound('click'); closeModal()" class="quiz-btn secondary">${
+    t("close")
+  }</button>
     </div>
   `;
 
@@ -903,7 +1094,8 @@ function showQuizResults() {
 function showItemDiscovery(info) {
   const modal = document.getElementById("item-modal");
   const modalBody = document.getElementById("modal-body");
-  const itemName = info.item.customName || info.item.appliance || info.item.id;
+  const itemName = info.item.customName || info.item.appliance ||
+    info.item.id;
 
   let html = `
     <h2>${info.isNew ? t("newDiscovery") : itemName}</h2>
@@ -920,7 +1112,9 @@ function showItemDiscovery(info) {
   }
 
   if (info.appliance) {
-    html += `<p class="category-badge">${t("categoryPrefix")}: ${info.appliance.category}</p>`;
+    html += `<p class="category-badge">${
+      t("categoryPrefix")
+    }: ${info.appliance.category}</p>`;
     html += `<h3>${t("mineralsUsed")}</h3><ul>`;
 
     for (const mineral of info.appliance.minerals) {
@@ -934,7 +1128,9 @@ function showItemDiscovery(info) {
             <div style="flex: 1;">
               <strong class="mineral-name">${mineral.name}</strong>
               <span class="mineral-use">${mineral.use}</span>
-              <em class="mineral-origin">${t("originPrefix")}: ${mineral.origin}</em>
+              <em class="mineral-origin">${
+        t("originPrefix")
+      }: ${mineral.origin}</em>
             </div>
           </div>
         </li>
@@ -947,7 +1143,9 @@ function showItemDiscovery(info) {
 
   html += `
     <div class="quiz-buttons">
-      <button onclick="playSound('click'); closeModal()" class="quiz-btn continue-btn">${t("continueBtn")}</button>
+      <button onclick="playSound('click'); closeModal()" class="quiz-btn continue-btn">${
+    t("continueBtn")
+  }</button>
     </div>
   `;
 
@@ -962,7 +1160,7 @@ function closeModal() {
 function getPlayer(mem, ptr) {
   return {
     pos: mem.loadF32Array(ptr + PLAYER_POS_OFFSET, 2),
-    dest: mem.loadF32Array(ptr + PLAYER_DEST_OFFSET, 2)
+    dest: mem.loadF32Array(ptr + PLAYER_DEST_OFFSET, 2),
   };
 }
 
@@ -973,12 +1171,15 @@ function getWorld(mem, ptr) {
   return {
     width,
     height,
-    world: mem.loadU32Array(mem.loadU32(ptr + WORLD_WORLD_OFFSET), mem.loadU32(ptr + WORLD_WORLD_SIZE_OFFSET)),
+    world: mem.loadU32Array(
+      mem.loadU32(ptr + WORLD_WORLD_OFFSET),
+      mem.loadU32(ptr + WORLD_WORLD_SIZE_OFFSET),
+    ),
     scale: mem.loadU32(ptr + WORLD_SCALE_OFFSET),
     spawn: {
       x: mem.loadF32(ptr + WORLD_SPAWN_OFFSET),
-      y: mem.loadF32(ptr + WORLD_SPAWN_OFFSET + 4)
-    }
+      y: mem.loadF32(ptr + WORLD_SPAWN_OFFSET + 4),
+    },
   };
 }
 

@@ -23,7 +23,8 @@ window.TRANSLATIONS = {
     startQuiz: "Iniciar questionario",
     continueExploring: "Continuar a explorar",
     noQuestionsTitle: "Sem perguntas",
-    noQuestionsBody: "Nao ha perguntas disponiveis. Descobre mais itens primeiro!",
+    noQuestionsBody:
+      "Nao ha perguntas disponiveis. Descobre mais itens primeiro!",
     back: "Voltar",
     questionOf: "Pergunta {current} de {total}",
     scoreLine: "Pontos: {score} | Restantes: {remaining}",
@@ -46,7 +47,7 @@ window.TRANSLATIONS = {
     questionTemplate: "Qual destes minerais esta presente no/na {appliance}?",
     categoryPrefix: "Categoria",
     originPrefix: "Origem",
-    settingsOpenAria: "Abrir definicoes"
+    settingsOpenAria: "Abrir definicoes",
   },
   en: {
     startKicker: "Educational game",
@@ -70,7 +71,8 @@ window.TRANSLATIONS = {
     startQuiz: "Start quiz",
     continueExploring: "Keep exploring",
     noQuestionsTitle: "No questions",
-    noQuestionsBody: "No questions are available yet. Discover more items first!",
+    noQuestionsBody:
+      "No questions are available yet. Discover more items first!",
     back: "Back",
     questionOf: "Question {current} of {total}",
     scoreLine: "Score: {score} | Remaining: {remaining}",
@@ -93,8 +95,8 @@ window.TRANSLATIONS = {
     questionTemplate: "Which of these minerals is present in {appliance}?",
     categoryPrefix: "Category",
     originPrefix: "Origin",
-    settingsOpenAria: "Open settings"
-  }
+    settingsOpenAria: "Open settings",
+  },
 };
 
 // Backward compatibility for older references.
