@@ -1,0 +1,96 @@
+\chapter{Manual de Instalação e Execução}
+\label{ap:manual}
+
+Este apêndice fornece as instruções necessárias para instalar e executar o jogo ``Casa dos Minerais''. O projeto foi concebido primariamente para a Web, garantindo facilidade de acesso sem necessidade de instalação complexa.
+
+\section{Requisitos do Sistema}
+
+Para a correta execução da aplicação, o sistema deve cumprir os seguintes requisitos mínimos:
+
+\begin{itemize}
+    \item \textbf{Sistema Operativo:} Windows 10/11, macOS, Linux, Android ou iOS.
+    \item \textbf{Navegador Web:} Versões recentes do Google Chrome, Mozilla Firefox, Microsoft Edge ou Apple Safari.
+    \item \textbf{Motor Gráfico:} Suporte a WebGL 2.0 e WebAssembly (WASM).
+    \item \textbf{Hardware:} Processador \textit{dual-core} ou superior, 4GB de RAM recomendados. É necessária uma placa gráfica (integrada ou dedicada) com controladores atualizados.
+\end{itemize}
+
+\section{Instalação e Execução}
+
+O jogo pode ser executado de duas formas: remotamente (via servidor web) ou localmente.
+
+\subsection{Opção A: Acesso Remoto (Recomendado)}
+A aplicação foi preparada para ser alojada na plataforma \textbf{Vercel}, tirando partido da sua rede de distribuição global (CDN) e integração contínua. Sendo uma aplicação Web (WASM), não requer instalação persistente no dispositivo do utilizador.
+
+Para aceder à versão mais recente, utilize o navegador para visitar o seguinte endereço (pendente de \textit{deploy} final):
+\begin{center}
+    \url{https://torres-engineer.github.io/minerals-house/}
+\end{center}
+
+\subsection{Opção B: Execução Local (Desenvolvimento)}
+
+Para executar o jogo a partir do código fonte, é necessário ter o compilador da linguagem Odin instalado.
+
+\textbf{Pré-requisitos:}
+\begin{enumerate}
+    \item Instalar o compilador Odin (consultar \url{https://odin-lang.org/docs/install/}).
+    \item (Opcional) Para a versão nativa, garantir que as bibliotecas do Raylib estão configuradas corretamente.
+\end{enumerate}
+
+\textbf{Passos para a versão Nativa (Desktop):}
+Executar o seguinte comando na raiz do projeto:
+\begin{lstlisting}[language=bash]
+odin run ./native
+\end{lstlisting}
+
+\textbf{Passos para a versão Web:}
+\begin{enumerate}
+    \item Compilar o jogo para WebAssembly (WASM):
+    \begin{lstlisting}[language=bash]
+# Linux / macOS
+./build.sh
+
+# Windows
+.\build.bat
+    \end{lstlisting}
+
+    \item Iniciar um servidor web local na pasta \texttt{web}:
+    \begin{lstlisting}[language=bash]
+cd ./web
+
+# Opcao 1: Python
+python -m http.server
+
+# Opcao 2: PHP
+php -S localhost:8000
+
+# Opcao 3: BusyBox
+busybox httpd -f -p 8000
+    \end{lstlisting}
+
+    \item Abrir o navegador e aceder a \url{http://localhost:8000}.
+\end{enumerate}
+
+\section{Guia de Utilização (Demo)}
+
+Para testar as funcionalidades principais do jogo (Demo), siga este roteiro:
+
+\begin{enumerate}
+    \item \textbf{Início:} No ecrã de título, selecione o idioma (Português) e clique em ``Iniciar Jogo''.
+    \item \textbf{Exploração:} Utilize o botão esquerdo do rato para mover o personagem. Clique sobre os objetos destacados (ex: Torradeira, Piano) para abrir a janela de informações.
+    \item \textbf{Aprendizagem:} Leia a descrição e os minerais associados ao objeto. Feche a janela para continuar.
+    \item \textbf{Conclusão:} Após encontrar os objetos, dirija-se à porta de saída (com um destaque azul) para iniciar o questionário.
+    \item \textbf{Avaliação:} Responda às perguntas apresentadas para completar o nível.
+\end{enumerate}
+
+\section{Resolução de Problemas (\textit{Troubleshooting})}
+
+\begin{description}
+    \item[Erro: O jogo fica preso no ecrã ``A carregar...''] \hfill \\
+    Verifique se está a tentar abrir o ficheiro \texttt{index.html} diretamente (protocolo \texttt{file://}). O jogo requer o protocolo \texttt{http://} ou \texttt{https://} para carregar o módulo WebAssembly. Consulte a secção ``Execução Local''.
+
+    \item[Erro: Sem som ou música] \hfill \\
+    Os navegadores modernos bloqueiam a reprodução automática de áudio. Interaja com a página (clique no ecrã) para ativar o contexto de áudio. Verifique também se o som não está silenciado no menu de definições (ícone de engrenagem).
+
+    \item[Erro: Performance lenta (lags)] \hfill \\
+    Certifique-se de que a aceleração por hardware está ativada nas definições do seu navegador. Se estiver num portátil, verifique se está a usar o modo de poupança de energia, que pode limitar o desempenho gráfico.
+\end{description}
