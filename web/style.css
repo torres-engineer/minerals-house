@@ -23,50 +23,46 @@ body {
   display: none !important;
 }
 
-/* ========================================
-   COZY PIXEL HOME - Color Palette
-   ======================================== */
+/* ─── Cozy Pixel Home — Colour Palette ─── */
 :root {
-  /* Primary Colors */
+  /* The warm base tones */
   --bg-dark: #3b2a1a;
   --bg-panel: #fef7ed;
   --bg-card: #fff8f0;
 
-  /* Accent Colors */
+  /* Pops of colour */
   --accent-rust: #f0965b;
   --accent-copper: #c8894a;
   --accent-orange: #e8b730;
   --accent-gold: #d4a754;
 
-  /* Text Colors */
+  /* Text shading */
   --text-light: #4a3728;
   --text-muted: #8b7355;
   --text-dark: #2d2118;
 
-  /* Border Colors */
+  /* Borders and dividers */
   --border-dark: #6b4f38;
   --border-medium: #c4a882;
   --border-light: #e0d0b8;
 
-  /* Special Colors */
+  /* Feedback and glow */
   --success: #6dba82;
   --error: #e25555;
   --glow-orange: rgba(232, 183, 48, 0.5);
 
-  /* Cozy palette */
+  /* Shorthand cozy palette */
   --cozy-cream: #fef7ed;
   --cozy-wood: #8b6f47;
   --cozy-warm: #f0965b;
   --cozy-green: #6dba82;
   --cozy-gold: #e8b730;
 
-  /* Main Font */
+  /* The one and only font */
   --font-main: 'Nunito', sans-serif;
 }
 
-/* ========================================
-   START MENU + HUD
-   ======================================== */
+/* ─── Start Menu & HUD ─── */
 .menu-overlay {
   position: fixed;
   inset: 0;
@@ -263,9 +259,7 @@ body {
   grid-column: auto;
 }
 
-/* ========================================
-   ANIMATIONS
-   ======================================== */
+/* ─── Animations ─── */
 @keyframes popIn {
   0% {
     transform: scale(0.5);
@@ -353,9 +347,7 @@ body {
   }
 }
 
-/* ========================================
-   MODAL - Mining Frame Style
-   ======================================== */
+/* ─── Modal — Mining-Frame Style ─── */
 .modal {
   position: fixed;
   top: 0;
@@ -387,14 +379,14 @@ body {
   font-family: var(--font-main);
   animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* Warm cozy border */
+  /* Nice warm border glow */
   box-shadow:
     0 0 0 3px var(--cozy-gold),
     0 0 0 7px var(--cozy-wood),
     0 12px 40px rgba(59, 42, 26, 0.3);
 }
 
-/* Corner decorations removed for cleaner look */
+/* Kept this space clean by removing corner decorations */
 
 .modal-close {
   position: absolute;
@@ -428,12 +420,12 @@ body {
   padding: 18px 20px 24px;
   overflow-y: auto;
   max-height: calc(92vh - 20px);
-  scrollbar-width: none;          /* Firefox */
-  -ms-overflow-style: none;       /* IE/Edge */
+  scrollbar-width: none;          /* Hide for Firefox */
+  -ms-overflow-style: none;       /* Hide for IE/Edge */
 }
 
 #modal-body::-webkit-scrollbar {
-  display: none;                  /* Chrome/Safari */
+  display: none;                  /* Hide for Chrome/Safari */
 }
 
 #settings-body {
@@ -445,9 +437,7 @@ body {
   display: none;
 }
 
-/* ========================================
-   TYPOGRAPHY IN MODAL
-   ======================================== */
+/* ─── Text Styles Inside Modals ─── */
 .modal-content h2 {
   background: linear-gradient(180deg, var(--cozy-wood) 0%, #5a4030 100%);
   color: #ffffff;
@@ -479,7 +469,7 @@ body {
   line-height: 1.6;
 }
 
-/* Category badge */
+/* Little tag showing the item's category */
 .category-badge {
   display: inline-block;
   background: linear-gradient(135deg, #fff8e8, #fef3d0);
@@ -492,9 +482,7 @@ body {
   margin-bottom: 10px;
 }
 
-/* ========================================
-   MINERAL CARDS - Collector Style
-   ======================================== */
+/* ─── Mineral Cards — Collector Style ─── */
 .modal-content ul {
   list-style: none;
   padding: 0;
@@ -512,7 +500,7 @@ body {
   position: relative;
   transition: transform 0.2s, box-shadow 0.2s;
 
-  /* Warm inner glow */
+  /* Soft inner glow to feel warm */
   box-shadow:
     0 2px 0 var(--border-medium),
     0 3px 8px rgba(139, 111, 71, 0.08);
@@ -526,7 +514,7 @@ body {
     0 8px 20px rgba(139, 111, 71, 0.15);
 }
 
-/* Mineral icon container */
+/* Holds the pixel-art mineral icon */
 .mineral-icon-frame {
   display: flex;
   align-items: center;
@@ -582,9 +570,7 @@ body {
   line-height: 1.5;
 }
 
-/* ========================================
-   BUTTONS - Mining Style
-   ======================================== */
+/* ─── Buttons — Mining Style ─── */
 .quiz-buttons {
   display: flex;
   gap: 12px;
@@ -641,9 +627,7 @@ body {
   color: var(--text-light);
 }
 
-/* ========================================
-   QUIZ - Question & Options
-   ======================================== */
+/* ─── Quiz — Questions & Options ─── */
 .quiz-options {
   display: flex;
   flex-direction: column;
@@ -696,8 +680,8 @@ body {
   box-shadow: 0 2px 0 var(--border-dark);
 }
 
-/* Option with mining cart icon */
-/* Removed generic pickaxe icon in favor of specific mineral image */
+/* Quiz option (kept for potential future styling) */
+/* We swapped the generic pickaxe for each mineral's own icon */
 
 .quiz-question {
   font-size: 18px;
@@ -725,7 +709,7 @@ body {
   animation: shimmer 2s infinite;
 }
 
-/* Progress bar with gems */
+/* Diamond-shaped progress gems */
 .quiz-progress {
   display: flex;
   justify-content: center;
@@ -744,9 +728,7 @@ body {
   opacity: 0.5;
 }
 
-/* ========================================
-   FEEDBACK ANIMATIONS
-   ======================================== */
+/* ─── Feedback Animations ─── */
 .correct-answer {
   animation: glow 0.5s ease-out;
   border-color: var(--cozy-green) !important;
@@ -759,7 +741,7 @@ body {
   background: rgba(226, 85, 85, 0.1) !important;
 }
 
-/* Confetti container */
+/* Confetti party! */
 .confetti-container {
   position: absolute;
   top: 0;
@@ -777,9 +759,7 @@ body {
   animation: confetti 1s ease-out forwards;
 }
 
-/* ========================================
-   DISCOVERY POPUP SPECIFIC
-   ======================================== */
+/* ─── Discovery Popup ─── */
 .discovery-header {
   display: flex;
   align-items: center;
@@ -810,7 +790,7 @@ body {
   animation: shimmer 1.5s infinite;
 }
 
-/* Fun fact box */
+/* "Did you know?" fun fact box */
 .fun-fact {
   background: linear-gradient(135deg, #fff8e8, var(--cozy-cream));
   border: 2px dashed var(--cozy-gold);
@@ -828,7 +808,7 @@ body {
   font-weight: 700;
 }
 
-/* Continue button styling */
+/* Big ol' continue button */
 .continue-btn {
   width: 100%;
   margin-top: 14px;
@@ -843,9 +823,7 @@ body {
   box-shadow: 0 7px 0 #a0623a, 0 10px 24px rgba(240, 150, 91, 0.4);
 }
 
-/* ========================================
-   NEXT LEVEL BUTTON
-   ======================================== */
+/* ─── Next Level Button ─── */
 .quiz-btn.next-level {
   background: linear-gradient(180deg, var(--success) 0%, #1e8449 100%);
   box-shadow: 0 4px 0 #196f3d, inset 0 2px 0 rgba(255, 255, 255, 0.2);
@@ -864,9 +842,7 @@ body {
   box-shadow: 0 2px 0 #196f3d, inset 0 2px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* ========================================
-   RESPONSIVE ADJUSTMENTS
-   ======================================== */
+/* ─── Small Screens ─── */
 @media (max-width: 480px) {
   .menu-card {
     padding: 22px 18px;

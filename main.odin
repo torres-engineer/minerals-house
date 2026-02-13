@@ -1,3 +1,5 @@
+// The shared gameplay heart of the project — both native and web builds use this.
+
 package main
 
 import "core:fmt"
@@ -12,7 +14,7 @@ MAX_PATH_LENGTH :: 64
 Player :: struct {
 	pos, dest:  Vector2,
 	speed:      f32,
-	// A* pathfinding waypoints
+	// Waypoints the player follows when pathfinding kicks in
 	path:       [MAX_PATH_LENGTH]Vector2,
 	path_len:   u32,
 	path_index: u32,
@@ -22,13 +24,14 @@ MAX_FOUND_ITEMS :: 16
 
 GameState :: struct {
 	player:            Player,
-	found_items:       [MAX_FOUND_ITEMS]u8, // Item IDs (0 = empty slot)
+	found_items:       [MAX_FOUND_ITEMS]u8, // Which items the player picked up (0 means empty) 
 	found_items_count: u32,
 }
 
 state: GameState
 
 @(export)
+// Hand back the global game state so the host can peek at it.
 getState :: proc() -> ^GameState {
 	return &state
 }
@@ -40,7 +43,7 @@ World :: struct {
 	spawn:         Vector2,
 	exit:          Vector2,
 }
-// Max possible map size
+// Biggest map we'll ever need
 MAX_TILES :: 4096
 
 
@@ -51,19 +54,20 @@ world_map: [MAX_TILES]u32
 
 
 world := World {
-	width  = 30, // Default, will be overwritten in init_map
-	height = 20, // Default, will be overwritten in init_map
+	width  = 30, // Placeholder — init_map sets the real size
+	height = 20, // Placeholder — init_map sets the real size
 	world  = world_map[:],
 	scale  = 48,
 	spawn  = Vector2{18, 18},
 	exit   = Vector2{18, 19} * 48 + 24,
 }
 
+// Sets up the tile grid, spawn point, and exit for the chosen level.
 init_map :: proc(level_id: i32) {
 	map_data := MAP1_RAW
 	w: u32 = 30
 	h: u32 = 20
-	// Default Spawn/Exit for Level 1
+	// Where the player starts and leaves in Level 1
 	spawn_pos := Vector2{18, 18}
 	exit_pos := Vector2{18, 19}
 
@@ -71,7 +75,7 @@ init_map :: proc(level_id: i32) {
 		map_data = MAP2_RAW
 		w = 25
 		h = 30
-		// Default Spawn/Exit for Level 2 (Placeholder)
+		// Level 2 spawn/exit — may need tweaking later
 		spawn_pos = Vector2{12, 28}
 		exit_pos = Vector2{11, 3}
 	}
@@ -79,11 +83,11 @@ init_map :: proc(level_id: i32) {
 	world.width = w
 	world.height = h
 	world.spawn = spawn_pos
-	world.exit = exit_pos * f32(world.scale) + f32(world.scale / 2) // Centered
+	world.exit = exit_pos * f32(world.scale) + f32(world.scale / 2) // Nudge to tile centre
 
 	cursor := 0
 	for char in map_data {
-		// Skip newlines or spaces
+		// Only care about '0' and '1'; skip everything else
 		if char == '0' {
 			world_map[cursor] = 0
 			cursor += 1
@@ -99,16 +103,19 @@ init_map :: proc(level_id: i32) {
 
 
 @(export)
+// Gives the host access to the world layout and tile data.
 getWorld :: proc() -> ^World {
 	return &world
 }
 
 @(export)
+// Where the exit door sits in the world.
 get_exit_pos :: proc() -> ^Vector2 {
 	return &world.exit
 }
 
 @(export)
+// Kicks everything off — loads the map and drops the player at the spawn point.
 init :: proc(screen_width, screen_height: u32, level_id: i32) {
 	init_map(level_id)
 	state.player = Player {
@@ -120,53 +127,50 @@ init :: proc(screen_width, screen_height: u32, level_id: i32) {
 }
 
 @(export)
+// The player clicked somewhere — figure out how to get there.
 player_click :: proc(pos: Vector2) {
-	// Clear any existing path
+	// Forget any path we were following
 	state.player.path_len = 0
 
-	// If destination is valid, check if we can go directly
+	// If nothing's in the way, just walk straight there
 	if !check_collision(pos) {
-		// Check if there's a clear line of sight (no walls in the way)
 		if has_clear_path(state.player.pos, pos) {
-			// Direct movement - feels more natural
 			state.player.dest = pos
 			return
 		}
 	}
 
-	// Path is blocked - use A* pathfinding
+	// Can't go straight — time for A* pathfinding
 	path, path_len := find_path(state.player.pos, pos)
 
 	if path_len > 0 {
-		// Smooth the path to remove artifacts of grid-based movement
+		// Clean up the jagged grid path so movement looks smooth
 		path, path_len = smooth_path(state.player.pos, path, path_len)
 
-		// Store the path
 		state.player.path = path
 		state.player.path_len = path_len
 		state.player.path_index = 0
-		// Set first waypoint as immediate destination
+		// Start walking to the first waypoint
 		state.player.dest = state.player.path[0]
 	} else {
-		// No path found - try direct movement anyway
-		// (the sliding collision will help navigate)
+		// No route? Try a direct walk anyway — wall-sliding might save us
 		if !check_collision(pos) {
 			state.player.dest = pos
 		}
 	}
 }
 
-// Check if there's a clear path between two points using fine-grained sampling
+// Walk an invisible line between two points to see if anything's blocking the way.
 has_clear_path :: proc(from, to: Vector2) -> bool {
 	diff := to - from
 	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
 
-	// Short distances are always "clear" - let sliding collision handle it
+	// If it's really close, don't bother checking — collision sliding can handle it
 	if dist < 48 {
 		return true
 	}
 
-	// Sample points along the line - check every ~12 pixels for accuracy
+	// Step along the line every ~12 px and look for walls
 	steps := int(dist / 12)
 	if steps < 3 {
 		steps = 3
@@ -183,6 +187,7 @@ has_clear_path :: proc(from, to: Vector2) -> bool {
 	return true
 }
 
+// Is this spot a wall (or out of bounds)?
 is_solid :: proc(pos: Vector2) -> bool {
 	x := u32(math.floor(pos.x / f32(world.scale)))
 	y := u32(math.floor(pos.y / f32(world.scale)))
@@ -194,12 +199,14 @@ is_solid :: proc(pos: Vector2) -> bool {
 	return world.world[y * world.width + x] == 0
 }
 
+// Would the player bump into a wall at this position?
+// We check the centre plus four edges so the hitbox feels fair.
 check_collision :: proc(pos: Vector2) -> bool {
-	// Collision radius - must be smaller than tile (48) so player fits through 1-tile doorways
+	// Keep this smaller than a tile (48) or the player won't fit through doorways
 	collision_radius_x :: 18.0
 	collision_radius_y :: 14.0
 
-	// Check center and all 4 cardinal edges
+	// Centre + four cardinal edges
 	return(
 		is_solid(pos) ||
 		is_solid(pos + Vector2{-collision_radius_x, 0}) ||
@@ -209,7 +216,7 @@ check_collision :: proc(pos: Vector2) -> bool {
 	)
 }
 
-// Check if a tile is walkable (for A* pathfinding)
+// Can the player walk on this tile? (used by A*)
 is_tile_walkable :: proc(tx, ty: i32) -> bool {
 	if tx < 0 || ty < 0 || u32(tx) >= world.width || u32(ty) >= world.height {
 		return false
@@ -217,30 +224,31 @@ is_tile_walkable :: proc(tx, ty: i32) -> bool {
 	return world.world[u32(ty) * world.width + u32(tx)] != 0
 }
 
-// A* Pathfinding structures
+// A* helpers
 MAX_OPEN :: 600
 PathNode :: struct {
 	x, y:   i32,
-	g, h:   f32, // g = cost from start, h = heuristic to goal
-	parent: i32, // index in closed list, -1 if none
+	g, h:   f32, // g = distance walked so far, h = estimated remaining
+	parent: i32, // who we came from (-1 = starting node)
 }
 
-// Simple A* pathfinding on grid tiles
+// Good old A* — finds a walkable route between two world positions.
+// Returns an array of waypoints the player should follow.
 find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector2, path_len: u32) {
 	scale := f32(world.scale)
 
-	// Convert to tile coordinates
+	// Turn pixel coords into tile coords
 	start_tx := i32(math.floor(start_pos.x / scale))
 	start_ty := i32(math.floor(start_pos.y / scale))
 	end_tx := i32(math.floor(end_pos.x / scale))
 	end_ty := i32(math.floor(end_pos.y / scale))
 
-	// If start or end is invalid, return empty path
+	// Can't pathfind from inside a wall
 	if !is_tile_walkable(start_tx, start_ty) {
 		return
 	}
 
-	// Find nearest walkable tile to destination
+	// Destination is blocked? Find the closest open tile nearby
 	if !is_tile_walkable(end_tx, end_ty) {
 		best_dist := f32(1e9)
 		found := false
@@ -266,23 +274,23 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 		}
 	}
 
-	// Already at destination
+	// Already standing on the target tile
 	if start_tx == end_tx && start_ty == end_ty {
 		return
 	}
 
-	// A* algorithm
+	// Classic A* with open/closed lists
 	open: [MAX_OPEN]PathNode
 	open_count: u32 = 1
 	closed: [MAX_OPEN]PathNode
 	closed_count: u32 = 0
 
-	// Heuristic: Manhattan distance
+	// Manhattan distance works well for a grid
 	heuristic :: proc(x1, y1, x2, y2: i32) -> f32 {
 		return f32(abs(x2 - x1) + abs(y2 - y1))
 	}
 
-	// Initialize with start node
+	// Seed the open list with where we're standing
 	open[0] = PathNode {
 		x      = start_tx,
 		y      = start_ty,
@@ -291,15 +299,15 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 		parent = -1,
 	}
 
-	// Direction offsets: 4 cardinal + 4 diagonal for smoother paths
+	// 4 cardinal + 4 diagonal neighbours — diagonals make paths look nicer
 	dirs := [8][2]i32{{0, -1}, {1, 0}, {0, 1}, {-1, 0}, {1, -1}, {1, 1}, {-1, 1}, {-1, -1}}
-	DIAG_COST :: 1.414 // sqrt(2)
+	DIAG_COST :: 1.414 // good old sqrt(2)
 
 	found_goal := false
 	goal_closed_idx: i32 = -1
 
 	for open_count > 0 && closed_count < MAX_OPEN - 1 {
-		// Find node with lowest f = g + h
+		// Pick the most promising node (lowest f = g + h)
 		best_idx: u32 = 0
 		best_f := open[0].g + open[0].h
 		for i in 1 ..< open_count {
@@ -312,23 +320,23 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 
 		current := open[best_idx]
 
-		// Remove from open (swap with last)
+		// Pop it from the open list (swap-remove for speed)
 		open[best_idx] = open[open_count - 1]
 		open_count -= 1
 
-		// Add to closed
+		// Mark it as visited
 		closed[closed_count] = current
 		current_closed_idx := i32(closed_count)
 		closed_count += 1
 
-		// Check if goal reached
+		// Did we make it?
 		if current.x == end_tx && current.y == end_ty {
 			found_goal = true
 			goal_closed_idx = current_closed_idx
 			break
 		}
 
-		// Expand neighbors
+		// Look at all the neighbours
 		for dir_i in 0 ..< 8 {
 			dir := dirs[dir_i]
 			nx := current.x + dir[0]
@@ -338,8 +346,7 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 				continue
 			}
 
-			// For diagonal moves, ensure both adjacent cardinal tiles are walkable
-			// to prevent cutting through wall corners
+			// Don't let diagonals cut through wall corners — that looks weird
 			is_diagonal := dir_i >= 4
 			if is_diagonal {
 				if !is_tile_walkable(current.x + dir[0], current.y) ||
@@ -348,7 +355,7 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 				}
 			}
 
-			// Check if in closed
+			// Skip tiles we've already visited
 			in_closed := false
 			for i in 0 ..< closed_count {
 				if closed[i].x == nx && closed[i].y == ny {
@@ -363,7 +370,7 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 			step_cost: f32 = is_diagonal ? DIAG_COST : 1.0
 			new_g := current.g + step_cost
 
-			// Check if in open
+			// Already queued? Just update if this route is shorter
 			in_open := false
 			open_idx: u32 = 0
 			for i in 0 ..< open_count {
@@ -375,13 +382,13 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 			}
 
 			if in_open {
-				// Update if better path
+				// Found a shortcut?
 				if new_g < open[open_idx].g {
 					open[open_idx].g = new_g
 					open[open_idx].parent = current_closed_idx
 				}
 			} else if open_count < MAX_OPEN {
-				// Add to open
+				// New tile to explore
 				open[open_count] = PathNode {
 					x      = nx,
 					y      = ny,
@@ -398,14 +405,14 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 		return
 	}
 
-	// Reconstruct path (backwards)
+	// Walk the parent chain backwards to build the route
 	temp_path: [MAX_PATH_LENGTH]Vector2
 	temp_len: u32 = 0
 
 	idx := goal_closed_idx
 	for idx >= 0 && temp_len < MAX_PATH_LENGTH {
 		node := closed[idx]
-		// Convert tile to world coords (center of tile)
+		// Back to pixel coords, landing in the middle of each tile
 		temp_path[temp_len] = Vector2 {
 			f32(node.x) * scale + scale / 2,
 			f32(node.y) * scale + scale / 2,
@@ -414,7 +421,7 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 		idx = node.parent
 	}
 
-	// Reverse path (skip start position)
+	// Flip it around (we don't need the starting tile)
 	if temp_len > 1 {
 		for i in 0 ..< (temp_len - 1) {
 			path[i] = temp_path[temp_len - 2 - i]
@@ -422,7 +429,7 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 		path_len = temp_len - 1
 	}
 
-	// Set final destination to exact end position if walkable
+	// Snap the last waypoint to exactly where the player clicked
 	if path_len > 0 && !check_collision(end_pos) {
 		path[path_len - 1] = end_pos
 	}
@@ -430,7 +437,7 @@ find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector
 	return
 }
 
-// Optimize path by removing unnecessary waypoints (string pulling)
+// Trims out redundant waypoints so the player doesn't zig-zag like a robot.
 smooth_path :: proc(
 	start_pos: Vector2,
 	path: [MAX_PATH_LENGTH]Vector2,
@@ -446,8 +453,7 @@ smooth_path :: proc(
 	current := start_pos
 	last_idx := int(path_len) - 1
 
-	// Start checking from the last node
-	// If we can go straight to the end, great. If not, back up one step, etc.
+	// Try to skip as far ahead as we can see — fewer waypoints = smoother walk
 
 	idx := 0
 	for idx <= last_idx {
@@ -465,7 +471,7 @@ smooth_path :: proc(
 		}
 
 		if !found {
-			// This creates a failsafe, just take the next point
+			// Can't see past anything? Just take the next step
 			new_path[new_len] = path[idx]
 			new_len += 1
 			current = path[idx]
@@ -477,6 +483,7 @@ smooth_path :: proc(
 }
 
 @(export)
+// Tick the game forward by one frame — move the player and handle collisions.
 step :: proc(delta_time: f64) -> (keep_going: bool) {
 	player := &state.player
 	start_pos := player.pos
@@ -484,16 +491,16 @@ step :: proc(delta_time: f64) -> (keep_going: bool) {
 	diff := player.dest - player.pos
 	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
 
-	// Reached current waypoint? Use a tighter threshold for precision
+	// Close enough to the current waypoint? Snap and move on
 	if dist < 4.0 {
 		player.pos = player.dest
 
-		// Advance to next waypoint if following a path
+		// Still got more waypoints? Head to the next one
 		if player.path_len > 0 && player.path_index < player.path_len - 1 {
 			player.path_index += 1
 			player.dest = player.path[player.path_index]
 		} else {
-			// Arrived at final destination
+			// We're here!
 			player.path_len = 0
 		}
 		return true
@@ -501,11 +508,11 @@ step :: proc(delta_time: f64) -> (keep_going: bool) {
 
 	walk := player.speed * f32(delta_time)
 
-	// If step is larger than remaining distance, snap to destination
+	// About to overshoot? Just land on the destination
 	if walk >= dist {
 		if !check_collision(player.dest) {
 			player.pos = player.dest
-			// Advance waypoint
+			// Next waypoint, please
 			if player.path_len > 0 && player.path_index < player.path_len - 1 {
 				player.path_index += 1
 				player.dest = player.path[player.path_index]
@@ -522,29 +529,28 @@ step :: proc(delta_time: f64) -> (keep_going: bool) {
 
 	moved := false
 
-	// Movement on X axis
+	// Try moving horizontally
 	next_x := player.pos + Vector2{move.x, 0}
 	if !check_collision(next_x) {
 		player.pos = next_x
 		moved = true
 	}
 
-	// Movement on Y axis
+	// Try moving vertically
 	next_y := player.pos + Vector2{0, move.y}
 	if !check_collision(next_y) {
 		player.pos = next_y
 		moved = true
 	}
 
-	// Stuck detection: if we couldn't move at all, try to advance to next waypoint
-	// or clear the path entirely
+	// Stuck? Skip to the next waypoint or give up
 	if !moved && dist > 4.0 {
 		if player.path_len > 0 && player.path_index < player.path_len - 1 {
-			// Skip current waypoint and try next
+			// Jump ahead to the next waypoint
 			player.path_index += 1
 			player.dest = player.path[player.path_index]
 		} else {
-			// Nothing else to do, clear path
+			// Nowhere left to go
 			player.path_len = 0
 		}
 	}
@@ -553,6 +559,7 @@ step :: proc(delta_time: f64) -> (keep_going: bool) {
 }
 
 @(export)
+// Is the player standing close enough to the exit?
 is_near_exit :: proc(threshold: f32) -> bool {
 	diff := state.player.pos - world.exit
 	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
@@ -560,23 +567,25 @@ is_near_exit :: proc(threshold: f32) -> bool {
 }
 
 @(export)
+// Player picked up an item — returns true only the first time.
 add_found_item :: proc(item_id: u8) -> bool {
-	// Check if already found
+	// Already got this one?
 	for i in 0 ..< state.found_items_count {
 		if state.found_items[i] == item_id {
-			return false // Already found
+			return false // Yep, old news
 		}
 	}
-	// Add if space available
+	// Room in the bag?
 	if state.found_items_count < MAX_FOUND_ITEMS {
 		state.found_items[state.found_items_count] = item_id
 		state.found_items_count += 1
-		return true // Newly found
+		return true // Brand new find!
 	}
 	return false
 }
 
 @(export)
+// Have we already picked up this item?
 has_found_item :: proc(item_id: u8) -> bool {
 	for i in 0 ..< state.found_items_count {
 		if state.found_items[i] == item_id {
@@ -587,11 +596,13 @@ has_found_item :: proc(item_id: u8) -> bool {
 }
 
 @(export)
+// How many items has the player found so far?
 get_found_items_count :: proc() -> u32 {
 	return state.found_items_count
 }
 
 @(export)
+// Grab the item id at a specific slot (0 if out of range).
 get_found_item_at :: proc(index: u32) -> u8 {
 	if index < state.found_items_count {
 		return state.found_items[index]

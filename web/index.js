@@ -1,3 +1,8 @@
+/*
+ * Web front-end for Minerals' House.
+ * Boots the WASM game, wires up the UI and audio, and runs the quiz/discovery flows.
+ */
+
 "use strict";
 
 const PLAYER_POS_OFFSET = 0;
@@ -15,7 +20,7 @@ const I18N = window.TRANSLATIONS || window.I18N || { pt: {}, en: {} };
 
 let currentLanguage = "pt";
 let currentLevel = 1;
-const MAX_LEVELS = 2; // We currently have 2 levels
+const MAX_LEVELS = 2; // Two levels for now
 let gameStarted = false;
 let gameBooting = false;
 
@@ -35,6 +40,12 @@ const sounds = {
   wrong: { url: "./data/audio/wrong.mp3", buffer: null, baseVolume: 0.5, channel: "sfx" }
 };
 
+/**
+ * Keeps a value between 0 and 1. Falls back to a default if the input is garbage.
+ * @param {number} value - The number to clamp.
+ * @param {number} fallback - What to use if the input isn't a real number.
+ * @returns {number}
+ */
 function clamp01(value, fallback = 1) {
   const num = Number(value);
   if (!Number.isFinite(num)) return fallback;
@@ -43,6 +54,9 @@ function clamp01(value, fallback = 1) {
   return num;
 }
 
+/**
+ * Saves the player's language and volume choices to localStorage.
+ */
 function saveSettings() {
   try {
     const payload = {
@@ -56,10 +70,13 @@ function saveSettings() {
     };
     window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(payload));
   } catch (error) {
-    // Ignore persistence errors (privacy mode/storage restrictions).
+    // Storage might not be available (private browsing, etc.) — no big deal.
   }
 }
 
+/**
+ * Tries to restore language and audio preferences from a previous session.
+ */
 function loadSettings() {
   try {
     const raw = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
@@ -76,7 +93,7 @@ function loadSettings() {
       audioSettings.muted = Boolean(parsed.audio.muted);
     }
   } catch (error) {
-    // Ignore malformed or unavailable storage.
+    // If localStorage is broken or empty, we just go with defaults.
   }
 }
 
@@ -103,7 +120,7 @@ const mineralIcons = {
   "terras raras": "./source/minerals/terrasRaras.png",
   "rare earth elements": "./source/minerals/terrasRaras.png",
 
-  // New Map 2 Minerals
+  // New minerals for Map 2
   magnesio: "./source/minerals/magnesio.png",
   magnesium: "./source/minerals/magnesio.png",
   calcite: "./source/minerals/calcite.png",
@@ -126,6 +143,11 @@ const mineralIcons = {
   default: "./source/minerals/generic.png"
 };
 
+/**
+ * Strips accents and lowercases text so we can compare mineral names without fuss.
+ * @param {string} value
+ * @returns {string}
+ */
 function normalizeText(value) {
   return (value || "")
     .toString()
@@ -135,6 +157,12 @@ function normalizeText(value) {
     .trim();
 }
 
+/**
+ * Looks up a translated string by key, plugging in any template variables.
+ * @param {string} key - Translation key.
+ * @param {Object<string, string|number>} [vars] - Values to inject into the template.
+ * @returns {string}
+ */
 function t(key, vars) {
   const bundle = I18N[currentLanguage] || I18N.en;
   let text = bundle[key] || I18N.en[key] || key;
@@ -146,10 +174,19 @@ function t(key, vars) {
   return text;
 }
 
+/**
+ * Picks the right pixel-art icon for a mineral name (language-agnostic).
+ * @param {string} mineralName
+ * @returns {string} Path to the icon file.
+ */
 function getMineralIcon(mineralName) {
   return mineralIcons[normalizeText(mineralName)] || mineralIcons.default;
 }
 
+/**
+ * Spins up the Web Audio context and pre-loads every sound we'll need.
+ * @returns {Promise<void>}
+ */
 async function initAudio() {
   if (audioCtx) {
     if (audioCtx.state === "suspended") await audioCtx.resume();
@@ -171,16 +208,28 @@ async function initAudio() {
   }
 }
 
+/**
+ * Figures out how loud a sound should actually be after master/channel/mute.
+ * @param {{baseVolume: number, channel: string}|null} sound
+ * @returns {number} Effective gain (0–1).
+ */
 function resolveSoundVolume(sound) {
   if (!sound || audioSettings.muted) return 0;
   const channelGain = sound.channel === "music" ? audioSettings.music : audioSettings.sfx;
   return sound.baseVolume * audioSettings.master * channelGain;
 }
 
+/**
+ * Makes sure the background music volume reflects the current settings.
+ */
 function applyAudioMix() {
   if (sounds.bgm.gainNode) sounds.bgm.gainNode.gain.value = resolveSoundVolume(sounds.bgm);
 }
 
+/**
+ * Plays a sound effect or music track by name.
+ * @param {string} name - Key from the `sounds` map.
+ */
 function playSound(name) {
   const sound = sounds[name];
   if (!audioCtx || !sound || !sound.buffer) return;
@@ -215,6 +264,12 @@ function playSound(name) {
     };
   }
 }
+/**
+ * Reads a volume slider, updates the matching setting, and saves everything.
+ * @param {string} inputId - The slider's element id.
+ * @param {string} valueId - The label that shows the percentage.
+ * @param {"master"|"music"|"sfx"} targetField - Which setting to touch.
+ */
 function updateVolumeReadout(inputId, valueId, targetField) {
   const input = document.getElementById(inputId);
   const value = document.getElementById(valueId);
@@ -224,6 +279,9 @@ function updateVolumeReadout(inputId, valueId, targetField) {
   saveSettings();
 }
 
+/**
+ * Pushes the current language into every static label on the page.
+ */
 function applyStaticTranslations() {
   const map = [
     ["start-kicker", "startKicker"],
@@ -260,6 +318,10 @@ function applyStaticTranslations() {
   }
 }
 
+/**
+ * Switches the UI language and remembers the choice.
+ * @param {"pt"|"en"} language
+ */
 function selectLanguage(language) {
   currentLanguage = language === "en" ? "en" : "pt";
   for (const button of document.querySelectorAll(".lang-btn")) {
@@ -269,6 +331,9 @@ function selectLanguage(language) {
   saveSettings();
 }
 
+/**
+ * Hooks up the language buttons and the big "Start Game" button.
+ */
 function setupStartMenu() {
   for (const button of document.querySelectorAll(".lang-btn")) {
     button.addEventListener("click", () => {
@@ -307,6 +372,9 @@ function setupStartMenu() {
   });
 }
 
+/**
+ * Connects sliders, mute toggle, and restart button inside the settings modal.
+ */
 function setupSettingsMenu() {
   const settingsButton = document.getElementById("settings-button");
   const settingsModal = document.getElementById("settings-modal");
@@ -357,13 +425,19 @@ function setupSettingsMenu() {
   });
 }
 
+/**
+ * Builds the file paths for item/appliance data based on language and level.
+ * @param {"pt"|"en"} language
+ * @param {number} level
+ * @returns {{items: string, appliances: string}}
+ */
 function getDataPaths(language, level) {
   const folderName = `items_map${level}`;
   const langSuffix = language === "en" ? ".en" : "";
 
-  // Structure:
-  // web/data/items_map1/items.json
-  // web/data/items_map1/items.en.json
+  // Data lives here:
+  // web/data/items_map1/items.json      (Portuguese)
+  // web/data/items_map1/items.en.json   (English)
 
   const baseItems = `./data/${folderName}/items${langSuffix}.json`;
   const baseAppliances = `./data/${folderName}/appliances${langSuffix}.json`;
@@ -374,6 +448,13 @@ function getDataPaths(language, level) {
   };
 }
 
+/**
+ * Fetches item and appliance JSON for a level. Falls back to Portuguese if the
+ * English files are missing.
+ * @param {"pt"|"en"} language
+ * @param {number} level
+ * @returns {Promise<{items: Array, appliances: Array}>}
+ */
 async function loadGameData(language, level) {
   const paths = getDataPaths(language, level);
   try {
@@ -387,6 +468,12 @@ async function loadGameData(language, level) {
     throw error;
   }
 }
+/**
+ * Loads the WASM binary, wires up rendering, input, and all the in-game UI.
+ * @param {"pt"|"en"} language
+ * @param {number} [level=1]
+ * @returns {Promise<void>}
+ */
 async function initGame(language, level = 1) {
   const mem = new odin.WasmMemoryInterface();
   const log = document.getElementById("console");
@@ -497,8 +584,8 @@ async function initGame(language, level = 1) {
       const exitPos = exports.get_exit_pos();
       const exitX = mem.loadF32(exitPos);
       const exitY = mem.loadF32(exitPos + 4);
-      // Check if click is within the exit rectangle
-      // Level 1: 2 blocks wide. Level 2: 3 blocks wide.
+      // Did the player click on the exit door?
+      // Level 1 exit is 2 blocks wide, level 2 is 3.
       const exitBlocks = currentLevel === 2 ? 3 : 2;
       const exitWidth = exitBlocks * 48;
 
@@ -785,6 +872,12 @@ async function initGame(language, level = 1) {
 
   requestAnimationFrame(render);
 }
+/**
+ * Draws little diamond shapes to show quiz progress (filled = correct).
+ * @param {number} total
+ * @param {number} answered
+ * @returns {string} HTML snippet.
+ */
 function generateProgressGems(total, answered) {
   let gems = "";
   for (let i = 0; i < total; i += 1) {
@@ -795,6 +888,10 @@ function generateProgressGems(total, answered) {
   return `<div class="quiz-progress">${gems}</div>`;
 }
 
+/**
+ * Pops some celebratory confetti into the given container.
+ * @param {HTMLElement} container
+ */
 function createConfetti(container) {
   const colors = ["#f0965b", "#e8b730", "#c8894a", "#6dba82", "#8b6f47"];
   for (let i = 0; i < 20; i += 1) {
@@ -808,6 +905,11 @@ function createConfetti(container) {
   }
 }
 
+/**
+ * Shows the exit-door modal. If the player hasn't found everything, they can
+ * still choose to start the quiz or keep exploring.
+ * @param {{foundCount: number, totalItems: number, items: Array, appliances: Array}} info
+ */
 function showQuizEvent(info) {
   const modal = document.getElementById("item-modal");
   const modalBody = document.getElementById("modal-body");
@@ -836,6 +938,9 @@ function showQuizEvent(info) {
   startQuiz();
 }
 
+/**
+ * Kicks off a fresh quiz round from the beginning.
+ */
 function startQuiz() {
   const modal = document.getElementById("item-modal");
   const modalBody = document.getElementById("modal-body");
@@ -859,6 +964,11 @@ function startQuiz() {
   showQuestion();
 }
 
+/**
+ * Generates quiz questions by pairing each appliance with its minerals
+ * and throwing in some wrong answers.
+ * @returns {Array<{question: string, options: string[], correct: string, explanation: string}>}
+ */
 function generateQuizQuestions() {
   const questions = [];
   const appliances = window.quizAppliances || [];
@@ -891,6 +1001,9 @@ function generateQuizQuestions() {
   return questions.sort(() => Math.random() - 0.5);
 }
 
+/**
+ * Shows the current question (or jumps to results if we've run out).
+ */
 function showQuestion() {
   const modal = document.getElementById("item-modal");
   const modalBody = document.getElementById("modal-body");
@@ -924,6 +1037,10 @@ function showQuestion() {
   modalBody.innerHTML = html;
   modal.classList.remove("hidden");
 }
+/**
+ * Checks the player's answer, bumps the score if right, and shows feedback.
+ * @param {string} answer - The option the player picked.
+ */
 function answerQuestion(answer) {
   const q = quizQuestions[currentQuestion];
   const modalBody = document.getElementById("modal-body");
@@ -958,11 +1075,17 @@ function answerQuestion(answer) {
   }
 }
 
+/**
+ * On to the next question!
+ */
 function nextQuestion() {
   currentQuestion += 1;
   showQuestion();
 }
 
+/**
+ * Shows the final score, a friendly message, and what to do next.
+ */
 function showQuizResults() {
   const modal = document.getElementById("item-modal");
   const modalBody = document.getElementById("modal-body");
@@ -1017,6 +1140,10 @@ function showQuizResults() {
   }
 }
 
+/**
+ * Moves on to the next level after the player passes the quiz.
+ * @returns {Promise<void>}
+ */
 window.loadNextLevel = async function () {
   const modal = document.getElementById("item-modal");
   modal.classList.add("hidden");
@@ -1026,18 +1153,22 @@ window.loadNextLevel = async function () {
 
   document.getElementById("start-menu").classList.remove("hidden");
 
-  // Reload the game with the new level
+  // Reload the game with the next level
   try {
     await initGame(currentLanguage, currentLevel);
     gameStarted = true;
     document.getElementById("start-menu").classList.add("hidden");
   } catch (e) {
     console.error(e);
-    // Fallback to reload if something breaks
+    // Something went wrong — full page reload as a safety net
     window.location.reload();
   }
 };
 
+/**
+ * Pops up the discovery modal when the player interacts with an item.
+ * @param {{item: Object, appliance: Object|null, isNew: boolean, playerPos: number[]}} info
+ */
 function showItemDiscovery(info) {
   const modal = document.getElementById("item-modal");
   const modalBody = document.getElementById("modal-body");
@@ -1093,10 +1224,19 @@ function showItemDiscovery(info) {
   modal.classList.remove("hidden");
 }
 
+/**
+ * Closes whatever modal is open.
+ */
 function closeModal() {
   document.getElementById("item-modal").classList.add("hidden");
 }
 
+/**
+ * Reads the player's position and destination straight from WASM memory.
+ * @param {odin.WasmMemoryInterface} mem
+ * @param {number} ptr - Player struct address.
+ * @returns {{pos: Float32Array, dest: Float32Array}}
+ */
 function getPlayer(mem, ptr) {
   return {
     pos: mem.loadF32Array(ptr + PLAYER_POS_OFFSET, 2),
@@ -1104,6 +1244,12 @@ function getPlayer(mem, ptr) {
   };
 }
 
+/**
+ * Pulls world dimensions and the tile grid out of WASM memory.
+ * @param {odin.WasmMemoryInterface} mem
+ * @param {number} ptr - World struct address.
+ * @returns {{width: number, height: number, world: Uint32Array, scale: number, spawn: {x: number, y: number}}}
+ */
 function getWorld(mem, ptr) {
   const width = mem.loadU32(ptr + WORLD_WIDTH_OFFSET);
   const height = mem.loadU32(ptr + WORLD_HEIGHT_OFFSET);

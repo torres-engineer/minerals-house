@@ -1,3 +1,8 @@
+/*
+ * All the UI strings in Portuguese and English.
+ * The rest of the app pulls translations from here.
+ */
+
 "use strict";
 
 window.TRANSLATIONS = {
@@ -101,5 +106,5 @@ window.TRANSLATIONS = {
   }
 };
 
-// Backward compatibility for older references.
+// Keep the old name around so nothing breaks.
 window.I18N = window.TRANSLATIONS;

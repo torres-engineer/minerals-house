@@ -1,3 +1,5 @@
+// Native desktop build — uses raylib for window, input, and drawing.
+
 package native
 
 import main "../"
@@ -10,6 +12,7 @@ FPS :: 144
 camera: rl.Camera2D
 state: ^main.GameState
 
+// Fire up the window and run the game loop until it's closed.
 main :: proc() {
 	rl.SetConfigFlags(rl.ConfigFlags{.MSAA_4X_HINT})
 	rl.InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Minerals' House")
@@ -26,6 +29,7 @@ main :: proc() {
 	}
 }
 
+// Get the shared game state ready and set up the camera.
 init :: proc() {
 	main.init(u32(rl.GetScreenWidth()), u32(rl.GetScreenHeight()), 2)
 	state = main.getState()
@@ -38,11 +42,11 @@ init :: proc() {
 	}
 }
 
+// Handle player input and advance the game by one frame.
 update :: proc() {
 	if rl.IsMouseButtonPressed(rl.MouseButton.RIGHT) {
-		// main.player_click(state.player.pos + (rl.GetMousePosition() - camera.offset))
+		// Right-click — tell the player where to walk
 		main.player_click(rl.GetScreenToWorld2D(rl.GetMousePosition(), camera))
-
 		// rl.CheckCollisionPointRec
 	}
 
@@ -51,6 +55,7 @@ update :: proc() {
 	camera.target = state.player.pos
 }
 
+// Draw the world, the player, and a little FPS counter.
 draw :: proc() {
 	rl.BeginDrawing()
 
