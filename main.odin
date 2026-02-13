@@ -24,7 +24,7 @@ MAX_FOUND_ITEMS :: 16
 
 GameState :: struct {
 	player:            Player,
-	found_items:       [MAX_FOUND_ITEMS]u8, // Which items the player picked up (0 means empty) 
+	found_items:       [MAX_FOUND_ITEMS]u8, // Which items the player picked up (0 means empty)
 	found_items_count: u32,
 }
 
@@ -47,58 +47,40 @@ World :: struct {
 MAX_TILES :: 4096
 
 
-MAP1_RAW :: #load("world1.txt", string)
-MAP2_RAW :: #load("world2.txt", string)
-
+// Dynamic Map Buffer (filled from JS)
+// Size safety: 30x30 = 900 tiles. 4096 is plenty safe.
 world_map: [MAX_TILES]u32
 
+world: World
 
-world := World {
-	width  = 30, // Placeholder — init_map sets the real size
-	height = 20, // Placeholder — init_map sets the real size
-	world  = world_map[:],
-	scale  = 48,
-	spawn  = Vector2{18, 18},
-	exit   = Vector2{18, 19} * 48 + 24,
+@(export)
+set_tile :: proc(index: i32, value: u32) {
+	if index >= 0 && index < MAX_TILES {
+		world_map[index] = value
+	}
 }
 
-// Sets up the tile grid, spawn point, and exit for the chosen level.
-init_map :: proc(level_id: i32) {
-	map_data := MAP1_RAW
-	w: u32 = 30
-	h: u32 = 20
-	// Where the player starts and leaves in Level 1
-	spawn_pos := Vector2{18, 18}
-	exit_pos := Vector2{18, 19}
-
-	if level_id == 2 {
-		map_data = MAP2_RAW
-		w = 25
-		h = 30
-		// Level 2 spawn/exit — may need tweaking later
-		spawn_pos = Vector2{12, 28}
-		exit_pos = Vector2{11, 3}
-	}
-
+@(export)
+setup_level_config :: proc(w, h: u32, sx, sy, ex, ey: f32) {
 	world.width = w
 	world.height = h
-	world.spawn = spawn_pos
-	world.exit = exit_pos * f32(world.scale) + f32(world.scale / 2) // Nudge to tile centre
+	world.world = world_map[:]
+	world.scale = 48
 
-	cursor := 0
-	for char in map_data {
-		// Only care about '0' and '1'; skip everything else
-		if char == '0' {
-			world_map[cursor] = 0
-			cursor += 1
-		} else if char == '1' {
-			world_map[cursor] = 1
-			cursor += 1
-		}
-		if cursor >= MAX_TILES {
-			break
-		}
-	}
+	// Coordinates from JSON are in Tiles (e.g. 18, 18).
+	// Convert to World Pixels (center of tile)
+
+	world.spawn = Vector2{sx, sy} * f32(world.scale) + f32(world.scale / 2)
+	world.exit = Vector2{ex, ey} * f32(world.scale) + f32(world.scale / 2)
+
+	// Reset Player to Spawn
+	state.player.pos = world.spawn
+	state.player.dest = world.spawn
+	state.player.path_len = 0
+}
+
+init_map :: proc(level_id: i32) {
+	// Deprecated in favor of setup_level_config, but kept empty/minimal if needed
 }
 
 
@@ -117,10 +99,11 @@ get_exit_pos :: proc() -> ^Vector2 {
 @(export)
 // Kicks everything off — loads the map and drops the player at the spawn point.
 init :: proc(screen_width, screen_height: u32, level_id: i32) {
-	init_map(level_id)
+	// Map is already loaded via set_tile/setup_level_config
+
 	state.player = Player {
-		pos   = world.spawn * f32(world.scale) + f32(world.scale / 2),
-		dest  = world.spawn * f32(world.scale) + f32(world.scale / 2),
+		pos   = world.spawn,
+		dest  = world.spawn,
 		speed = 120,
 	}
 	state.found_items_count = 0
@@ -210,9 +193,9 @@ check_collision :: proc(pos: Vector2) -> bool {
 	return(
 		is_solid(pos) ||
 		is_solid(pos + Vector2{-collision_radius_x, 0}) ||
-		is_solid(pos + Vector2{ collision_radius_x, 0}) ||
+		is_solid(pos + Vector2{collision_radius_x, 0}) ||
 		is_solid(pos + Vector2{0, -collision_radius_y}) ||
-		is_solid(pos + Vector2{0,  collision_radius_y}) \
+		is_solid(pos + Vector2{0, collision_radius_y}) \
 	)
 }
 
