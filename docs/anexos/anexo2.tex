@@ -113,6 +113,13 @@ Para adicionar um andar ou cenário inteiramente novo ao jogo (Ex: Nível 3 - O 
     \item \textbf{appliances.json:} A informação educativa desses objetos (definido no passo anterior).
 \end{itemize}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{figuras/levelStructure.png}
+    \caption{Estrutura de pastas para um novo nível.}
+    \label{fig:level_structure}
+\end{figure}
+
 \subsection{1. O Ficheiro de Configuração (config.json)}
 
 Este ficheiro define onde o jogador começa, onde termina e o tamanho do mapa.
@@ -148,7 +155,21 @@ Exemplo visual de um mapa 10x5 (uma sala rodeada de paredes):
 0000000000
 \end{verbatim}
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figuras/hitbox.png}
+    \caption{Exemplo da definição das áreas de colisão (0 e 1) no ficheiro de mapa.}
+    \label{fig:hitbox_example}
+\end{figure}
+
 \textit{Nota: O número de linhas e colunas deve corresponder ao height e width definidos no config.json.}
 
 \subsection{Imagens do Cenário (Layers)}
-Atualmente, o jogo também requer que as imagens do cenário (chão, paredes) sejam colocadas na pasta de imagens (\texttt{web/source/layers/layers\_mapa3}). Estas imagens devem ser desenhadas por um artista para corresponderem ao mapa de texto criado.
+Atualmente, o jogo também requer que as imagens do cenário (chão, paredes) sejam colocadas na pasta de imagens (\texttt{web/source/layers/layers\_mapa3}). Estas imagens devem ser desenhadas por um artista para corresponderem ao mapa de texto criado. A \textbf{Figura~\ref{fig:decomposicao-layers}} (no Capítulo 3) ilustra como estas camadas são separadas.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.3\textwidth]{figuras/layersStructure.png}
+    \caption{Organização das camadas visuais (layers) correspondentes ao nível.}
+    \label{fig:layers_structure}
+\end{figure}
