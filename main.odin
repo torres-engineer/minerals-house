@@ -1,11 +1,210 @@
 package main
 
-import "core:fmt"
+import "core:encoding/json"
+import "core:image"
+import "core:image/png"
+import "core:io"
 import "core:math"
+import "core:math/rand"
+import "core:os"
+import "core:strings"
 
 main :: proc() {}
 
 Vector2 :: [2]f32
+
+TileType :: enum {
+	Floor,
+	Wall,
+	Spawn,
+	Exit,
+}
+
+Minerals :: struct {
+	name:    string,
+	origins: []string,
+	uses:    []string,
+}
+
+Item :: struct {
+	name, description: string,
+	offset:            Offset,
+	minerals:          []string,
+}
+
+World_Entry :: struct {
+	id:              string,
+	config_path:     string,
+	mask_path:       string,
+	background_path: string,
+	overlay_path:    string,
+}
+
+World :: struct {
+	name:          string,
+	width, height: u32,
+	scale:         u32,
+	mask:          []TileType,
+	spawns:        [dynamic]Vector2,
+	exits:         [dynamic]Vector2,
+	items:         []Item,
+	entry:         World_Entry,
+}
+
+select_worlds :: proc(
+	entries: []World_Entry,
+	read_file: proc(path: string) -> ([]byte, bool),
+) -> []World {
+	worlds := make([dynamic]World, 0, len(entries))
+
+	for e in entries {
+		world: World
+
+		if cfg_data, ok := read_file(e.config_path); ok {
+			defer delete(cfg_data)
+			if err := json.unmarshal(cfg_data, &world); err != nil {
+				continue
+			}
+		}
+
+		world.name = e.id
+
+		mask_bytes, mask_ok := read_file(e.mask_path)
+		if !mask_ok {
+			continue
+		}
+		defer delete(mask_bytes)
+
+		mask_img, err := png.load_from_bytes(mask_bytes)
+		if err != nil {
+			continue
+		}
+		defer image.destroy(mask_img)
+
+		world.width = u32(mask_img.width)
+		world.height = u32(mask_img.height)
+
+		world.mask = make([]TileType, world.width * world.height)
+
+		pix := mask_img.pixels.buf
+		bytes_per_pixel := mask_img.channels * (mask_img.depth / 8)
+		world.spawns = make([dynamic]Vector2)
+		world.exits = make([dynamic]Vector2)
+
+		for y in 0 ..< world.height {
+			for x in 0 ..< world.width {
+				idx := world.width * y + x
+
+				p := (y * u32(mask_img.width) + x) * u32(bytes_per_pixel)
+				r := pix[p + 0]
+				g := pix[p + 1]
+				b := pix[p + 2]
+				a := pix[p + 3]
+
+				if r == 0 && g == 0 && b == 0 && a == 0 {
+					world.mask[idx] = .Wall
+				} else if r == 0xFF && g == 0xFF && b == 0xFF && a == 0xFF {
+					world.mask[idx] = .Floor
+				} else if r == 0 && g == 0xFF && b == 0 && a == 0xFF {
+					world.mask[idx] = .Spawn
+					append(&world.spawns, Vector2{f32(x), f32(y)})
+				} else if r == 0xFF && g == 0 && b == 0 && a == 0xFF {
+					world.mask[idx] = .Exit
+					append(&world.exits, Vector2{f32(x), f32(y)})
+				} else {
+					world.mask[idx] = .Wall
+				}
+			}
+		}
+
+		world.entry = e
+
+		append(&worlds, world)
+	}
+
+	return worlds[:]
+}
+
+world: World
+
+@(export)
+getWorld :: proc() -> ^World {
+	return &world
+}
+
+@(export)
+init :: proc(
+	screen_width, screen_height: u32,
+	entries: []World_Entry,
+	read_file: proc(path: string) -> ([]byte, bool),
+) {
+	worlds := select_worlds(entries, read_file)
+	if len(worlds) == 0 {
+		return
+	}
+
+	// TODO: player picks the world
+	world = rand.choice(worlds)
+
+	player_radius: f32 = 24.0
+
+	candidates := make([dynamic]Vector2, 0, len(world.spawns))
+	defer delete(candidates)
+
+	for spawn in world.spawns {
+		spawn_world := (spawn + 0.5) * f32(world.scale)
+		if spawn_position_is_safe(spawn_world, player_radius) {
+			append(&candidates, spawn_world)
+		}
+	}
+
+	if len(candidates) == 0 {
+		// TODO: workaround and use floor pixels?
+		panic("no safe spawn position")
+	}
+
+	start := rand.choice(candidates[:])
+
+	state.player = Player {
+		pos   = start,
+		dest  = start,
+		speed = 120,
+	}
+}
+
+spawn_position_is_safe :: proc(pos: Vector2, radius: f32) -> bool {
+	deg_45 := math.sqrt(f32(2)) / 2
+
+	offset := Polygon {
+		vertices = []Vector2 {
+			Vector2{0, 0},
+			Vector2{radius, 0},
+			Vector2{-radius, 0},
+			Vector2{0, radius},
+			Vector2{0, -radius},
+			Vector2{radius * deg_45, radius * deg_45},
+			Vector2{-radius * deg_45, radius * deg_45},
+			Vector2{radius * deg_45, -radius * deg_45},
+			Vector2{-radius * deg_45, -radius * deg_45},
+		},
+	}
+
+	return collision_safe(pos, offset)
+}
+
+check_collision :: proc(pos: Vector2) -> bool {
+	sx := pos.x / f32(world.scale)
+	sy := pos.y / f32(world.scale)
+
+	if sx < 0 || sx >= f32(world.width) || sy < 0 || sy >= f32(world.height) {
+		return true
+	}
+
+	ix := u32(sx)
+	iy := u32(sy)
+
+	return world.mask[iy * world.width + ix] == .Wall
+}
 
 MAX_PATH_LENGTH :: 64
 
@@ -18,12 +217,9 @@ Player :: struct {
 	path_index: u32,
 }
 
-MAX_FOUND_ITEMS :: 16
-
 GameState :: struct {
-	player:            Player,
-	found_items:       [MAX_FOUND_ITEMS]u8, // Item IDs (0 = empty slot)
-	found_items_count: u32,
+	player:      Player,
+	items_found: [dynamic]u32,
 }
 
 state: GameState
@@ -31,81 +227,6 @@ state: GameState
 @(export)
 getState :: proc() -> ^GameState {
 	return &state
-}
-
-World :: struct {
-	width, height: u32,
-	world:         []u32,
-	scale:         u32,
-	spawn:         Vector2,
-	exit:          Vector2,
-}
-world_width :: 30
-world_height :: 20
-
-/*world_map := [world_width * world_height]u32 {
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,
-	0,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,
-	0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,
-	0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,0,
-	0,0,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,
-	0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,1,1,1,1,1,1,0,0,
-	0,0,1,1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,1,1,1,1,1,1,0,0,
-	0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,0,1,1,1,1,1,1,0,0,
-	0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,
-	0,0,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,
-	0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,
-	0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,0,0,0,1,1,0,1,1,1,1,1,1,1,1,0,
-	0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,0,1,1,1,1,1,1,1,1,0,
-	0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-}*/
-
-MAP_RAW :: #load("world1.txt", string)
-
-world_map: [world_width * world_height]u32
-
-init_map :: proc() {
-	cursor := 0
-	for char in MAP_RAW {
-		// Skip newlines or spaces
-		if char == '0' {
-			world_map[cursor] = 0
-			cursor += 1
-		} else if char == '1' {
-			world_map[cursor] = 1
-			cursor += 1
-		}
-	}
-}
-
-world := World {
-	width  = world_width,
-	height = world_height,
-	world  = world_map[:],
-	scale  = 48,
-	spawn  = Vector2{9, 16},
-	exit   = Vector2{18, 18} * 48 + 24, // Exit at tile (18,18), centered
-}
-
-@(export)
-getWorld :: proc() -> ^World {
-	return &world
-}
-
-@(export)
-init :: proc(screen_width, screen_height: u32) {
-	state.player = Player {
-		pos   = world.spawn * f32(world.scale) + f32(world.scale / 2),
-		dest  = world.spawn * f32(world.scale) + f32(world.scale / 2),
-		speed = 120,
-	}
-	init_map()
 }
 
 @(export)
@@ -172,36 +293,12 @@ has_clear_path :: proc(from, to: Vector2) -> bool {
 	return true
 }
 
-is_solid :: proc(pos: Vector2) -> bool {
-	x := u32(math.floor(pos.x / f32(world.scale)))
-	y := u32(math.floor(pos.y / f32(world.scale)))
-
-	if x >= world.width || y >= world.height {
-		return true
-	}
-
-	return world.world[y * world.width + x] == 0
-}
-
-check_collision :: proc(pos: Vector2) -> bool {
-	// Raio horizontal para colisão simples (metade da largura do personagem)
-	// Usamos 20 (largura total 40) para ser menor que o tile (48) e passar nas portas
-	collision_radius :: 20.0
-
-	// Verifica centro, esquerda e direita
-	return(
-		is_solid(pos) ||
-		is_solid(pos + Vector2{-collision_radius, 0}) ||
-		is_solid(pos + Vector2{collision_radius, 0}) \
-	)
-}
-
 // Check if a tile is walkable (for A* pathfinding)
 is_tile_walkable :: proc(tx, ty: i32) -> bool {
 	if tx < 0 || ty < 0 || u32(tx) >= world.width || u32(ty) >= world.height {
 		return false
 	}
-	return world.world[u32(ty) * world.width + u32(tx)] != 0
+	return world.mask[u32(ty) * world.width + u32(tx)] != .Wall
 }
 
 // A* Pathfinding structures
@@ -216,7 +313,6 @@ PathNode :: struct {
 find_path :: proc(start_pos, end_pos: Vector2) -> (path: [MAX_PATH_LENGTH]Vector2, path_len: u32) {
 	scale := f32(world.scale)
 
-	// Convert to tile coordinates
 	start_tx := i32(math.floor(start_pos.x / scale))
 	start_ty := i32(math.floor(start_pos.y / scale))
 	end_tx := i32(math.floor(end_pos.x / scale))
@@ -528,37 +624,57 @@ step :: proc(delta_time: f64) -> (keep_going: bool) {
 
 @(export)
 is_near_exit :: proc(threshold: f32) -> bool {
-	diff := state.player.pos - world.exit
-	dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
-	return dist <= threshold
+	if len(world.exits) == 0 {
+		return false
+	}
+
+	closest_dist: f32 = 1e9
+	for exit_pos in world.exits {
+		diff := state.player.pos - exit_pos
+		dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
+		if dist < closest_dist {
+			closest_dist = dist
+		}
+	}
+	return closest_dist <= threshold
 }
 
 @(export)
 get_exit_pos :: proc() -> Vector2 {
-	return world.exit
+	closest: Vector2 = Vector2{0, 0}
+
+	if len(world.exits) == 0 {
+		return closest
+	}
+
+	closest_dist: f32 = 1e9
+	for exit_pos in world.exits {
+		diff := state.player.pos - exit_pos
+		dist := math.sqrt(diff.x * diff.x + diff.y * diff.y)
+		if dist < closest_dist {
+			closest_dist = dist
+			closest = exit_pos
+		}
+	}
+	return closest
 }
 
 @(export)
-add_found_item :: proc(item_id: u8) -> bool {
+add_found_item :: proc(item_id: u32) -> bool {
 	// Check if already found
-	for i in 0 ..< state.found_items_count {
-		if state.found_items[i] == item_id {
+	for i in 0 ..< len(state.items_found) {
+		if state.items_found[i] == item_id {
 			return false // Already found
 		}
 	}
-	// Add if space available
-	if state.found_items_count < MAX_FOUND_ITEMS {
-		state.found_items[state.found_items_count] = item_id
-		state.found_items_count += 1
-		return true // Newly found
-	}
-	return false
+	append(&state.items_found, item_id)
+	return true
 }
 
 @(export)
-has_found_item :: proc(item_id: u8) -> bool {
-	for i in 0 ..< state.found_items_count {
-		if state.found_items[i] == item_id {
+has_found_item :: proc(item_id: u32) -> bool {
+	for i in state.items_found {
+		if i == item_id {
 			return true
 		}
 	}
@@ -567,13 +683,102 @@ has_found_item :: proc(item_id: u8) -> bool {
 
 @(export)
 get_found_items_count :: proc() -> u32 {
-	return state.found_items_count
+	return u32(len(state.items_found))
 }
 
 @(export)
-get_found_item_at :: proc(index: u32) -> u8 {
-	if index < state.found_items_count {
-		return state.found_items[index]
+get_found_item_at :: proc(index: u32) -> u32 {
+	if index < u32(len(state.items_found)) {
+		return state.items_found[index]
 	}
 	return 0
+}
+
+Rectangle :: struct {
+	pos:  Vector2,
+	w, h: f32,
+}
+Circle :: struct {
+	pos: Vector2,
+	r:   f32,
+}
+Polygon :: struct {
+	vertices: []Vector2,
+}
+Offset :: union {
+	Rectangle,
+	Circle,
+	Polygon,
+}
+
+collision_safe :: proc {
+	rectangle_collision_safe,
+	circle_collision_safe,
+	polygon_collision_safe,
+}
+
+rectangle_collision_safe :: proc(pos: Vector2, rect: Rectangle) -> bool {
+	half_w := rect.w * 0.5
+	half_h := rect.h * 0.5
+
+	left := rect.pos.x - half_w
+	right := rect.pos.x + half_w
+	top := rect.pos.y - half_h
+	bottom := rect.pos.y + half_h
+
+	return(
+		!check_collision(pos) &&
+		!check_collision(Vector2{left, rect.pos.y}) &&
+		!check_collision(Vector2{right, rect.pos.y}) &&
+		!check_collision(Vector2{rect.pos.x, top}) &&
+		!check_collision(Vector2{rect.pos.x, bottom}) \
+	)
+}
+
+circle_collision_safe :: proc(pos: Vector2, circle: Circle) -> bool {
+	deg_45 := math.sqrt(f32(2)) / 2
+
+	offsets := []Vector2 {
+		Vector2{0, 0},
+		Vector2{circle.r, 0},
+		Vector2{-circle.r, 0},
+		Vector2{0, circle.r},
+		Vector2{0, -circle.r},
+		Vector2{circle.r * deg_45, circle.r * deg_45},
+		Vector2{-circle.r * deg_45, circle.r * deg_45},
+		Vector2{circle.r * deg_45, -circle.r * deg_45},
+		Vector2{-circle.r * deg_45, -circle.r * deg_45},
+	}
+
+	for off in offsets {
+		p := pos + off
+		if check_collision(p) {
+			return false
+		}
+	}
+	return true
+}
+
+polygon_collision_safe :: proc(pos: Vector2, poly: Polygon) -> bool {
+	if check_collision(pos) {
+		return false
+	}
+
+	for v in poly.vertices {
+		if check_collision(pos + v) {
+			return false
+		}
+	}
+
+	if len(poly.vertices) >= 3 {
+		for i in 0 ..< len(poly.vertices) {
+			j := (i + 1) % len(poly.vertices)
+			mid := (poly.vertices[i] + poly.vertices[j]) * 0.5
+			if check_collision(pos + mid) {
+				return false
+			}
+		}
+	}
+
+	return true
 }

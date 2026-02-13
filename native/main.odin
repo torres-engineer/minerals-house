@@ -1,6 +1,10 @@
 package native
 
 import main "../"
+import "core:fmt"
+import "core:os"
+import "core:path/filepath"
+import "core:strings"
 import rl "vendor:raylib"
 
 SCREEN_WIDTH :: 640
@@ -9,6 +13,10 @@ FPS :: 144
 
 camera: rl.Camera2D
 state: ^main.GameState
+world: ^main.World
+
+background_tex: rl.Texture
+overlay_tex: rl.Texture
 
 main :: proc() {
 	rl.SetConfigFlags(rl.ConfigFlags{.MSAA_4X_HINT})
@@ -16,6 +24,10 @@ main :: proc() {
 	defer rl.CloseWindow()
 
 	init()
+	defer {
+		rl.UnloadTexture(background_tex)
+		rl.UnloadTexture(overlay_tex)
+	}
 
 	rl.SetTargetFPS(FPS)
 
@@ -27,7 +39,18 @@ main :: proc() {
 }
 
 init :: proc() {
-	main.init(u32(rl.GetScreenWidth()), u32(rl.GetScreenHeight()))
+	entries := discover_worlds()
+	defer delete(entries)
+
+	main.init(
+		u32(rl.GetScreenWidth()),
+		u32(rl.GetScreenHeight()),
+		entries,
+		proc(path: string) -> ([]byte, bool) {
+			data, ok := os.read_entire_file_from_filename(path)
+			return data, ok
+		},
+	)
 	state = main.getState()
 
 	camera = rl.Camera2D {
@@ -36,6 +59,15 @@ init :: proc() {
 		rotation = 0,
 		zoom     = 1,
 	}
+
+	world = main.getWorld()
+
+	bg_img := rl.LoadImage(strings.clone_to_cstring(world.entry.background_path))
+	background_tex = rl.LoadTextureFromImage(bg_img)
+	rl.UnloadImage(bg_img)
+	ov_img := rl.LoadImage(strings.clone_to_cstring(world.entry.overlay_path))
+	overlay_tex = rl.LoadTextureFromImage(ov_img)
+	rl.UnloadImage(ov_img)
 }
 
 update :: proc() {
@@ -58,25 +90,57 @@ draw :: proc() {
 
 	rl.BeginMode2D(camera)
 
-	world := main.getWorld()
-
-	for i in 0 ..< world.width {
-		for j in 0 ..< world.height {
-			rl.DrawRectangle(
-				i32(i * world.scale),
-				i32(j * world.scale),
-				i32(world.scale),
-				i32(world.scale),
-				world.world[j * world.width + i] == 1 ? rl.RAYWHITE : rl.BLACK,
-			)
-		}
-	}
+	rl.DrawTextureEx(background_tex, {0, 0}, 0, 1, rl.RAYWHITE)
 
 	rl.DrawCircleV(state.player.pos, 24, rl.DARKBLUE)
+
+	rl.DrawTextureEx(overlay_tex, {0, 0}, 0, 1, rl.RAYWHITE)
 
 	rl.EndMode2D()
 
 	rl.DrawFPS(8, 8)
 
 	rl.EndDrawing()
+}
+
+WORLDS_DIR :: "worlds"
+
+discover_worlds :: proc() -> []main.World_Entry {
+	entries := make([dynamic]main.World_Entry)
+
+	worlds_dir, err := os.open(WORLDS_DIR)
+	if err != os.ERROR_NONE {
+		return entries[:]
+	}
+	defer os.close(worlds_dir)
+
+	fi, ferr := os.read_dir(worlds_dir, 0)
+	if ferr != os.ERROR_NONE {
+		return entries[:]
+	}
+
+	for info in fi {
+		if !info.is_dir {
+			continue
+		}
+
+		base := info.fullpath
+		config := filepath.join([]string{base, "config.json"})
+		mask := filepath.join([]string{base, "mask.png"})
+		background := filepath.join([]string{base, "background.png"})
+		overlay := filepath.join([]string{base, "overlay.png"})
+
+		append(
+			&entries,
+			main.World_Entry {
+				id = info.name,
+				config_path = filepath.join([]string{base, "config.json"}),
+				mask_path = filepath.join([]string{base, "mask.png"}),
+				background_path = filepath.join([]string{base, "background.png"}),
+				overlay_path = filepath.join([]string{base, "overlay.png"}),
+			},
+		)
+	}
+
+	return entries[:]
 }

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -xe
+
 odin_js=$(odin root)/core/sys/wasm/js/odin.js
 cp "$odin_js" web/odin.js
 
