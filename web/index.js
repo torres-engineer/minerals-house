@@ -16,11 +16,16 @@ const WORLD_SPAWN_OFFSET = 20;
 const DATA_VERSION = "20260211-01";
 const SETTINGS_STORAGE_KEY = "minerals-house.settings.v1";
 
+// --- Global State for Levels ---
+let currentItems = [];
+let currentAppliances = [];
+let loadedLevelConfig = null;
+let currentLevel = 1;
+
 const I18N = window.TRANSLATIONS || window.I18N || { pt: {}, en: {} };
 
 let currentLanguage = "pt";
-let currentLevel = 1;
-const MAX_LEVELS = 2; // Two levels for now
+const MAX_LEVELS = 2;
 let gameStarted = false;
 let gameBooting = false;
 
@@ -142,6 +147,18 @@ const mineralIcons = {
   silver: "./source/minerals/prata.png",
   default: "./source/minerals/generic.png"
 };
+
+/**
+ * Gets the icon path for a mineral.
+ * @param {string} mineralName 
+ * @returns {string}
+ */
+function getMineralIcon(mineralName) {
+  if (!mineralName) return mineralIcons.default;
+  const key = normalizeText(mineralName);
+  // Try exact match or normalized match
+  return mineralIcons[mineralName.toLowerCase()] || mineralIcons[key] || mineralIcons.default;
+}
 
 /**
  * Strips accents and lowercases text so we can compare mineral names without fuss.
@@ -426,48 +443,73 @@ function setupSettingsMenu() {
 }
 
 /**
- * Builds the file paths for item/appliance data based on language and level.
- * @param {"pt"|"en"} language
- * @param {number} level
- * @returns {{items: string, appliances: string}}
+ * Loads a level by ID including config, map, items, and appliances.
+ * Pushes data to Odin.
+ * @param {number} levelId 
+ * @param {string} [language=currentLanguage]
  */
-function getDataPaths(language, level) {
-  const folderName = `items_map${level}`;
-  const langSuffix = language === "en" ? ".en" : "";
-
-  // Data lives here:
-  // web/data/items_map1/items.json      (Portuguese)
-  // web/data/items_map1/items.en.json   (English)
-
-  const baseItems = `./data/${folderName}/items${langSuffix}.json`;
-  const baseAppliances = `./data/${folderName}/appliances${langSuffix}.json`;
-
-  return {
-    items: baseItems,
-    appliances: baseAppliances
-  };
-}
-
-/**
- * Fetches item and appliance JSON for a level. Falls back to Portuguese if the
- * English files are missing.
- * @param {"pt"|"en"} language
- * @param {number} level
- * @returns {Promise<{items: Array, appliances: Array}>}
- */
-async function loadGameData(language, level) {
-  const paths = getDataPaths(language, level);
+async function loadLevel(levelId, language = currentLanguage) {
   try {
-    const [itemsData, appliancesData] = await Promise.all([
-      fetch(paths.items).then((r) => r.json()),
-      fetch(paths.appliances).then((r) => r.json())
+    const basePath = `./data/levels/level${levelId}`;
+    const langCode = language === "en" ? "en" : null;
+
+    // Helper: try fetching [name].[lang].json, then fallback to [name].json
+    const fetchJsonWithFallback = async (name) => {
+      // 1. Try language-specific file if code exists
+      if (langCode) {
+        // e.g. items.en.json
+        const res = await fetch(`${basePath}/${name}${langCode}.json`);
+        if (res.ok) return res.json();
+      }
+      // 2. Fallback to default
+      const resDefault = await fetch(`${basePath}/${name}.json`);
+      if (!resDefault.ok) throw new Error(`Missing ${name} for level ${levelId}`);
+      return resDefault.json();
+    };
+
+    // Parallel fetch core files + data with fallback
+    const [configRes, mapRes, itemsData, appliancesData] = await Promise.all([
+      fetch(`${basePath}/config.json`),
+      fetch(`${basePath}/map.txt`),
+      fetchJsonWithFallback("items"),
+      fetchJsonWithFallback("appliances")
     ]);
-    return { items: itemsData.items || [], appliances: appliancesData.appliances || [] };
-  } catch (error) {
-    if (language !== "pt") return loadGameData("pt", level);
-    throw error;
+
+    if (!configRes.ok || !mapRes.ok) throw new Error(`Level ${levelId} config/map missing`);
+
+    loadedLevelConfig = await configRes.json();
+    const mapText = await mapRes.text();
+
+    currentItems = itemsData.items;
+    currentAppliances = appliancesData.appliances;
+    window.quizAppliances = currentAppliances;
+
+    // Send data to Odin - using individual tile calls to avoid string passing issues
+    const cleanMap = mapText.replace(/[^01]/g, ""); // Remove newlines and anything not 0 or 1
+    for (let i = 0; i < cleanMap.length; i++) {
+      const val = cleanMap[i] === "1" ? 1 : 0;
+      window.exports.set_tile(i, val);
+    }
+    console.log(`Pushed map to Odin: ${cleanMap.length} tiles`);
+
+    window.exports.setup_level_config(
+      loadedLevelConfig.width,
+      loadedLevelConfig.height,
+      loadedLevelConfig.spawn.x,
+      loadedLevelConfig.spawn.y,
+      loadedLevelConfig.exit.x,
+      loadedLevelConfig.exit.y
+    );
+
+    currentLevel = levelId;
+    console.log(`Level ${levelId} loaded: ${loadedLevelConfig.name} (${language})`);
+
+  } catch (e) {
+    console.error("Failed to load level:", e);
+    throw e;
   }
 }
+
 /**
  * Loads the WASM binary, wires up rendering, input, and all the in-game UI.
  * @param {"pt"|"en"} language
@@ -479,9 +521,15 @@ async function initGame(language, level = 1) {
   const log = document.getElementById("console");
   await odin.runWasm("index.wasm", log, null, mem);
   const exports = mem.exports;
+  window.exports = exports;
+  window.mem = mem;
 
-  const { items, appliances } = await loadGameData(language, level);
-  window.quizAppliances = appliances;
+  // Load level data with the selected language
+  await loadLevel(level, language);
+
+  // Aliases for local scope use
+  const items = currentItems;
+  const appliances = currentAppliances;
 
   function getAppliance(name) {
     const needle = normalizeText(name);
@@ -585,8 +633,8 @@ async function initGame(language, level = 1) {
       const exitX = mem.loadF32(exitPos);
       const exitY = mem.loadF32(exitPos + 4);
       // Did the player click on the exit door?
-      // Level 1 exit is 2 blocks wide, level 2 is 3.
-      const exitBlocks = currentLevel === 2 ? 3 : 2;
+      // Level exit width comes from config (default to 2 blocks)
+      const exitBlocks = (loadedLevelConfig.exit && loadedLevelConfig.exit.width) || 2;
       const exitWidth = exitBlocks * 48;
 
       const isClickOnExit = (
