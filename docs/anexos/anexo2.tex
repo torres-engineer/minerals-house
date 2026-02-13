@@ -1,0 +1,154 @@
+\chapter{Guia de Edição de Conteúdos}
+\label{an:guia_edicao}
+
+Este anexo fornece as instruções necessárias para que educadores ou colaboradores sem conhecimentos de programação possam adicionar novos minerais e objetos ao jogo, ou corrigir informações existentes.
+
+\section{Introdução}
+
+O conteúdo educativo do ``Casa dos Minerais'' encontra-se separado do código do jogo, em ficheiros de texto simples no formato \textbf{JSON}. Isto permite que qualquer pessoa com um editor de texto possa modificar a informação apresentada aos jogadores.
+
+\section{Onde Editar}
+
+Os ficheiros de dados encontram-se na pasta \texttt{web/data/levels/}. Cada nível possui a sua própria pasta (ex: \texttt{level1}, \texttt{level2}).
+
+Para cada nível, existem dois ficheiros principais que podem ser editados:
+\begin{itemize}
+    \item \texttt{items.json}: Contém a lista de objetos interativos no cenário (ex: fogão, televisão) e a sua posição.
+    \item \texttt{appliances.json}: Contém a informação educativa sobre cada objeto, incluindo os minerais que o compõem.
+\end{itemize}
+
+Recomenda-se a utilização de um editor de texto que suporte validação de JSON, como o \textit{Notepad++} ou \textit{Visual Studio Code}, para evitar erros de formatação (ex: esquecer uma vírgula).
+
+\section{Como Adicionar um Novo Objeto}
+
+O processo divide-se em dois passos: definir o objeto no cenário e preencher a sua informação educativa.
+
+\subsection{Passo 1: Definir a Informação Educativa (appliances.json)}
+
+Abra o ficheiro \texttt{appliances.json} e adicione uma nova entrada na lista \texttt{"appliances"}.
+
+\begin{lstlisting}[language=json, caption={Exemplo de adição de um novo objeto (Micro-ondas) ao appliancess.json.}]
+{
+  "name": "Micro-ondas",
+  "minerals": [
+    {
+      "name": "Cobre",
+      "origin": "Chile, Peru, China",
+      "use": "Magnetrao e fiacao"
+    },
+    {
+      "name": "Silicio",
+      "origin": "China, Russia, EUA",
+      "use": "Painel de controlo (chips)"
+    }
+  ]
+}
+\end{lstlisting}
+
+\textbf{Regras Importantes:}
+\begin{itemize}
+    \item \textbf{name:} O nome do objeto deve ser único. Este nome será usado para ligar o objeto à sua posição no mapa.
+    \item \textbf{minerals:} Lista dos minerais que compõem o objeto.
+    \item Evite usar acentos nos campos de texto se o sistema não estiver configurado para UTF-8, embora o jogo suporte caracteres acentuados.
+\end{itemize}
+
+\subsection{Passo 2: Colocar o Objeto no Mapa (items.json)}
+
+Abra o ficheiro \texttt{items.json} para definir onde o objeto aparece no jogo.
+
+\begin{lstlisting}[language=json, caption={Exemplo de posicionamento do objeto no items.json.}]
+{
+  "id": "microwave",
+  "appliance": "Micro-ondas", 
+  "x": 800,
+  "y": 450,
+  "radius": 40
+}
+\end{lstlisting}
+
+\textbf{Explicação dos Campos:}
+\begin{itemize}
+    \item \textbf{id:} Um identificador único interno (use letras minúsculas e sem espaços).
+    \item \textbf{appliance:} \textbf{Deve corresponder exatamente} ao \texttt{"name"} definido no passo anterior. É esta ligação que permite ao jogo saber que informações mostrar.
+    \item \textbf{x, y:} Coordenadas (em pixeis) onde o objeto ficará. O canto superior esquerdo do mapa é (0,0).
+    \item \textbf{radius:} (Opcional) Distância de interação. Se o jogador clicar dentro deste raio, interage com o objeto. Valor típico: 40.
+\end{itemize}
+
+\section{Como Adicionar/Editar Minerais}
+
+Para corrigir a informação de um mineral (por exemplo, atualizar o país de origem no Micro-ondas), basta editar o bloco correspondente em \texttt{appliances.json}:
+
+\begin{lstlisting}[language=json]
+    {
+      "name": "Cobre",
+      "origin": "Portugal (Neves-Corvo), Chile", 
+      "use": "Condutor eletrico no magnetrao"
+    }
+\end{lstlisting}
+
+Não é necessário alterar nada no \texttt{items.json} nem recompilar o jogo. Basta gravar o ficheiro e recarregar a página do jogo no navegador.
+
+\section{Resolução de Problemas Comuns}
+
+\begin{itemize}
+    \item \textbf{O objeto aparece mas não mostra informação:} Verifique se o nome no campo \texttt{"appliance"} do \texttt{items.json} é \textbf{idêntico} ao \texttt{"name"} no \texttt{appliances.json} (incluindo maiúsculas/minúsculas e espaços).
+\end{itemize}
+
+\section{Como Criar um Novo Nível Completo}
+
+Para adicionar um andar ou cenário inteiramente novo ao jogo (Ex: Nível 3 - O Jardim), é necessário criar uma nova estrutura de pastas. Não é necessário programar lógica nova, apenas fornecer os dados.
+
+\subsection{Estrutura de Ficheiros}
+
+\begin{enumerate}
+    \item Aceda à pasta \texttt{web/data/levels/}.
+    \item Crie uma nova pasta com o número do nível (ex: \texttt{level3}).
+    \item Dentro dessa pasta, crie os seguintes 4 ficheiros obrigatórios:
+\end{enumerate}
+
+\begin{itemize}
+    \item \textbf{config.json:} Define as propriedades básicas do nível.
+    \item \textbf{map.txt:} O desenho do mapa (a hitbox do mapa, ou seja as paredes e chão).
+    \item \textbf{items.json:} A lista de objetos no cenário (definido no passo anterior).
+    \item \textbf{appliances.json:} A informação educativa desses objetos (definido no passo anterior).
+\end{itemize}
+
+\subsection{1. O Ficheiro de Configuração (config.json)}
+
+Este ficheiro define onde o jogador começa, onde termina e o tamanho do mapa.
+
+\begin{lstlisting}[language=json]
+{
+  "name": "O Jardim",
+  "width": 30,          // Largura em 'tiles' (quadrados)
+  "height": 20,         // Altura em 'tiles'
+  "spawn": { "x": 2, "y": 2 },  // Onde o jogador nascede
+  "exit": { 
+      "x": 28, 
+      "y": 18,
+      "width": 2        // Largura da porta de saida (em blocos)
+  }
+}
+\end{lstlisting}
+
+\subsection{2. O Mapa (map.txt)}
+
+O mapa é desenhado com um simples ficheiro de texto, onde cada caractere representa um quadrado de 48x48 pixeis.
+\begin{itemize}
+    \item \textbf{0}: Parede ou Vazio (o jogador não pode andar).
+    \item \textbf{1}: Chão (o jogador pode andar).
+\end{itemize}
+
+Exemplo visual de um mapa 10x5 (uma sala rodeada de paredes):
+\begin{verbatim}
+0000000000
+0111111110
+0111111110
+0111111110
+0000000000
+\end{verbatim}
+
+\textit{Nota: O número de linhas e colunas deve corresponder ao height e width definidos no config.json.}
+
+\subsection{Imagens do Cenário (Layers)}
+Atualmente, o jogo também requer que as imagens do cenário (chão, paredes) sejam colocadas na pasta de imagens (\texttt{web/source/layers/layers\_mapa3}). Estas imagens devem ser desenhadas por um artista para corresponderem ao mapa de texto criado.
