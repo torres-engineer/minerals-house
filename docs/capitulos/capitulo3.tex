@@ -1,33 +1,62 @@
 \chapter{Implementação}
 \label{ch:implementacao}
 
-Este capítulo descreve como o ``Casa dos Minerais'' foi implementado na prática. O jogo corre tanto nativamente como no browser, o que obrigou a separar a lógica de simulação da camada de apresentação.
+Este capítulo descreve como o ``Casa dos Minerais'' foi implementado
+na prática. O jogo corre tanto nativamente como no browser, o que
+obrigou a separar a lógica de simulação da camada de apresentação.
 
 \section{Arquitetura geral}
 
 A arquitetura divide-se em dois componentes:
 
 \begin{enumerate}
-    \item \textbf{Núcleo Lógico (Core):} Implementado em Odin, é responsável por toda a gestão de estado do jogo, regras de simulação, \textit{pathfinding} (navegação) e deteção de colisões. Este código é agnóstico à plataforma, ou seja, não sabe se está a correr num PC ou num browser. Para a web, este núcleo é compilado para WebAssembly (WASM), gerando um ficheiro \texttt{index.wasm} de tamanho reduzido.
-    
-    \item \textbf{Camada de Apresentação (Frontend):} Responsável por desenhar o jogo, capturar o \textit{input} do utilizador (rato/teclado) e reproduzir áudio. 
+  \item \textbf{Núcleo Lógico (Core):} Implementado em Odin, é
+    responsável por toda a gestão de estado do jogo, regras de
+    simulação, \textit{pathfinding} (navegação) e deteção de
+    colisões. Este código é agnóstico à plataforma, ou seja, não sabe
+    se está a correr num PC ou num browser. Para a web, este núcleo é
+    compilado para WebAssembly (WASM), gerando um ficheiro
+    \texttt{index.wasm} de tamanho reduzido.
+
+  \item \textbf{Camada de Apresentação (Frontend):} Responsável por
+    desenhar o jogo, capturar o \textit{input} do utilizador
+    (rato/teclado) e reproduzir áudio.
     \begin{itemize}
-        \item Na versão \textbf{Web}, esta camada é escrita em JavaScript, utilizando a API Canvas do HTML5 para renderização e a Web Audio API para som. O JavaScript comunica com o módulo WASM, lendo a memória do jogo (posição do jogador, itens recolhidos) e chamando funções exportadas (como \texttt{step} ou \texttt{player\_click}).
-        \item Na versão \textbf{nativa} (utilizada para testes e desenvolvimento rápido), esta camada é implementada em Odin utilizando a biblioteca \texttt{Raylib}, que fornece janelas e gráficos acelerados por hardware.
+      \item Na versão \textbf{Web}, esta camada é escrita em
+        JavaScript, utilizando a API Canvas do HTML5 para
+        renderização e a Web Audio API para som. O JavaScript
+        comunica com o módulo WASM, lendo a memória do jogo (posição
+        do jogador, itens recolhidos) e chamando funções exportadas
+        (como \texttt{step} ou \texttt{player\_click}).
+      \item Na versão \textbf{nativa} (utilizada para testes e
+        desenvolvimento rápido), esta camada é implementada em Odin
+        utilizando a biblioteca \texttt{Raylib}, que fornece janelas
+        e gráficos acelerados por hardware.
     \end{itemize}
 \end{enumerate}
 
-Esta separação permitiu à equipa desenvolver e testar a lógica complexa (como o movimento do personagem) em ambiente nativo, com ferramentas de \textit{debug} superiores, e exportar o resultado para a web sem alterações no código base.
+Esta separação permitiu à equipa desenvolver e testar a lógica
+complexa (como o movimento do personagem) em ambiente nativo, com
+ferramentas de \textit{debug} superiores, e exportar o resultado para
+a web sem alterações no código base.
 
 \section{Modelo de dados}
 
-O projeto usa dois tipos de estruturas de dados: estáticas e compactas em Odin para o estado do jogo, e dinâmicas em JSON/JavaScript para o conteúdo descritivo.
+O projeto usa dois tipos de estruturas de dados: estáticas e
+compactas em Odin para o estado do jogo, e dinâmicas em
+JSON/JavaScript para o conteúdo descritivo.
 
 \subsection{Estruturas de Estado (Core/Odin)}
 
-No núcleo da simulação, os dados são organizados em estruturas (\textit{structs}) de memória contígua, o que favorece a performance e a previsibilidade, essenciais para ambientes com recursos limitados como o WASM.
+No núcleo da simulação, os dados são organizados em estruturas
+(\textit{structs}) de memória contígua, o que favorece a performance
+e a previsibilidade, essenciais para ambientes com recursos limitados
+como o WASM.
 
-A estrutura \texttt{GameState} centraliza toda a informação mutável, contendo o jogador e o registo de itens encontrados. A posição e o destino são vetores de 2 elementos (`[2]f32`), permitindo cálculos matemáticos diretos.
+A estrutura \texttt{GameState} centraliza toda a informação mutável,
+contendo o jogador e o registo de itens encontrados. A posição e o
+destino são vetores de 2 elementos (`[2]f32`), permitindo cálculos
+matemáticos diretos.
 
 \begin{lstlisting}[language=C, caption={Estruturas principais do estado de jogo em Odin.}, label={lst:odin-structs}]
 MAX_PATH_LENGTH :: 64
@@ -50,13 +79,23 @@ GameState :: struct {
 }
 \end{lstlisting}
 
-O mapa do jogo é representado pela estrutura \texttt{World}, que define as dimensões da grelha e contém um \textit{array} linear (\texttt{world\_map}) onde cada célula corresponde a um \textit{tile}. O valor \texttt{0} indica uma célula transitável e \texttt{1} uma parede ou obstáculo. Esta representação simplificada facilita a verificação de colisões e o cálculo de rotas.
+O mapa do jogo é representado pela estrutura \texttt{World}, que
+define as dimensões da grelha e contém um \textit{array} linear
+(\texttt{world\_map}) onde cada célula corresponde a um
+\textit{tile}. O valor \texttt{0} indica uma célula transitável e
+\texttt{1} uma parede ou obstáculo. Esta representação simplificada
+facilita a verificação de colisões e o cálculo de rotas.
 
 \subsection{Dados de Conteúdo (JSON/JavaScript)}
 
-Enquanto o núcleo gere a lógica espacial, o conteúdo educativo (nomes, descrições, associações mineral-objeto) reside em ficheiros JSON externos. Esta separação permite alterar textos, traduzir o jogo ou adicionar novos objetos sem necessidade de recompilar o código binário (WASM).
+Enquanto o núcleo gere a lógica espacial, o conteúdo educativo
+(nomes, descrições, associações mineral-objeto) reside em ficheiros
+JSON externos. Esta separação permite alterar textos, traduzir o jogo
+ou adicionar novos objetos sem necessidade de recompilar o código
+binário (WASM).
 
-Cada objeto interativo no jogo possui uma entrada correspondente no ficheiro JSON, que detalha os seus atributos pedagógicos.
+Cada objeto interativo no jogo possui uma entrada correspondente no
+ficheiro JSON, que detalha os seus atributos pedagógicos.
 
 \begin{lstlisting}[language=json, caption={Exemplo de estrutura de dados para um Eletrodoméstico.}, label={lst:json-structure}]
 {
@@ -77,21 +116,39 @@ Cada objeto interativo no jogo possui uma entrada correspondente no ficheiro JSO
 }
 \end{lstlisting}
 
-No arranque, o motor JavaScript carrega estes ficheiros e cria um dicionário de objetos indexado pelo nome, permitindo que a interface apresente a informação correta quando o jogador interage com um item no cenário.
+No arranque, o motor JavaScript carrega estes ficheiros e cria um
+dicionário de objetos indexado pelo nome, permitindo que a interface
+apresente a informação correta quando o jogador interage com um item no cenário.
 
 \section{O mapa e o motor gráfico}
 
-A renderização na versão web é realizada num elemento \texttt{<canvas>}. Ao contrário de motores de jogo comerciais que abstraem este processo, o ``Casa dos Minerais'' implementa o seu próprio ciclo de desenho (\textit{render loop}) para manter o projeto leve e educativo.
+A renderização na versão web é realizada num elemento
+\texttt{<canvas>}. Ao contrário de motores de jogo comerciais que
+abstraem este processo, o ``Casa dos Minerais'' implementa o seu
+próprio ciclo de desenho (\textit{render loop}) para manter o projeto
+leve e educativo.
 
-O mapa é construído através de camadas (\textit{layers}) exportadas como imagens PNG transparentes: chão, paredes, objetos decorativos e itens interativos. A cada quadro (\textit{frame}), o motor executa os seguintes passos:
+O mapa é construído através de camadas (\textit{layers}) exportadas
+como imagens PNG transparentes: chão, paredes, objetos decorativos e
+itens interativos. A cada quadro (\textit{frame}), o motor executa os
+seguintes passos:
 
 \begin{enumerate}
-    \item Limpeza do ecrã e desenho da camada de fundo (chão).
-    \item \textbf{Ordenação de Profundidade (Z-Sorting):} Para criar a ilusão de profundidade num jogo 2D ``top-down'', é fundamental que o personagem apareça \textit{atrás} de objetos quando está ``acima'' deles no ecrã, e \textit{à frente} quando está ``abaixo''. O motor constrói uma lista de renderização, ordenando todos os elementos (partes do cenário e o jogador) com base na sua coordenada Y (vertical). Elementos com menor Y são desenhados primeiro.
-    \item Aplicação de efeitos visuais dinâmicos, como a pulsação em itens interativos (calculada via função seno no tempo) ou o destaque na zona de saída.
+  \item Limpeza do ecrã e desenho da camada de fundo (chão).
+  \item \textbf{Ordenação de Profundidade (Z-Sorting):} Para criar a
+    ilusão de profundidade num jogo 2D ``top-down'', é fundamental
+    que o personagem apareça \textit{atrás} de objetos quando está
+    ``acima'' deles no ecrã, e \textit{à frente} quando está
+    ``abaixo''. O motor constrói uma lista de renderização, ordenando
+    todos os elementos (partes do cenário e o jogador) com base na
+    sua coordenada Y (vertical). Elementos com menor Y são desenhados primeiro.
+  \item Aplicação de efeitos visuais dinâmicos, como a pulsação em
+    itens interativos (calculada via função seno no tempo) ou o
+    destaque na zona de saída.
 \end{enumerate}
 
-A Figura~\ref{fig:decomposicao-layers} mostra como as diferentes camadas se sobrepõem para compor o cenário.
+A Figura~\ref{fig:decomposicao-layers} mostra como as diferentes
+camadas se sobrepõem para compor o cenário.
 
 \begin{figure}[H]
   \centering
@@ -118,20 +175,41 @@ A Figura~\ref{fig:decomposicao-layers} mostra como as diferentes camadas se sobr
 
 \section{Sistema de navegação e pathfinding}
 
-O movimento do personagem não é direto; o jogador clica num destino e o personagem deve contornar obstáculos (mesas, sofás, paredes) para lá chegar. Para isso, foi implementado o algoritmo \textbf{A* (A-Star)} no núcleo Odin.
+O movimento do personagem não é direto; o jogador clica num destino e
+o personagem deve contornar obstáculos (mesas, sofás, paredes) para
+lá chegar. Para isso, foi implementado o algoritmo \textbf{A*
+(A-Star)} no núcleo Odin.
 
 \subsection{Algoritmo e Heurística}
-O A* explora a grelha do mapa para encontrar o caminho mais curto entre a posição atual e o destino. Foi utilizada a distância de Manhattan como heurística, dado que o movimento base ocorre numa grelha quadrangular. O sistema suporta movimento em 8 direções (cardinais e diagonais), com um custo ligeiramente superior para as diagonais ($\sqrt{2} \approx 1.41$) para garantir realismo.
+O A* explora a grelha do mapa para encontrar o caminho mais curto
+entre a posição atual e o destino. Foi utilizada a distância de
+Manhattan como heurística, dado que o movimento base ocorre numa
+grelha quadrangular. O sistema suporta movimento em 8 direções
+(cardinais e diagonais), com um custo ligeiramente superior para as
+diagonais ($\sqrt{2} \approx 1.41$) para garantir realismo.
 
 \subsection{Suavização de Caminho (\textit{Path smoothing})}
-Um problema comum em jogos de grelha é o movimento ``robótico'' e em ziguezague. Para mitigar isto, implementou-se uma técnica de \textit{String Pulling}: após calcular o caminho base, o algoritmo verifica se existem atalhos diretos e desimpedidos entre pontos afastados do caminho, removendo nós intermédios desnecessários. Isto resulta num movimento fluido e natural, onde o personagem descreve linhas retas sempre que possível, recorrendo à grelha apenas para contornar esquinas apertadas.
+Um problema comum em jogos de grelha é o movimento ``robótico'' e em
+ziguezague. Para mitigar isto, implementou-se uma técnica de
+\textit{String Pulling}: após calcular o caminho base, o algoritmo
+verifica se existem atalhos diretos e desimpedidos entre pontos
+afastados do caminho, removendo nós intermédios desnecessários. Isto
+resulta num movimento fluido e natural, onde o personagem descreve
+linhas retas sempre que possível, recorrendo à grelha apenas para
+contornar esquinas apertadas.
 
 \section{Interface com o utilizador (UI)}
 
 A interface adota uma abordagem mista:
 \begin{itemize}
-    \item \textbf{Mundo de Jogo:} Elementos diegéticos, como nomes de itens ou indicadores de interação, são desenhados diretamente no Canvas para acompanhar a posição dos objetos no mundo.
-    \item \textbf{Menus e HUD:} Menus de início, configurações, e caixas de diálogo utilizam HTML e CSS sobrepostos ao Canvas. Isto garante que o texto é perfeitamente legível, acessível a leitores de ecrã (parcialmente) e responsivo a diferentes tamanhos de janela, tirando partido do motor de layout do próprio browser.
+  \item \textbf{Mundo de Jogo:} Elementos diegéticos, como nomes de
+    itens ou indicadores de interação, são desenhados diretamente no
+    Canvas para acompanhar a posição dos objetos no mundo.
+  \item \textbf{Menus e HUD:} Menus de início, configurações, e
+    caixas de diálogo utilizam HTML e CSS sobrepostos ao Canvas. Isto
+    garante que o texto é perfeitamente legível, acessível a leitores
+    de ecrã (parcialmente) e responsivo a diferentes tamanhos de
+    janela, tirando partido do motor de layout do próprio browser.
 \end{itemize}
 
 \begin{figure}[H]
@@ -147,7 +225,8 @@ A interface adota uma abordagem mista:
     \frame{\includegraphics[width=\textwidth]{figuras/ui-example2.png}}
     \caption{Menu de Definições}
   \end{subfigure}
-  \caption{Exemplos da interface gráfica do utilizador durante o jogo e nos menus.}
+  \caption{Exemplos da interface gráfica do utilizador durante o jogo
+  e nos menus.}
   \label{fig:ui-examples}
 \end{figure}
 
@@ -158,15 +237,32 @@ A interface adota uma abordagem mista:
   \label{fig:game-example}
 \end{figure}
 
-O sistema de áudio, gerido pela Web Audio API, permite misturar efeitos sonoros (\textit{clicks}, passos) e música de fundo, com controlos de volume independentes persistidos no armazenamento local do navegador (\texttt{localStorage}).
+O sistema de áudio, gerido pela Web Audio API, permite misturar
+efeitos sonoros (\textit{clicks}, passos) e música de fundo, com
+controlos de volume independentes persistidos no armazenamento local
+do navegador (\texttt{localStorage}).
 
 \section{Sistema de questionários}
 \label{sec:questions}
 
-O módulo de questionários funciona como um momento de avaliação formativa. A sua ativação segue duas lógicas distintas, dando liberdade ao jogador:
+O módulo de questionários funciona como um momento de avaliação
+formativa. A sua ativação segue duas lógicas distintas, dando
+liberdade ao jogador:
 \begin{itemize}
-    \item \textbf{Acesso Voluntário:} O jogador pode dirigir-se à porta de saída a qualquer momento, mesmo sem ter encontrado todos os itens. Isto permite que utilizadores mais confiantes testem os seus conhecimentos sem serem forçados a uma exploração exaustiva.
-    \item \textbf{Sugestão Automática:} Quando o jogador recolhe a totalidade dos itens disponíveis no cenário e se dirige à saída, o jogo assume que a fase de exploração terminou e inicia o questionário automaticamente.
+  \item \textbf{Acesso Voluntário:} O jogador pode dirigir-se à porta
+    de saída a qualquer momento, mesmo sem ter encontrado todos os
+    itens. Isto permite que utilizadores mais confiantes testem os
+    seus conhecimentos sem serem forçados a uma exploração exaustiva.
+  \item \textbf{Sugestão Automática:} Quando o jogador recolhe a
+    totalidade dos itens disponíveis no cenário e se dirige à saída,
+    o jogo assume que a fase de exploração terminou e inicia o
+    questionário automaticamente.
 \end{itemize}
 
-As perguntas são geradas proceduralmente com base no conteúdo JSON carregado. O sistema escolhe aleatoriamente um eletrodoméstico ou mineral encontrado e apresenta quatro opções de resposta. O estado de progresso (quantas perguntas acertou) determina se o nível seguinte é desbloqueado. Esta lógica reside inteiramente no JavaScript, o que simplifica a integração com a interface HTML modal onde o utilizador seleciona as respostas.
+As perguntas são geradas proceduralmente com base no conteúdo JSON
+carregado. O sistema escolhe aleatoriamente um eletrodoméstico ou
+mineral encontrado e apresenta quatro opções de resposta. O estado de
+progresso (quantas perguntas acertou) determina se o nível seguinte é
+desbloqueado. Esta lógica reside inteiramente no JavaScript, o que
+simplifica a integração com a interface HTML modal onde o utilizador
+seleciona as respostas.
