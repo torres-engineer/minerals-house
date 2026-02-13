@@ -15,14 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Setup Odin
-      uses: gingerBill/odin-actions@main
-
-    - name: Build
-      run: |
-        chmod +x build.sh
-        ./build.sh
-
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
