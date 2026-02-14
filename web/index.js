@@ -458,7 +458,7 @@ async function loadLevel(levelId, language = currentLanguage) {
       // 1. Try language-specific file if code exists
       if (langCode) {
         // e.g. items.en.json
-        const res = await fetch(`${basePath}/${name}${langCode}.json`);
+        const res = await fetch(`${basePath}/${name}.${langCode}.json`);
         if (res.ok) return res.json();
       }
       // 2. Fallback to default
