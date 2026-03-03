@@ -52,6 +52,11 @@ body {
   display: none !important;
 }
 
+#start-title {
+  font-family: var(--font-main);
+  font-size: 2em;
+}
+
 /* ─── Cozy Pixel Home — Colour Palette ─── */
 :root {
   /* The warm base tones */
