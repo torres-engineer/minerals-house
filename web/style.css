@@ -293,6 +293,20 @@ body {
   grid-column: auto;
 }
 
+#progress-info {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 900;
+  border: 3px solid var(--cozy-wood);
+  border-radius: 14px;
+  height: 48px;
+  place-items: center;
+  background: linear-gradient(180deg, var(--cozy-cream) 0%, #f5e6d0 100%);
+  color: var(--cozy-wood);
+  box-shadow: 0 4px 0 var(--cozy-wood), 0 5px 12px rgba(139, 111, 71, 0.2);
+}
+
 /* ─── Animations ─── */
 @keyframes popIn {
   0% {
@@ -891,6 +905,11 @@ body {
     right: 10px;
     width: 44px;
     height: 44px;
+  }
+
+  #progress-info {
+    top: 10px;
+    left: 10px;
   }
 
   .modal-content {

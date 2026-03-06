@@ -91,6 +91,24 @@
       </svg>
     </button>
 
+    <section id="progress-info">
+      <p>
+        Progress (<span id="found-number">0</span>/<span id="to-find-number"
+        >0</span>): <progress id="found-progress" max="0" value="0">
+          0 %
+        </progress>
+      </p>
+    </section>
+
+    <div id="item-modal" class="modal hidden" oncontextmenu="return false;">
+      <div class="modal-content">
+        <button class="modal-close" onclick="playSound('click'); closeModal()">
+          &times;
+        </button>
+        <div id="modal-body"></div>
+      </div>
+    </div>
+
     <!-- Item/quiz popup modal -->
     <div id="item-modal" class="modal hidden" oncontextmenu="return false;">
       <div class="modal-content">

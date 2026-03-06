@@ -683,6 +683,8 @@ async function initGame(language, level = 1) {
           const appliance = found.item.appliance ? getAppliance(found.item.appliance) : null;
           showItemDiscovery({ item: found.item, appliance, isNew: isNewFind, playerPos: pos });
           playSound("click");
+
+          updateProgress();
         } else {
           exports.player_click(found.item.x, found.item.y);
         }
@@ -1361,3 +1363,16 @@ document.addEventListener("DOMContentLoaded", () => {
   updateVolumeReadout("sfx-volume", "sfx-volume-value", "sfx");
   applyAudioMix();
 });
+
+function updateProgress() {
+    const found = document.getElementById("found-number");
+    const to_find = document.getElementById("to-find-number");
+    const progress = document.getElementById("found-progress");
+
+    found.innerText = "0";
+    to_find.innerText = "0";
+    progress.max = 0;
+    progress.value = 0;
+    progress.innerText = `${0} %`;
+    progress.innerText = `${0} %`;
+}
