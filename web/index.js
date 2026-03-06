@@ -1,4 +1,22 @@
-/*
+/**
+ *    Minerals' House
+ *    Copyright (C) 2025–2026  Danilo Kymhyr <danilokymhyr3@gmail.com>,
+ *    Guilherme Pereira <pguilherme926@gmail.com>, João Torres
+ *    <torres.dev@disroot.org>
+ *
+ *    This program is free software: you can redistribute it and/or modify it
+ *    under the terms of the GNU General Public License as published by the
+ *    Free Software Foundation, either version 3 of the License, or (at your
+ *    option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful, but
+ *    WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+ *    Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License along
+ *    with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
  * Web front-end for Minerals' House.
  * Boots the WASM game, wires up the UI and audio, and runs the quiz/discovery flows.
  */
@@ -150,7 +168,7 @@ const mineralIcons = {
 
 /**
  * Gets the icon path for a mineral.
- * @param {string} mineralName 
+ * @param {string} mineralName
  * @returns {string}
  */
 function getMineralIcon(mineralName) {
@@ -445,7 +463,7 @@ function setupSettingsMenu() {
 /**
  * Loads a level by ID including config, map, items, and appliances.
  * Pushes data to Odin.
- * @param {number} levelId 
+ * @param {number} levelId
  * @param {string} [language=currentLanguage]
  */
 async function loadLevel(levelId, language = currentLanguage) {
