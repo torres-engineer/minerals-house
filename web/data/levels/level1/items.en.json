@@ -18,14 +18,14 @@
       "id": "laundry",
       "appliance": "Washing Machine",
       "x": 1010,
-      "y": 145,
-      "radius": 40
+      "y": 130,
+      "radius": 50
     },
     {
       "id": "computer",
       "appliance": "Computer",
       "x": 65,
-      "y": 280,
+      "y": 295,
       "radius": 35
     },
     {
