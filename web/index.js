@@ -684,7 +684,7 @@ async function initGame(language, level = 1) {
           showItemDiscovery({ item: found.item, appliance, isNew: isNewFind, playerPos: pos });
           playSound("click");
 
-          updateProgress();
+          updateProgress(exports.get_found_items_count(), items.filter((entry) => entry.appliance !== null).length);
         } else {
           exports.player_click(found.item.x, found.item.y);
         }
@@ -1364,15 +1364,14 @@ document.addEventListener("DOMContentLoaded", () => {
   applyAudioMix();
 });
 
-function updateProgress() {
+function updateProgress(n, max) {
     const found = document.getElementById("found-number");
     const to_find = document.getElementById("to-find-number");
     const progress = document.getElementById("found-progress");
 
-    found.innerText = "0";
-    to_find.innerText = "0";
-    progress.max = 0;
-    progress.value = 0;
-    progress.innerText = `${0} %`;
-    progress.innerText = `${0} %`;
+    found.innerText = n.toString();
+    to_find.innerText = max.toString();
+    progress.max = max;
+    progress.value = n;
+    progress.innerText = `${(n/max)*100} %`;
 }
