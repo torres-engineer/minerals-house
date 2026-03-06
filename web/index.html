@@ -51,7 +51,7 @@
           Start Game
         </button>
 
-        <footer style="color: oklch(0.46 0 0); font-size: 0.75rem">
+        <footer class="cozy-footer">
           <a href="https://github.com/torres-engineer/minerals-house"
           >Minerals' House</a> Copyright &copy; <time datetime="2025"
           >2025</time>&ndash;<time datetime="2026">2026</time> <a
@@ -91,13 +91,12 @@
       </svg>
     </button>
 
-    <section id="progress-info">
-      <p>
-        Progress (<span id="found-number">0</span>/<span id="to-find-number"
-        >0</span>): <progress id="found-progress" max="0" value="0">
-          0 %
-        </progress>
-      </p>
+    <section id="progress-info" class="hidden">
+      <div class="progress-label">
+        <span id="progress-icon">&#x26CF;</span>
+        <span id="found-number">0</span>/<span id="to-find-number">0</span>
+      </div>
+      <progress id="found-progress" max="0" value="0">0%</progress>
     </section>
 
     <div id="item-modal" class="modal hidden" oncontextmenu="return false;">
@@ -165,7 +164,7 @@
               Close
             </button>
           </div>
-          <footer style="color: oklch(0.46 0 0); font-size: 0.75rem">
+          <footer class="cozy-footer">
             <a href="https://github.com/torres-engineer/minerals-house"
             >Minerals' House</a><br />Copyright &copy; <time datetime="2025"
             >2025</time>&ndash;<time datetime="2026">2026</time><br /><a

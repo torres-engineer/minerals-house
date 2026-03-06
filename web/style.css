@@ -293,18 +293,174 @@ body {
   grid-column: auto;
 }
 
+/* ─── Footer — Wooden Plaque ─── */
+.cozy-footer {
+  margin-top: 24px;
+  padding: 14px 18px;
+  border-top: 3px solid var(--cozy-gold);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0px,
+      transparent 18px,
+      rgba(139, 111, 71, 0.03) 18px,
+      rgba(139, 111, 71, 0.03) 19px
+    ),
+    linear-gradient(180deg, rgba(59, 42, 26, 0.06) 0%, rgba(59, 42, 26, 0.14) 100%);
+  border-radius: 0 0 16px 16px;
+  color: var(--text-muted);
+  font-family: var(--font-main);
+  font-size: 0.7rem;
+  line-height: 1.8;
+  letter-spacing: 0.3px;
+  text-align: center;
+  position: relative;
+}
+
+.cozy-footer::before {
+  content: '\26CF';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--cozy-cream);
+  border: 2px solid var(--cozy-gold);
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  color: var(--cozy-gold);
+  box-shadow: 0 2px 6px rgba(232, 183, 48, 0.25);
+}
+
+.cozy-footer a {
+  color: var(--cozy-wood);
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 2px dotted var(--border-medium);
+  padding-bottom: 1px;
+  transition: color 0.25s, border-color 0.25s, text-shadow 0.25s;
+}
+
+.cozy-footer a:hover {
+  color: var(--cozy-warm);
+  border-bottom-color: var(--cozy-warm);
+  text-shadow: 0 0 8px rgba(240, 150, 91, 0.3);
+}
+
+/* ─── Progress HUD — Mining Tracker ─── */
 #progress-info {
   position: fixed;
   top: 16px;
   left: 16px;
   z-index: 900;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px 8px 12px;
   border: 3px solid var(--cozy-wood);
   border-radius: 14px;
-  height: 48px;
-  place-items: center;
   background: linear-gradient(180deg, var(--cozy-cream) 0%, #f5e6d0 100%);
   color: var(--cozy-wood);
-  box-shadow: 0 4px 0 var(--cozy-wood), 0 5px 12px rgba(139, 111, 71, 0.2);
+  font-family: var(--font-main);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow:
+    0 4px 0 var(--cozy-wood),
+    0 5px 12px rgba(139, 111, 71, 0.2);
+  transition: box-shadow 0.3s;
+}
+
+#progress-info.all-found {
+  border-color: #4a9e5e;
+  box-shadow:
+    0 4px 0 #3d8550,
+    0 5px 12px rgba(109, 186, 130, 0.3),
+    0 0 12px rgba(109, 186, 130, 0.15);
+}
+
+.progress-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+
+#progress-icon {
+  font-size: 16px;
+  filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.15));
+  transition: transform 0.3s;
+}
+
+#progress-info.all-found #progress-icon {
+  animation: float 2s infinite;
+}
+
+/* Native <progress> — reset & restyle */
+#found-progress {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 90px;
+  height: 12px;
+  border: 2px solid var(--border-medium);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+  background: transparent;
+}
+
+/* Track — Webkit (Chrome, Safari, Edge) */
+#found-progress::-webkit-progress-bar {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      var(--border-light) 0px,
+      var(--border-light) 8px,
+      rgba(196, 168, 130, 0.4) 8px,
+      rgba(196, 168, 130, 0.4) 9px
+    );
+  border-radius: 4px;
+}
+
+/* Fill — Webkit */
+#found-progress::-webkit-progress-value {
+  background: linear-gradient(180deg, #f0c740 0%, var(--cozy-gold) 40%, var(--accent-copper) 100%);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 6px var(--glow-orange);
+  transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Fill — Firefox */
+#found-progress::-moz-progress-bar {
+  background: linear-gradient(180deg, #f0c740 0%, var(--cozy-gold) 40%, var(--accent-copper) 100%);
+  border-radius: 4px;
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 6px var(--glow-orange);
+}
+
+/* Complete state */
+#found-progress.complete::-webkit-progress-value {
+  background: linear-gradient(180deg, #7dcc92 0%, var(--cozy-green) 40%, #4a9e5e 100%);
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 8px rgba(109, 186, 130, 0.5);
+}
+
+#found-progress.complete::-moz-progress-bar {
+  background: linear-gradient(180deg, #7dcc92 0%, var(--cozy-green) 40%, #4a9e5e 100%);
+  box-shadow:
+    inset 0 -2px 0 rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 0 8px rgba(109, 186, 130, 0.5);
 }
 
 /* ─── Animations ─── */

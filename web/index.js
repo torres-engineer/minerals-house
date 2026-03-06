@@ -393,6 +393,8 @@ function setupStartMenu() {
       gameStarted = true;
       document.getElementById("start-menu").classList.add("hidden");
       document.getElementById("settings-button").classList.remove("hidden");
+      document.getElementById("progress-info").classList.remove("hidden");
+      updateProgress();
     } catch (error) {
       console.error(error);
       const subtitle = document.getElementById("start-subtitle");
@@ -684,7 +686,7 @@ async function initGame(language, level = 1) {
           showItemDiscovery({ item: found.item, appliance, isNew: isNewFind, playerPos: pos });
           playSound("click");
 
-          updateProgress(exports.get_found_items_count(), items.filter((entry) => entry.appliance !== null).length);
+          updateProgress();
         } else {
           exports.player_click(found.item.x, found.item.y);
         }
@@ -1226,6 +1228,7 @@ window.loadNextLevel = async function () {
     await initGame(currentLanguage, currentLevel);
     gameStarted = true;
     document.getElementById("start-menu").classList.add("hidden");
+    updateProgress();
   } catch (e) {
     console.error(e);
     // Something went wrong — full page reload as a safety net
@@ -1364,14 +1367,23 @@ document.addEventListener("DOMContentLoaded", () => {
   applyAudioMix();
 });
 
-function updateProgress(n, max) {
-    const found = document.getElementById("found-number");
-    const to_find = document.getElementById("to-find-number");
-    const progress = document.getElementById("found-progress");
+function updateProgress() {
+    const foundCount = window.exports ? window.exports.get_found_items_count() : 0;
+    const totalItems = currentItems.filter((entry) => entry.appliance !== null).length;
 
-    found.innerText = n.toString();
-    to_find.innerText = max.toString();
-    progress.max = max;
-    progress.value = n;
-    progress.innerText = `${(n/max)*100} %`;
+    document.getElementById("found-number").innerText = String(foundCount);
+    document.getElementById("to-find-number").innerText = String(totalItems);
+
+    const bar = document.getElementById("found-progress");
+    const container = document.getElementById("progress-info");
+    bar.max = totalItems;
+    bar.value = foundCount;
+
+    if (foundCount >= totalItems && totalItems > 0) {
+        bar.classList.add("complete");
+        container.classList.add("all-found");
+    } else {
+        bar.classList.remove("complete");
+        container.classList.remove("all-found");
+    }
 }
