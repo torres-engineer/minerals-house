@@ -329,7 +329,11 @@ function applyStaticTranslations() {
     ["sfx-volume-label", "sfxVolume"],
     ["mute-audio-label", "muteAll"],
     ["restart-game-btn", "restartGame"],
-    ["close-settings-btn", "close"]
+    ["close-settings-btn", "close"],
+    ["start-footer-coordinator", "footerCoordinator"],
+    ["start-footer-project", "footerProject"],
+    ["settings-footer-coordinator", "footerCoordinator"],
+    ["settings-footer-project", "footerProject"]
   ];
 
   for (const [id, key] of map) {
@@ -854,10 +858,10 @@ async function initGame(language, level = 1) {
         let shadowBlur;
 
         if (isHovered) {
-          fillStyle = "rgba(255, 215, 0, 0.25)";
+          fillStyle = "rgba(0, 255, 255, 0.3)";
           shadowBlur = 15;
         } else {
-          fillStyle = `rgba(255, 215, 0, ${pulseAlpha})`;
+          fillStyle = `rgba(0, 255, 255, ${pulseAlpha})`;
           shadowBlur = 5;
         }
 
@@ -869,7 +873,7 @@ async function initGame(language, level = 1) {
         hCtx.globalCompositeOperation = "source-over";
 
         ctx.save();
-        ctx.shadowColor = "rgba(255, 215, 0, 1)";
+        ctx.shadowColor = "rgb(0, 255, 255)";
         ctx.shadowBlur = shadowBlur;
         ctx.drawImage(window.highlightCanvas, 0, 0, size, size, screenToWorldX(sX), screenToWorldY(sY), size, size);
         ctx.restore();

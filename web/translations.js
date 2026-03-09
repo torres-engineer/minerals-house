@@ -54,7 +54,9 @@ window.TRANSLATIONS = {
     questionTemplate: "Qual destes minerais está presente no(a) {appliance}?",
     categoryPrefix: "Categoria",
     originPrefix: "Origem",
-    settingsOpenAria: "Abrir definições"
+    settingsOpenAria: "Abrir definições",
+    footerCoordinator: "(coordenadora)",
+    footerProject: "Projeto desenvolvido no âmbito de uma unidade curricular no"
   },
   en: {
     startKicker: "Educational game",
@@ -104,7 +106,9 @@ window.TRANSLATIONS = {
     questionTemplate: "Which of these minerals is present on {appliance}?",
     categoryPrefix: "Category",
     originPrefix: "Origin",
-    settingsOpenAria: "Open settings"
+    settingsOpenAria: "Open settings",
+    footerCoordinator: "(coordinator)",
+    footerProject: "Project developed for a course at"
   }
 };
 
