@@ -56,7 +56,7 @@ window.TRANSLATIONS = {
     originPrefix: "Origem",
     settingsOpenAria: "Abrir definições",
     footerCoordinator: "(coordenadora)",
-    footerProject: "Projeto desenvolvido no âmbito de uma unidade curricular no"
+    footerProject: 'Projeto desenvolvido no âmbito da unidade curricular "Projeto Integrado", da Licenciatura em Engenharia Informática, do'
   },
   en: {
     startKicker: "Educational game",
@@ -108,7 +108,7 @@ window.TRANSLATIONS = {
     originPrefix: "Origin",
     settingsOpenAria: "Open settings",
     footerCoordinator: "(coordinator)",
-    footerProject: "Project developed for a course at"
+    footerProject: 'Project developed in the scope of the "Integrated Project" curricular unit, of the Computer Engineering Degree, at'
   }
 };
 
